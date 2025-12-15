@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <link rel="stylesheet" href="style.css" />
+    <script src="index.js" defer></script>
+  </head>
+  <body>
+    <div class="wrap">
+      <aside>
+        <ul>
+          <li>
+            <p>이름 :</p>
+            <input type="text" id="company" />
+          </li>
+          <li>
+            <p>상호명 :</p>
+            <input type="text" id="name" />
+          </li>
+          <li>
+            <p>연락처 :</p>
+            <input type="text" id="tel" />
+          </li>
+          <li>
+            <p>주소 :</p>
+            <input type="text" id="addr" />
+          </li>
+          <li>
+            <p>이메일 :</p>
+            <input type="text" id="email" />
+          </li>
+          <li><button id="btn" data-flag="0">저장</button></li>
+        </ul>
+      </aside>
+      <main>
+        <header>
+          <input type="text" id="search1" />
+          <input type="button" value="검색" id="search2" />
+        </header>
+        <section>
+          <ul class="nav">
+            <li>순번</li>
+            <li>이름</li>
+            <li>상호명</li>
+            <li>연락처</li>
+            <li>주소</li>
+            <li>이메일</li>
+            <li>관리</li>
+          </ul>
+          <div class="list"></div>
+        </section>
+      </main>
+    </div>
+    <input type="text" id="seq" value="" />
+  </body>
+</html>
