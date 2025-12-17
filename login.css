@@ -1,0 +1,132 @@
+@import url("https://fonts.googleapis.com/css2?family=Asta+Sans:wght@300..800&family=Chiron+Hei+HK:ital,wght@0,200..900;1,200..900&display=swap");
+body {
+  font-family: "Chiron Hei HK", sans-serif;
+  font-size: 16px;
+}
+.login-page {
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #f9fafb;
+}
+.login-card {
+  width: 360px;
+  padding: 40px;
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
+}
+
+.logo {
+  font-size: 24px;
+  font-weight: 700;
+  text-align: center;
+  margin-bottom: 30px;
+  color: #007bff;
+}
+.input-wrap {
+  position: relative;
+}
+.pw-wrap .btn-eye {
+  position: absolute;
+  right: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 20px;
+  height: 20px;
+  background: url(images/visibility_off_22dp_666_FILL0_wght400_GRAD0_opsz24.svg)
+    no-repeat center;
+  border: none;
+  background-size: contain;
+  cursor: pointer;
+  opacity: 0.2;
+  transition: opacity 0.2s ease;
+}
+.pw-wrap .btn-eye.is-active{
+  opacity: 0.9;
+}
+.login-options {
+  display: flex;
+  justify-content: space-between;
+  font-size: 13px;
+  margin: 8px 0 16px;
+}
+.login-options a {
+  color: #666;
+  text-decoration: none;
+}
+.login-form {
+  width: 100%;
+  box-sizing: border-box;
+}
+.login-form input {
+  width: 90%;
+  height: 48px;
+  border: 1px solid #ddd;
+  border-radius: 12px;
+  padding: 0 16px;
+  margin-bottom: 14px;
+  font-size: 14px;
+  display: block;
+}
+.login-form input:focus {
+  outline: 0;
+  border-color: #007bff;
+}
+.login-form button:not(.btn-eye) {
+  width: 100%;
+  height: 48px;
+  border: none;
+  border-radius: 12px;
+  background: #007bff;
+  color: #fff;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.error-msg {
+  height: 20px;
+  color: red;
+  font-size: 13px;
+}
+.chk-wrap {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+}
+
+.chk-wrap input {
+  display: none;
+}
+
+.chk-box {
+  width: 16px;
+  height: 16px;
+  border: 1.5px solid #ccc;
+  border-radius: 4px;
+  position: relative;
+}
+
+.chk-wrap input:checked + .chk-box {
+  background: #007bff;
+  border-color: #007bff;
+}
+
+.chk-wrap input:checked + .chk-box::after {
+  content: "";
+  position: absolute;
+  left: 5px;
+  top: 2px;
+  width: 4px;
+  height: 8px;
+  border: solid #fff;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+}
+
+.chk-text {
+  font-size: 13px;
+  color: #333;
+}

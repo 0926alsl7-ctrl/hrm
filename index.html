@@ -3,374 +3,41 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Document</title>
-    <link rel="stylesheet" href="style.css" />
+    <title>HR Management System</title>
+    <link rel="shortcut icon" href="images/favicon.ico">
+    <link rel="icon" type="images/png" sizes="32x32" href="images/favicon-32x32.png">
+     <link rel="icon" type="images/png" sizes="16x16" href="images/favicon-16x16.png">
+    <link rel="stylesheet" href="login.css" />
+    <script src="login.js" defer></script>
   </head>
-  <body>
-    <div class="wrap">
-      <aside>
-        <h3></h3>
-        <p>
-          <img
-            src="/icons/account_circle_20dp_000000_FILL0_wght400_GRAD0_opsz20.svg"
-            alt="profile"
-          />
-          <span>민님</span>
-        </p>
-        <ul class="pro">
-          <li>
-            <img
-              src="/icons/design_services_20dp_000000_FILL0_wght400_GRAD0_opsz20 (2).svg"
-              alt="menu"
-            />
-            <a href="#">디자인모드</a>
-          </li>
-          <li>
-            <img
-              src="/icons/open_in_browser_20dp_000000_FILL0_wght400_GRAD0_opsz20.svg"
-              alt="menu"
-            />
-            <a href="#">사이트 바로가기</a>
-          </li>
-        </ul>
-        <ul class="site">
-          <li>
-            <a href="#"
-              >사이트 관리
-              <img
-                src="/icons/add_circle_16dp_666666_FILL0_wght400_GRAD0_opsz20.svg"
-                alt="menu"
-                style="padding-left: 56px; width: 18px"
-            /></a>
-            <div>
-              <img
-                src="/icons/space_dashboard_20dp_000000_FILL0_wght400_GRAD0_opsz20.svg"
-                alt="menu"
-              />
-              <a href="#">대시보드</a>
-            </div>
-            <div>
-              <img
-                src="/icons/person_20dp_000000_FILL0_wght400_GRAD0_opsz20.svg"
-                alt="menu"
-              />
-              <a href="#">사용자 관리</a>
-            </div>
-            <div>
-              <img
-                src="/icons/shopping_cart_20dp_000000_FILL0_wght400_GRAD0_opsz20.svg"
-                alt="menu"
-              />
-              <a href="#">쇼핑</a>
-            </div>
-            <div>
-              <img
-                src="/icons/calendar_month_20dp_000000_FILL0_wght400_GRAD0_opsz20.svg"
-                alt="menu"
-              />
-              <a href="#">예약</a>
-            </div>
-            <div>
-              <img
-                src="/icons/contract_edit_20dp_000000_FILL0_wght400_GRAD0_opsz20 (1).svg"
-                alt="menu"
-              />
-              <a href="#">컨텐츠 관리</a>
-            </div>
-            <div>
-              <img
-                src="/icons/campaign_20dp_000000_FILL0_wght400_GRAD0_opsz20.svg"
-                alt="menu"
-              />
-              <a href="#">마케팅 관리</a>
-            </div>
-            <div>
-              <img
-                src="/icons/mobile_3_20dp_000000_FILL0_wght400_GRAD0_opsz20.svg"
-                alt="menu"
-              />
-              <a href="#">App 신청 및 관리</a>
-            </div>
-            <div>
-              <img
-                src="/icons/bar_chart_20dp_000000_FILL0_wght400_GRAD0_opsz20.svg"
-                alt="menu"
-              /><a href="#">통계</a>
-            </div>
-            <div>
-              <img
-                src="/icons/add_business_20dp_000000_FILL0_wght400_GRAD0_opsz20.svg"
-                alt="menu"
-              /><a href="#">결제/부가서비스</a>
-            </div>
-            <div>
-              <img
-                src="/icons/settings_20dp_000000_FILL0_wght400_GRAD0_opsz20.svg"
-                alt="menu"
-              /><a href="#">환경설정</a>
-            </div>
-          </li>
-        </ul>
-      </aside>
-      <main>
-        <div class="search">
-          <input
-            type="search"
-            name="search"
-            id="search"
-            placeholder="슈가파우더"
-          />
-          <input type="submit" value="검색" id="submit" />
-          <input type="button" value="초기화" id="cancel" />
-        </div>
-        <div class="list">
-          <div class="list1">
-            <ul>
-              <h4>기본설정</h4>
-              <div class="bar1"></div>
-              <li>
-                <input type="radio" name="radio0" id="check" checked />사이트
-                정보 설정하기
-              </li>
-              <li>
-                <input type="radio" name="radio1" id="check" checked />디자인
-                편집하기
-              </li>
-              <li>
-                <input type="radio" name="radio1" id="check" />약관 설정하기
-              </li>
-              <li>
-                <input type="radio" name="radio1" id="check" />도메인 연결하기
-              </li>
-            </ul>
-            <ul>
-              <h4>판매하기</h4>
-              <div class="bar2"></div>
-              <li>
-                <input type="radio" name="radio2" id="check" />상품 추가하기
-              </li>
-              <li>
-                <input type="radio" name="radio2" id="check" />배송 설정하기
-              </li>
-              <li>
-                <input type="radio" name="radio2" id="check" />전자결제 신청하기
-              </li>
+  <body class="login-page">
+    <div class="login-wrap">
+      <div class="login-card">
+        <h1 class="logo">HRMS</h1>
+      <form class="login-form">
+  <div class="input-wrap">
+    <input type="text" id="userId" placeholder="ID" />
+  </div>
 
-              <li>
-                <input type="radio" name="radio2" id="check" />네이버페이
-                신청하기
-              </li>
-              <li>
-                <input type="radio" name="radio2" id="check" />네이버쇼핑
-                입점하기
-              </li>
-              <li>
-                <input type="radio" name="radio2" id="check" />예약상품 추가하기
-              </li>
+  <div class="input-wrap pw-wrap">
+    <input type="password" id="userPw" placeholder="Password" />
+    <button type="button" class="btn-eye" aria-label="비밀번호 보기"></button>
+  </div>
 
-              <li>
-                <input type="radio" name="radio2" id="check" />성수기, 휴일
-                설정하기
-              </li>
+  <div class="login-options">
+    <label class="chk-wrap">
+      <input type="checkbox" />
+      <span class="chk-box"></span>
+      <span class="chk-text">아이디 저장</span>
+    </label>
+    <a href="#" class="find-pw">비밀번호 찾기</a>
+  </div>
 
-              <li>
-                <input type="radio" name="radio2" id="check" />환불기준 설정하기
-              </li>
-            </ul>
+  <p class="error-msg"></p>
 
-            <ul>
-              <h4>성장하기</h4>
-              <div class="bar3"></div>
-              <li>
-                <input type="radio" name="radio3" id="check" />검색엔진 등록하기
-              </li>
-              <li>
-                <input type="radio" name="radio3" id="check" checked />검색엔진
-                최적화
-              </li>
-              <li>
-                <input type="radio" name="radio3" id="check" />소셜 로그인
-                설정하기
-              </li>
-              <li>
-                <input type="radio" name="radio3" id="check" />메일발송 설정하기
-              </li>
-              <li>
-                <input type="radio" name="radio3" id="check" />SNS/알림톡
-                설정하기
-              </li>
-              <li>
-                <input type="radio" name="radio3" id="check" />방문자 분석하기
-              </li>
-              <li>
-                <input type="radio" name="radio3" id="check" />광고 및 전환추적
-                설정
-              </li>
-            </ul>
-            <ul>
-              <h4>추천작업</h4>
-              <div class="bar4"></div>
-              <li>
-                <input type="radio" name="radio4" id="check" />운영진 설정하기
-              </li>
-              <li>
-                <input type="radio" name="radio4" id="check" />자동입금확인
-                설정하기
-              </li>
-              <li>
-                <input type="radio" name="radio4" id="check" />채팅상담 설정하기
-              </li>
-              <li>
-                <input type="radio" name="radio4" id="check" />모바일 앱
-                설정하기
-              </li>
-              <li>
-                <input type="radio" name="radio4" id="check" />FBE 설정하기
-              </li>
-            </ul>
-          </div>
-          <div class="list2">
-            <div class="profile">
-              <img
-                src="/icons/account_circle_32dp_D9D9D9_FILL0_wght400_GRAD0_opsz40.svg"
-                alt="account"
-              />
-              <br />
-              <select name="select" id="select">
-                <option selected>관리자</option>
-                <option>다른계정으로 로그인</option>
-              </select>
-              <p>0926alsl7@naver.com</p>
-            </div>
-            <div class="pf">
-              <ul>
-                <li>사용버전</li>
-                <li>PG</li>
-                <li>APP</li>
-                <li>도메인</li>
-                <li>SSL</li>
-                <li>SMS</li>
-                <li>입금확인</li>
-              </ul>
-              <ul id="second">
-                <li><span>FREE</span></li>
-                <li>미가입</li>
-                <li>IOS미사용/Android 미사용</li>
-                <li>기본 도메인 사용 중</li>
-                <li>사용 (기본 도메인 자동 적용)</li>
-                <li>0건</li>
-                <li>자동입금확인 미사용</li>
-              </ul>
-              <ul id="third">
-                <li>업그레이드</li>
-                <li>설정</li>
-                <li>설정</li>
-                <li>설정</li>
-                <li>설정</li>
-                <li>충전</li>
-                <li>설정</li>
-              </ul>
-            </div>
-          </div>
-        </div>
-        <div class="list3">
-          <div class="list4">
-            <table>
-              <caption>
-                일자별 요약
-              </caption>
-              <tr>
-                <th>일자</th>
-                <th>주문수</th>
-                <th>매출액</th>
-                <th>방문자</th>
-                <th>가입</th>
-                <th>문의</th>
-                <th>후기</th>
-              </tr>
-              <tr>
-                <td>2025-08-29</td>
-                <td>1,247</td>
-                <td>11,252,345원</td>
-                <td>11,647명</td>
-                <td>876명</td>
-                <td>0</td>
-                <td>0</td>
-              </tr>
-              <tr>
-                <td>2025-08-28</td>
-                <td>825</td>
-                <td>8,952,705원</td>
-                <td>17,926명</td>
-                <td>1,257명</td>
-                <td>0</td>
-                <td>0</td>
-              </tr>
-              <tr>
-                <td>2025-08-27</td>
-                <td>452</td>
-                <td>4,872,340원</td>
-                <td>37,565명</td>
-                <td>6,451명</td>
-                <td>0</td>
-                <td>0</td>
-              </tr>
-              <tr>
-                <td>2025-08-26</td>
-                <td>2,345</td>
-                <td>24,120,821원</td>
-                <td>24,215명</td>
-                <td>3,276명</td>
-                <td>0</td>
-                <td>0</td>
-              </tr>
-              <tr>
-                <td>2025-08-25</td>
-                <td>549</td>
-                <td>7,420,954원</td>
-                <td>15,956명</td>
-                <td>2,129명</td>
-                <td>0</td>
-                <td>0</td>
-              </tr>
-              <tr>
-                <td>2025-08-24</td>
-                <td>1,112</td>
-                <td>12,155,486원</td>
-                <td>11,298명</td>
-                <td>1,927명</td>
-                <td>0</td>
-                <td>0</td>
-              </tr>
-              <tr>
-                <td>2025-08-23</td>
-                <td>623</td>
-                <td>8,119,347원</td>
-                <td>50,517명</td>
-                <td>1,151명</td>
-                <td>0</td>
-                <td>0</td>
-              </tr>
-              <tr>
-                <td>최근 7일 합계</td>
-                <td>7,319</td>
-                <td>95,482,455원</td>
-                <td>112,347명</td>
-                <td>19,926명</td>
-                <td>0</td>
-                <td>0</td>
-              </tr>
-            </table>
-          </div>
-          <div class="list5">
-            <div class="graph">
-              <p>방문자 현황</p>
-              <img src="/icons/graph.png" alt="graph" />
-            </div>
-          </div>
-          <div class="list6"></div>
-        </div>
-      </main>
+  <button type="submit" class="btn-login">로그인</button>
+</form>
+      </div>
     </div>
   </body>
 </html>
