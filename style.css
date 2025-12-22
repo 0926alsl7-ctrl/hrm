@@ -209,6 +209,10 @@ img {
 .nav-item:hover {
   background: #f5f7fa;
 }
+.nav-item:hover .nav-txt {
+  color: #000;
+  font-weight: bold;
+}
 .nav-item img {
   width: 24px;
   height: 24px;

@@ -43,7 +43,7 @@ body {
   opacity: 0.2;
   transition: opacity 0.2s ease;
 }
-.pw-wrap .btn-eye.is-active{
+.pw-wrap .btn-eye.is-active {
   opacity: 0.9;
 }
 .login-options {
@@ -53,7 +53,7 @@ body {
   margin: 8px 0 16px;
 }
 .login-options a {
-  color: #666;
+  color: #007bff;
   text-decoration: none;
 }
 .login-form {
@@ -61,7 +61,8 @@ body {
   box-sizing: border-box;
 }
 .login-form input {
-  width: 90%;
+  width: 100%;
+  box-sizing: border-box;
   height: 48px;
   border: 1px solid #ddd;
   border-radius: 12px;
@@ -129,4 +130,37 @@ body {
 .chk-text {
   font-size: 13px;
   color: #333;
+}
+@media (max-width: 768px) {
+  .login-page {
+    align-items: flex-start;
+    padding: 40px 30px;
+    background: #fff;
+  }
+  .login-card {
+    width: 100%;
+    max-width: 420px;
+    padding: 0;
+    box-shadow: none;
+    border-radius: 0;
+  }
+  .logo {
+    font-size: 28px;
+    margin: 60px 0 40px;
+  }
+  .login-form button:not(.btn-eye) {
+    font-size: 14px;
+  }
+  .error-msg {
+    font-size: 12px;
+  }
+  .login-options {
+    font-size: 12px;
+    margin: 12px 0 20px;
+  }
+
+  .btn-login {
+    position: sticky;
+    bottom: 20px;
+  }
 }
