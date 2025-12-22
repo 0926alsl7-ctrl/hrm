@@ -18,6 +18,7 @@
       href="images/favicon-16x16.png"
     />
     <link rel="stylesheet" href="style.css" />
+    <link rel="stylesheet" href="m-style.css" media="(max-width:768px)" />
     <script src="dashboard.js" defer></script>
   </head>
   <body>
@@ -32,7 +33,6 @@
               <img src="images/favicon-32x32.png" alt="logo" />
               <h1 class="logo-txt">HRMS</h1>
             </div>
-
             <div class="header-bar">
               <ul class="header-bar-list flex">
                 <li class="header-bar-list-item">
@@ -65,49 +65,53 @@
           <div class="aside">
             <div class="aside-inner">
               <ul class="nav">
-                <li class="nav-item">
+                <li class="nav-item is-active" data-target="home">
                   <img src="images/home.svg" alt="home" />
                   <span class="nav-txt">홈</span>
                 </li>
-                <li class="nav-item">
+                <li class="nav-item" data-target="schedule">
                   <img src="images/schedule1.svg" alt="date" />
                   <span class="nav-txt">근무일정</span>
                 </li>
-                <li class="nav-item">
+                <li class="nav-item" data-target="attendance">
                   <img src="images/timecheck.svg" alt="date" />
                   <span class="nav-txt">출퇴근기록</span>
                 </li>
-                <li class="nav-item">
+                <li class="nav-item" data-target="vacation">
                   <img src="images/vacation.svg" alt="date" />
                   <span class="nav-txt">휴가관리</span>
                 </li>
-                <li class="nav-item">
+                <li class="nav-item" data-target="payroll">
                   <img src="images/chart2.svg" alt="date" />
                   <span class="nav-txt">근태정산 및 급여관리</span>
                 </li>
-                <li class="nav-item">
+                <li class="nav-item" data-target="approval">
                   <img src="images/approve1.svg" alt="date" />
                   <span class="nav-txt">전자결재</span>
                 </li>
+                <li class="nav-item" data-target="contract">
+                  <img src="images/approve2.svg" alt="date" />
+                  <span class="nav-txt">전자계약</span>
+                </li>
                 <li class="nav-divider"></li>
-                <li class="nav-item">
+                <li class="nav-item" data-target="notice">
                   <img src="images/notice.svg" alt="date" />
                   <span class="nav-txt">사내공지</span>
                 </li>
-                <li class="nav-item">
-                  <img src="images/send1.svg" alt="date" />
+                <li class="nav-item" data-target="message">
+                  <img
+                    src="images/send1.svg"
+                    alt="date"
+                    class="nav-item-message-img"
+                  />
                   <span class="nav-txt">메시지</span>
                 </li>
-                <li class="nav-item">
-                  <img src="images/link2.svg" alt="date" />
-                  <span class="nav-txt">연동</span>
-                </li>
                 <li class="nav-divider"></li>
-                <li class="nav-item">
+                <li class="nav-item" data-target="account">
                   <img src="images/account.svg" alt="date" />
                   <span class="nav-txt">계정</span>
                 </li>
-                <li class="nav-item">
+                <li class="nav-item" data-target="desktop">
                   <img src="images/desktop.svg" alt="date" />
                   <span class="nav-txt">데스크탑</span>
                 </li>
@@ -115,7 +119,190 @@
             </div>
           </div>
           <div class="main">
-            <div class="main-wrap"></div>
+            <div class="content">
+              <section class="section is-active" data-page="home">
+                <div class="dashboard">
+                  <div class="card profile-card">
+                    <div class="profile-info flex">
+                      <div class="profile-img">
+                        <img
+                          src="images/supervisoraccount.svg"
+                          alt="profile-img"
+                        />
+                      </div>
+                      <div class="profile-text flex">
+                        <div class="profile-name">하미니</div>
+                        <div class="profile-meta">HR Manager · MBC Company</div>
+                      </div>
+                    </div>
+                    <div class="profile-badge">ADMIN</div>
+                  </div>
+                  <div class="card schedule-card">
+                    <div class="card-header">
+                      <div class="card-title-wrap">
+                        <div class="card-title-icon">
+                          <img
+                            src="images/timecheck.svg"
+                            alt="출퇴근현황 아이콘"
+                          />
+                        </div>
+                        <div class="card-title">
+                          <h2 class="card-title-txt">출퇴근 현황</h2>
+                        </div>
+                      </div>
+                      <button class="next-page">
+                        <img
+                          src="images/pagemove.svg"
+                          alt="출퇴근현황 페이지 이동"
+                        />
+                      </button>
+                    </div>
+                    <div class="status-grid">
+                      <div class="status-item wide common">
+                        <span class="label">총 인원</span>
+                        <strong>981</strong>
+                      </div>
+                      <div class="status-item wide danger">
+                        <span class="label">미출근</span>
+                        <strong class="danger">13</strong>
+                      </div>
+                      <div class="status-item">
+                        <span class="label">연차</span>
+                        <strong>5</strong>
+                      </div>
+                      <div class="status-item">
+                        <span class="label">출장</span>
+                        <strong>31</strong>
+                      </div>
+                      <div class="status-item">
+                        <span class="label">휴가</span>
+                        <strong>8</strong>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="card approval-card">
+                    <div class="card-header">
+                      <div class="card-title-wrap">
+                        <div class="card-title-icon">
+                          <img src="images/approve1.svg" alt="전자결재" />
+                        </div>
+                        <div class="card-title">
+                          <h2 class="card-title-txt">승인 대기 결제</h2>
+                        </div>
+                      </div>
+                      <button class="next-page">
+                        <img src="images/pagemove.svg" alt="결재 페이지 이동" />
+                      </button>
+                    </div>
+                    <ul class="approval-list">
+                      <li>
+                        <span class="title">연차 신청</span>
+                        <span class="count-pill danger">2건</span>
+                      </li>
+                      <li>
+                        <span class="title">출장 신청</span>
+                        <span class="count-pill">11건</span>
+                      </li>
+                      <li>
+                        <span class="title">휴가 신청</span>
+                        <span class="count-pill">3건</span>
+                      </li>
+                      <li>
+                        <span class="title">야근 / 주말 근무</span>
+                        <span class="count-pill">7건</span>
+                      </li>
+                    </ul>
+                  </div>
+                  <div class="card notice-card">
+                    <div class="card-header">
+                      <div class="card-title-wrap">
+                        <div class="card-title-icon">
+                          <img src="images/notice.svg" alt="공지" />
+                        </div>
+                        <div class="card-title">
+                          <h2 class="card-title-txt">공지 관리</h2>
+                        </div>
+                      </div>
+                    </div>
+                    <ul class="notice-list">
+                      <li>
+                        <span class="title">12월 급여 일정 안내</span>
+                        <span class="date">12.05</span>
+                      </li>
+                      <li>
+                        <span class="title">재택근무 정책 변경</span>
+                        <span class="date">11.27</span>
+                      </li>
+                      <li>
+                        <span class="title"> 사내 보안 교육 안내</span>
+                        <span class="date">11.14</span>
+                      </li>
+                    </ul>
+                    <div class="notice-actions">
+                      <button class="notice-btn add">
+                        <img src="images/addnoti.svg" alt="공지추가" />
+                        <span>공지 추가</span>
+                      </button>
+                      <button class="notice-btn">
+                        <img src="images/editnotification.svg" alt="공지수정" />
+                        <span>공지 수정</span>
+                      </button>
+                    </div>
+                  </div>
+                  <div class="card summary-card">
+                    <div class="card-header">
+                      <div class="card-title-wrap">
+                        <div class="card-title-icon">
+                          <img src="images/chart3.svg" alt="icon" />
+                        </div>
+                        <div class="card-title">
+                          <h2 class="card-title-txt">이번 달 요약</h2>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="summary-item">
+                      <div class="summary-row">
+                        <div class="summary-text">
+                          <span class="label">평균 근무시간</span>
+                          <strong class="value"
+                            >8.2<span class="font-s">h</span></strong
+                          >
+                        </div>
+                        <span class="summary-sub">기준 8h</span>
+                      </div>
+                      <div class="progress toss">
+                        <div class="progress-bar" data-value="82"></div>
+                      </div>
+                    </div>
+
+                    <div class="summary-item">
+                      <div class="summary-row">
+                        <div class="summary-text">
+                          <span class="label">연차 사용률</span>
+                          <strong class="value"
+                            >12<span class="font-s">%</span>
+                          </strong>
+                        </div>
+                        <span class="summary-sub">연 15일 기준</span>
+                      </div>
+                      <div class="progress toss gray">
+                        <div class="progress-bar" data-value="12"></div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </section>
+              <section class="section" data-page="schedule"></section>
+              <section class="section" data-page="attendance"></section>
+              <section class="section" data-page="vacation"></section>
+              <section class="section" data-page="payroll"></section>
+              <section class="section" data-page="approval"></section>
+              <section class="section" data-page="contract"></section>
+              <section class="section" data-page="notice"></section>
+              <section class="section" data-page="message"></section>
+              <section class="section" data-page="account"></section>
+              <section class="section" data-page="desktop"></section>
+            </div>
           </div>
         </div>
       </div>

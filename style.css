@@ -1,11 +1,14 @@
 @import url("https://fonts.googleapis.com/css2?family=Asta+Sans:wght@300..800&family=Chiron+Hei+HK:ital,wght@0,200..900;1,200..900&display=swap");
-body {
-  font-family: "Chiron Hei HK", sans-serif;
-  font-size: 16px;
-}
 * {
   margin: 0;
   padding: 0;
+  box-sizing: border-box;
+  -webkit-font-smoothing: antialiased;
+}
+body {
+  font-family: "Chiron Hei HK", sans-serif;
+  font-size: 16px;
+  line-height: 1;
 }
 ul,
 li,
@@ -66,6 +69,7 @@ img {
   position: relative;
 }
 .menu {
+  cursor: pointer;
   width: 72px;
   padding-bottom: 10px;
   padding-left: 10px;
@@ -128,25 +132,26 @@ img {
 }
 
 .header-bar-list {
+  align-items: center;
   gap: 26px;
   padding-right: 24px;
 }
 .switch-btn {
-  padding: 5px 14px;
+  padding: 4px 14px;
   border: 1px solid #ccc;
   border-radius: 6px;
   position: relative;
 }
 .switch-btn .btn-txt {
-  font-size: 14px;
+  font-size: 13px;
   color: #333;
   padding-left: 22px;
 }
 .header-bar-list-item .btn-txt::before {
   content: "";
   display: inline-block;
-  width: 21px;
-  height: 21px;
+  width: 20px;
+  height: 20px;
   position: absolute;
   left: 10px;
   /* top: 0; */
@@ -156,8 +161,8 @@ img {
 }
 .icon-btn {
   position: relative;
-  width: 30px;
-  height: 30px;
+  width: 28px;
+  height: 28px;
 }
 .icon-btn.dropdown::before {
   content: "";
@@ -218,6 +223,19 @@ img {
   height: 24px;
   flex-shrink: 0;
 }
+.nav-item-message-img {
+  position: relative;
+}
+.nav-item-message-img::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: -2px;
+  width: 4px;
+  height: 4px;
+  background-color: #e53935;
+  border-radius: 100%;
+}
 .nav-txt {
   margin-left: 14px;
   font-size: 14px;
@@ -236,5 +254,335 @@ img {
 /* main ================================================================= */
 .main {
   flex: 1;
-  background: whitesmoke;
+  background: #f5f7fa;
+}
+.section {
+  display: none;
+}
+.section.is-active {
+  display: block;
+}
+/* section (1) home ============================================= */
+.dashboard {
+  max-width: 1200px;
+  padding: 24px;
+  margin: auto 0;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+  background: #f5f7fa;
+}
+
+.card {
+  background: #fff;
+  border-radius: 16px;
+  padding: 20px;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.02);
+  transition: transform 0.15s ease;
+}
+.card:hover {
+  transform: translateY(-2px);
+}
+.card-title-wrap {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.card-title-icon {
+  width: 18px;
+  height: 18px;
+  opacity: 0.8;
+}
+
+.card-title-txt {
+  font-size: 15px;
+  font-weight: 600;
+  color: #1d1d1f;
+}
+
+.profile-card {
+  grid-column: 1 / -1;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 24px 28px;
+}
+.profile-info {
+  align-items: center;
+  gap: 16px;
+}
+.profile-img {
+  width: 47px;
+  height: 47px;
+  border-radius: 8px;
+  padding: 4px;
+  overflow: hidden;
+  background: #f5f7fa;
+}
+.profile-img img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.profile-text {
+  flex-direction: column;
+  gap: 2px;
+}
+.profile-name {
+  font-size: 18px;
+  font-weight: 700;
+  line-height: 1.35;
+}
+
+.profile-meta {
+  font-size: 13px;
+  color: #6e6e73;
+  line-height: 1.45;
+}
+
+.profile-badge {
+  background: rgba(0, 122, 255, 0.12);
+  color: #007bff;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 6px 12px;
+  border-radius: 999px;
+}
+
+.status-grid {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 12px;
+  padding-top: 10px;
+}
+.status-item.wide {
+  grid-column: span 3;
+  text-align: center;
+}
+.status-item.common {
+  background: #e7f0ff;
+  color: #007bff;
+}
+.status-item.danger {
+  background: #ffecec;
+}
+.status-item {
+  grid-column: span 2;
+  background: #f5f7fa;
+  border-radius: 12px;
+  padding: 16px;
+  text-align: center;
+}
+
+.status-item .label {
+  display: block;
+  font-size: 12px;
+  color: #666;
+  margin-bottom: 6px;
+}
+
+.status-item strong {
+  color: #1d1d1f;
+  font-size: 20px;
+}
+
+.status-item .danger {
+  color: #e53935;
+}
+
+.approval-list li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 0;
+  font-size: 13px;
+}
+
+.approval-list .title {
+  color: #1d1d1f;
+}
+
+/* 토스식 숫자 */
+.count-pill {
+  padding: 4px 10px;
+  font-size: 12px;
+  font-weight: 600;
+  border-radius: 999px;
+  background: #f5f7fa;
+  color: #4e5968;
+}
+
+/* 긴급/주의 건 */
+.count-pill.danger {
+  background: #ffecec;
+  color: #e53935;
+}
+
+.card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.next-page {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  transition: background 0.15s ease;
+}
+.next-page:hover {
+  background: #f5f7fa;
+}
+.next-page img {
+  width: 16px;
+  height: 16px;
+  opacity: 0.6;
+}
+.next-page:hover img {
+  opacity: 1;
+}
+
+.notice-add {
+  width: 24px;
+  height: 24px;
+  cursor: pointer;
+}
+.notice-list li {
+  display: flex;
+  justify-content: space-between;
+  padding: 11px 0;
+  font-size: 13px;
+  border-bottom: 1px solid #f1f1f1;
+}
+.notice-list li:last-child {
+  border-bottom: none;
+}
+.notice-list .title {
+  color: #1d1d1f;
+}
+.notice-list .date {
+  font-size: 12px;
+  color: #999;
+}
+
+.notice-actions {
+  display: flex;
+  gap: 12px;
+  margin-top: 16px;
+}
+.notice-btn {
+  flex: 1;
+  height: 44px;
+  border-radius: 12px;
+  border: none;
+  background: #f5f7fa;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  color: #1d1d1f;
+  transition: background 0.15s ease, trnasform 0.1s ease;
+}
+
+.notice-btn img {
+  width: 16px;
+  height: 16px;
+  opacity: 0.8;
+}
+.notice-btn.add {
+  background: #e7f0ff;
+  color: #007bff;
+}
+.notice-btn:hover {
+  background: #eef1f4;
+}
+.notice-btn.add:hover {
+  background: #dbe9ff;
+}
+.notice-btn:active {
+  transform: scale(0.98);
+}
+.summary-item {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 14px 0;
+}
+
+.summary-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+}
+
+.summary-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.summary-text .label {
+  font-size: 12px;
+  color: #6e6e73;
+}
+
+.summary-text .value {
+  font-size: 20px;
+  font-weight: 600;
+  color: #1d1d1f;
+  letter-spacing: -0.02em;
+}
+.summary-text .font-s {
+  font-size: 15px;
+}
+
+/* 오른쪽 보조 설명 */
+.summary-sub {
+  font-size: 11px;
+  color: #9aa0a6;
+}
+
+/* 토스식 프로그레스 */
+.progress.toss {
+  height: 6px;
+  background: #f1f3f5;
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.progress.toss .progress-bar {
+  height: 100%;
+  width: 0;
+  background: linear-gradient(90deg, #5b8cff, #007bff);
+  border-radius: 999px;
+  transition: width 1s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.progress.toss.gray .progress-bar {
+  background: linear-gradient(90deg, #c5cad3, #9aa0a6);
+}
+
+/* ===== Mobile ===== */
+@media (max-width: 833px) {
+  .dashboard {
+    background: #f5f7fa;
+    grid-template-columns: 1fr;
+    padding: 16px;
+  }
+
+  .status-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .status-item,
+  .status-item.wide {
+    grid-column: span 1;
+  }
 }
