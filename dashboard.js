@@ -274,12 +274,12 @@ function renderSchedule() {
       <span>${item.dept} / ${hours}h </span>
     </div>
 
-    <div class="timeline">
+      <div class="timeline">
       <div class="shift ${item.job}" style="left:${left}%; width:${width}%">
         <div>${item.start} - ${item.end}</div>
         <small>${item.jobText}</small>
+        </div>
       </div>
-    </div>
 
     <div class="draft-actions">
       <button class="draft-edit">수정</button>
@@ -307,14 +307,14 @@ function renderScheduleDraft() {
           <strong>${item.name}</strong>
           <span>${item.dept} / ${hours}h (임시)</span>
         </div>
-        <div class="timeline">
-          <div class="shift ${item.job}" style="left:${left}%; width:${width}%">
-            <div>${item.start} - ${item.end}</div>
-            <small>${item.jobText}</small>
-          </div>
-        </div>
+      <div class="timeline">
+      <div class="shift ${item.job}" style="left:${left}%; width:${width}%">
+        <div>${item.start} - ${item.end}</div>
+        <small>${item.jobText}</small>
+      </div>
+      </div>
 
-           <div class="draft-actions">
+     <div class="draft-actions">
       <button class="draft-edit">수정</button>
       <button class="draft-delete">삭제</button>
     </div>

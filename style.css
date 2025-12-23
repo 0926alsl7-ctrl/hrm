@@ -780,11 +780,8 @@ img {
 
 .time-header {
   display: grid;
-  grid-template-columns: 180px 1fr;
+  grid-template-columns: 180px 1fr 72px;
   row-gap: 4px;
-  /* font-size: 12px;
-  color: #8b95a1;
-  margin-bottom: 8px; */
 }
 .am-pm {
   display: grid;
@@ -817,7 +814,8 @@ img {
 }
 
 .schedule-row {
-  display: flex;
+  display: grid;
+  grid-template-columns: 180px 1fr 72px;
   align-items: center;
   gap: 12px;
   border-bottom: 1px solid #f1f1f1;
@@ -837,7 +835,6 @@ img {
 }
 
 .timeline {
-  flex: 1;
   height: 36px;
   position: relative;
   background: repeating-linear-gradient(
@@ -847,6 +844,9 @@ img {
     transparent 1px,
     transparent 4.16%
   );
+}
+.timeline small{
+  padding-top: 4px;
 }
 .schedule-row.draft {
   opacity: 0.6;
@@ -1000,19 +1000,13 @@ img {
 .shift.gray {
   background: #d1d6db;
 }
-.schedule-row.draft {
-  position: relative;
-  display: grid;
-  grid-template-columns: 180px 1fr auto;
-  align-items: center;
+.shift.teal {
+  background: #58c7c7;
 }
 
 .draft-actions {
-  position: absolute;
-  right: 12px;
-  top: 50%;
-  transform: translateY(-50%);
   display: flex;
+  align-items: center;
   gap: 6px;
   z-index: 5;
 }
@@ -1023,6 +1017,7 @@ img {
   font-size: 12px;
   cursor: pointer;
   border-radius: 8px;
+  white-space: nowrap;
   background: #fff;
 }
 
