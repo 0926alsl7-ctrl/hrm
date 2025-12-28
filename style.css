@@ -654,6 +654,27 @@ img {
   width: 21px;
   height: 21px;
   opacity: 0.6;
+  position: relative;
+  transition: 0.2s ease;
+}
+.schedule-top .schedule-title .help-btn:hover {
+  opacity: 1;
+}
+.schedule-top .schedule-title .help-btn:hover::before {
+  opacity: 1;
+}
+.dashboard.schedule .help-btn::before {
+  content: "근로/휴게시간을 계획하고 각종 근로제도 및 근무유형에 대응합니다";
+  position: absolute;
+  bottom: -26px;
+  left: 0;
+  font-size: 11px;
+  color: var(--grayColor700);
+  white-space: nowrap;
+  background-color: #fff;
+  display: inline-block;
+  opacity: 0;
+  transition: 0.2s ease-in;
 }
 .schedule-title .toggle-wrap {
   display: flex;
@@ -697,7 +718,7 @@ img {
 .toggle input:checked + .slider::before {
   transform: translateX(20px);
 }
-.schedule-top .schedule-add-btn {
+.schedule-add-btn {
   background: var(--blueColor500);
   color: #fff;
   border-radius: var(--btn-border-radius);
@@ -845,7 +866,7 @@ img {
     transparent 4.16%
   );
 }
-.timeline small{
+.timeline small {
   padding-top: 4px;
 }
 .schedule-row.draft {
@@ -903,7 +924,7 @@ img {
   align-items: center;
   justify-content: space-between;
 }
-.schedule-add-modal-head .schedule-close-modal {
+.schedule-close-modal {
   width: 22px;
   height: 22px;
   cursor: pointer;
@@ -937,11 +958,11 @@ img {
   outline: none;
   border-color: var(--grayColor400);
 }
-#fakeDate {
+.fakeDate {
   flex: 1;
 }
 
-#setToday {
+.setToday {
   flex-shrink: 0;
   background-color: var(--button-bg-color-blue-weak);
   color: var(--button-color-blue);
@@ -1003,6 +1024,20 @@ img {
 .shift.teal {
   background: #58c7c7;
 }
+.shift.dimmed {
+  opacity: 0.35;
+}
+.shift.vacation {
+  background: repeating-linear-gradient(
+    45deg,
+    rgba(0, 0, 0, 0.15),
+    rgba(0, 0, 0, 0.15) 2px,
+    transparent 4px,
+    transparent 8px
+  );
+  color: #333;
+  z-index: 2;
+}
 
 .draft-actions {
   display: flex;
@@ -1029,6 +1064,45 @@ img {
 .draft-actions .draft-delete {
   background: var(--btn-dagner-weak-bg);
   color: var(--btn-dagnger-weak-color);
+}
+/* section (2) vacation ============================================= */
+.dashboard.vacation {
+  max-width: 1400px;
+  padding: 24px;
+  margin: auto 0;
+  display: grid;
+  grid-template-columns: repeat(1, 1fr);
+  gap: 20px;
+  background: var(--backgroundColorGrayColor);
+}
+.dashboard.vacation .help-btn:hover::before {
+  opacity: 1;
+}
+.dashboard.vacation .help-btn::before {
+  content: "휴가 발생부터 잔여일수, 연차촉진까지 간편하게 관리합니다";
+  position: absolute;
+  bottom: -26px;
+  left: 0;
+  font-size: 11px;
+  color: var(--grayColor700);
+  white-space: nowrap;
+  background-color: #fff;
+  display: inline-block;
+  opacity: 0;
+  transition: 0.2s ease-in;
+}
+.vacation-add-btn {
+  background: var(--blueColor500);
+  color: #fff;
+  border-radius: var(--btn-border-radius);
+  line-height: var(--btn-line-height);
+  padding: 8px 12px;
+  font-size: 13px;
+}
+.vacation-close-modal {
+  width: 22px;
+  height: 22px;
+  cursor: pointer;
 }
 
 /* ===== Mobile ===== */

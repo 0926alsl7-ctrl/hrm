@@ -46,344 +46,58 @@ document.querySelectorAll(".progress-bar").forEach((bar) => {
   });
 });
 
-// section02 - schedule =========================================
-const scheduleAddBtn = document.querySelector(".schedule-add-btn");
-const scheduleAdd = document.querySelector(".schedule-add-modal");
-const closeModalBtn = document.querySelector(".schedule-close-modal");
+// section - schedule + vacation =========================================
+/* ======================================================
+   DOM
+====================================================== */
 const body = document.querySelector(".schedule-body");
+const addBtn = document.querySelector(".schedule-add-btn");
+const saveBtn = document.querySelector(".schedule-save");
 
-const deptSelect = document.getElementById("depart");
-const empSelect = document.getElementById("employee");
-const job = document.getElementById("job");
+const modal = document.querySelector(".schedule-add-modal");
+const closeBtn = document.querySelector(".schedule-close-modal");
+const confirmBtn = document.querySelector(".confirm-add");
+const modalTitle = document.querySelector(".schedule-add-modal-head h3");
+const dateLabel = document.querySelector(".form-group.inline label");
+const timeLabel = document.querySelectorAll(".form-group.inline label")[1];
+const jobLabel = document.getElementById("jobLabel");
 
-const workDate = document.getElementById("workDate");
-const startTime = document.getElementById("startTime");
-const endTime = document.getElementById("endTime");
-const setToday = document.getElementById("setToday");
+const dept = document.querySelector(".depart");
+const emp = document.querySelector(".employee");
+const job = document.querySelector(".job");
 
-const fakeDate = document.getElementById("fakeDate");
-const fakeDateText = document.getElementById("fakeDateText");
-const fakeStart = document.getElementById("fakeStart");
-const fakeStartText = document.getElementById("fakeStartText");
-const fakeEnd = document.getElementById("fakeEnd");
-const fakeEndText = document.getElementById("fakeEndText");
+const workDate = document.querySelector(".workDate");
+const startTime = document.querySelector(".startTime");
+const endTime = document.querySelector(".endTime");
+const setToday = document.querySelector(".setToday");
 
-let editingSource = "draft";
-let currentDate = new Date().toISOString().slice(0, 10);
-const schedulesDraft = {};
-const schedules = {};
+const fakeDate = document.querySelector(".fakeDate");
+const fakeDateText = document.querySelector(".fakeDateText");
+const fakeStart = document.querySelector(".fakeStart");
+const fakeStartText = document.querySelector(".fakeStartText");
+const fakeEnd = document.querySelector(".fakeEnd");
+const fakeEndText = document.querySelector(".fakeEndText");
 
-const savedData = localStorage.getItem("schedules");
-if (savedData) {
-  Object.assign(schedules, JSON.parse(savedData));
-}
-renderSchedule();
-// // 오늘 날짜 불러오기 ====
 const todayText = document.querySelector(".data-text-today");
+const prevBtn = document.querySelector(".schedule-prev-btn");
+const nextBtn = document.querySelector(".schedule-next-btn");
+const todayBtn = document.querySelector(".today-btn");
 
-function updateDateText() {
-  const d = new Date(currentDate);
-  const week = ["일", "월", "화", "수", "목", "금", "토"];
+const mixToggle = document.getElementById("mixToggle");
 
-  todayText.textContent = `${d.getFullYear()}년 ${
-    d.getMonth() + 1
-  }월 ${d.getDate()}일 (${week[d.getDay()]})`;
-}
+/* ======================================================
+   상태
+====================================================== */
+let currentDate = new Date().toISOString().slice(0, 10);
+let manageMode = "work"; // work | vacation
+let editingId = null;
 
-// // 날짜 바꾸기
-function changeDate(diff) {
-  const d = new Date(currentDate);
-  d.setDate(d.getDate() + diff);
-  currentDate = d.toISOString().slice(0, 10);
+const drafts = {};
+const saved = JSON.parse(localStorage.getItem("schedules") || "{}");
 
-  updateDateText();
-  renderSchedule();
-  renderScheduleDraft();
-}
-
-updateDateText();
-
-// ===== modal
-scheduleAddBtn?.addEventListener("click", () => {
-  scheduleAdd.classList.add("is-open");
-  resetScheduleForm();
-});
-closeModalBtn?.addEventListener("click", () => {
-  scheduleAdd.classList.remove("is-open");
-  resetScheduleForm();
-});
-
-// ===== employee select
-deptSelect.addEventListener("change", () => {
-  empSelect.innerHTML = `<option value="">선택</option>`;
-
-  job.selectedIndex = 0;
-
-  if (jobByDept[deptSelect.value]) {
-    [...job.options].forEach((opt) => {
-      opt.selected = opt.textContent === jobByDept[deptSelect.value];
-    });
-  }
-
-  if (!employeesData[deptSelect.value]) return;
-
-  employeesData[deptSelect.value].forEach((name) => {
-    const opt = document.createElement("option");
-    opt.value = name;
-    opt.textContent = name;
-    empSelect.appendChild(opt);
-  });
-});
-
-// ===== fake picker
-fakeDate.onclick = () => workDate.showPicker?.() || workDate.click();
-fakeStart.onclick = () => startTime.showPicker?.() || startTime.click();
-fakeEnd.onclick = () => endTime.showPicker?.() || endTime.click();
-
-// ===== today
-setToday.onclick = () => {
-  const today = new Date().toISOString().slice(0, 10);
-  workDate.value = today;
-  workDate.dispatchEvent(new Event("change"));
-};
-
-// ===== value sync
-workDate.onchange = () => {
-  const d = new Date(workDate.value);
-  fakeDateText.textContent = `${d.getMonth() + 1}월 ${d.getDate()}일`;
-};
-startTime.onchange = () => (fakeStartText.textContent = startTime.value);
-endTime.onchange = () => (fakeEndText.textContent = endTime.value);
-
-// ===== add
-document.querySelector(".confirm-add").onclick = () => {
-  if (
-    !workDate.value ||
-    !empSelect.value ||
-    !startTime.value ||
-    !endTime.value
-  ) {
-    alert("모든 값을 입력해주세요.");
-    return;
-  }
-
-  const jobText = job.options[job.selectedIndex].text;
-
-  // ===== 수정 모드 =====
-  if (editingDraftId) {
-    // ----- draft 수정 -----
-    if (editingSource === "draft") {
-      const list = schedulesDraft[workDate.value] ?? [];
-      const idx = list.findIndex((v) => v.id === editingDraftId);
-
-      if (idx !== -1) {
-        list[idx] = {
-          ...list[idx],
-          dept: deptSelect.value,
-          name: empSelect.value,
-          job: job.value,
-          jobText,
-          start: startTime.value,
-          end: endTime.value,
-        };
-      }
-    }
-
-    // ----- saved 수정 -----
-    if (editingSource === "saved") {
-      const list = schedules[workDate.value] ?? [];
-      const idx = list.findIndex((v) => v.id === editingDraftId);
-
-      if (idx !== -1) {
-        list[idx] = {
-          ...list[idx],
-          dept: deptSelect.value,
-          name: empSelect.value,
-          job: job.value,
-          jobText,
-          start: startTime.value,
-          end: endTime.value,
-        };
-        saveToStorage();
-      }
-    }
-
-    editingDraftId = null;
-    editingSource = "draft";
-  }
-
-  // ===== 추가 모드 (신규 draft) =====
-  else {
-    schedulesDraft[workDate.value] ??= [];
-    schedulesDraft[workDate.value].push({
-      id: crypto.randomUUID(),
-      dept: deptSelect.value,
-      name: empSelect.value,
-      job: job.value,
-      jobText,
-      start: startTime.value,
-      end: endTime.value,
-    });
-  }
-
-  renderSchedule();
-  renderScheduleDraft();
-  scheduleAdd.classList.remove("is-open");
-  resetScheduleForm();
-};
-
-// ===== helpers
-function calcWorkHours(start, end) {
-  const [sh, sm] = start.split(":").map(Number);
-  const [eh, em] = end.split(":").map(Number);
-
-  let minutes = eh * 60 + em - (sh * 60 + sm);
-  if (minutes < 0) minutes = 0;
-
-  return Math.floor(minutes / 60);
-}
-
-function resetScheduleForm() {
-  deptSelect.value = "";
-  empSelect.innerHTML = `<option value="">부서 선택</option>`;
-  job.selectedIndex = 0;
-
-  workDate.value = startTime.value = endTime.value = "";
-  fakeDateText.textContent = "날짜 선택";
-  fakeStartText.textContent = "시작 시간";
-  fakeEndText.textContent = "종료 시간";
-
-  editingSource = "draft";
-  editingDraftId = null;
-}
-
-// ===== render
-function renderSchedule() {
-  body.innerHTML = "";
-  (schedules[currentDate] || []).forEach((item) => {
-    const hours = calcWorkHours(item.start, item.end);
-    const left = (Number(item.start.split(":")[0]) / 24) * 100;
-    const width = (hours / 24) * 100;
-
-    body.insertAdjacentHTML(
-      "beforeend",
-      `
-  <div class="schedule-row saved" data-id="${item.id}">
-    <div class="employee">
-      <strong>${item.name}</strong>
-      <span>${item.dept} / ${hours}h </span>
-    </div>
-
-      <div class="timeline">
-      <div class="shift ${item.job}" style="left:${left}%; width:${width}%">
-        <div>${item.start} - ${item.end}</div>
-        <small>${item.jobText}</small>
-        </div>
-      </div>
-
-    <div class="draft-actions">
-      <button class="draft-edit">수정</button>
-      <button class="draft-delete">삭제</button>
-    </div>
-  </div>
-  `
-    );
-  });
-}
-
-function renderScheduleDraft() {
-  // body.innerHTML = "";
-
-  (schedulesDraft[currentDate] || []).forEach((item) => {
-    const hours = calcWorkHours(item.start, item.end);
-    const left = (Number(item.start.split(":")[0]) / 24) * 100;
-    const width = (hours / 24) * 100;
-
-    body.insertAdjacentHTML(
-      "beforeend",
-      `
-      <div class="schedule-row draft" data-id="${item.id}">
-        <div class="employee">
-          <strong>${item.name}</strong>
-          <span>${item.dept} / ${hours}h (임시)</span>
-        </div>
-      <div class="timeline">
-      <div class="shift ${item.job}" style="left:${left}%; width:${width}%">
-        <div>${item.start} - ${item.end}</div>
-        <small>${item.jobText}</small>
-      </div>
-      </div>
-
-     <div class="draft-actions">
-      <button class="draft-edit">수정</button>
-      <button class="draft-delete">삭제</button>
-    </div>
-      </div>
-      `
-    );
-  });
-}
-function deleteDraft(id) {
-  schedulesDraft[currentDate] = schedulesDraft[currentDate].filter(
-    (v) => v.id !== id
-  );
-
-  renderSchedule();
-  renderScheduleDraft();
-}
-
-let editingDraftId = null;
-
-function openEditModal(item) {
-  editingDraftId = item.id;
-
-  scheduleAdd.classList.add("is-open");
-
-  deptSelect.value = item.dept;
-  deptSelect.dispatchEvent(new Event("change"));
-
-  job.value = item.job;
-  empSelect.value = item.name;
-
-  workDate.value = currentDate;
-  startTime.value = item.start;
-  endTime.value = item.end;
-
-  workDate.dispatchEvent(new Event("change"));
-  startTime.dispatchEvent(new Event("change"));
-  endTime.dispatchEvent(new Event("change"));
-}
-
-// next/prev
-document.querySelector(".schedule-prev-btn").onclick = () => changeDate(-1);
-document.querySelector(".schedule-next-btn").onclick = () => changeDate(1);
-document.querySelector(".today-btn").onclick = () => {
-  currentDate = new Date().toISOString().slice(0, 10);
-  updateDateText();
-  renderSchedule();
-  renderScheduleDraft();
-};
-
-// save
-document.querySelector(".schedule-save").onclick = () => {
-  Object.keys(schedulesDraft).forEach((date) => {
-    schedules[date] ??= [];
-    schedules[date].push(
-      ...schedulesDraft[date].map((v) => ({
-        ...v,
-        id: crypto.randomUUID(),
-      }))
-    );
-  });
-
-  Object.keys(schedulesDraft).forEach((k) => delete schedulesDraft[k]);
-
-  renderSchedule();
-  renderScheduleDraft();
-  saveToStorage();
-};
-
-// data
+/* ======================================================
+   데이터
+====================================================== */
 const jobByDept = {
   Management: "Management",
   Sales: "Sales",
@@ -397,89 +111,362 @@ const employeesData = {
   Management: ["정희석", "강대희", "이민", "권동주", "김준성", "권동현"],
   Sales: ["이유정", "김민석", "김민지", "이유준", "이은빈", "김태환"],
   Marketing: ["정하늘", "이담희", "정승훈", "김성길", "강대웅"],
-  Design: [
-    "하다경",
-    "이기자",
-    "한진수",
-    "박지원",
-    "이은수",
-    "권민지",
-    "이호철",
-  ],
-  Production: ["김형선", "이동욱", "이진", "김여원", "박채린", "김형석"],
-  "R&D": [
-    "김민이",
-    "심진우",
-    "진예진",
-    "강민서",
-    "최소윤",
-    "신현호",
-    "강석현",
-    "강민지",
-  ],
+  Design: ["하다경", "이기자", "한진수", "박지원", "이은수", "권민지"],
+  Production: ["김형선", "이동욱", "이진", "김여원", "박채린"],
+  "R&D": ["김민이", "심진우", "진예진", "강민서", "최소윤", "장재영"],
 };
-body.addEventListener("click", (e) => {
+
+/* ======================================================
+   날짜
+====================================================== */
+function updateDateText() {
+  const d = new Date(currentDate);
+  const week = ["일", "월", "화", "수", "목", "금", "토"];
+  todayText.textContent = `${d.getFullYear()}년 ${
+    d.getMonth() + 1
+  }월 ${d.getDate()}일 (${week[d.getDay()]})`;
+}
+
+function changeDate(diff) {
+  const d = new Date(currentDate);
+  d.setDate(d.getDate() + diff);
+  currentDate = d.toISOString().slice(0, 10);
+  updateDateText();
+  render();
+}
+
+prevBtn.onclick = () => changeDate(-1);
+nextBtn.onclick = () => changeDate(1);
+todayBtn.onclick = () => {
+  currentDate = new Date().toISOString().slice(0, 10);
+  updateDateText();
+  render();
+};
+
+updateDateText();
+
+/* ======================================================
+   유틸
+====================================================== */
+function calcHours(start, end) {
+  if (!start || !end) return 0;
+  const [sh, sm] = start.split(":").map(Number);
+  const [eh, em] = end.split(":").map(Number);
+  let min = eh * 60 + em - (sh * 60 + sm);
+  if (min < 0) min = 0;
+  return Math.round((min / 60) * 2) / 2;
+}
+function isOverlap(a, b) {
+  if (!a.start || !a.end || !b.start || !b.end) return false;
+
+  const toMin = (t) => {
+    const [h, m] = t.split(":").map(Number);
+    return h * 60 + m;
+  };
+
+  return toMin(a.start) < toMin(b.end) && toMin(b.start) < toMin(a.end);
+}
+
+function calcPosition(start, end) {
+  const startMin = start
+    ? Number(start.split(":")[0]) * 60 + Number(start.split(":")[1])
+    : 0;
+  const endMin = end
+    ? Number(end.split(":")[0]) * 60 + Number(end.split(":")[1])
+    : startMin;
+  const left = (startMin / 1440) * 100;
+  const width = ((endMin - startMin) / 1440) * 100;
+  return { left, width };
+}
+
+function resetForm() {
+  editingId = null;
+  dept.value = "";
+  emp.innerHTML = `<option value="">부서 선택</option>`;
+  job.selectedIndex = 0;
+  workDate.value = startTime.value = endTime.value = "";
+  fakeDateText.textContent = "날짜 선택";
+  fakeStartText.textContent = "시작 시간";
+  fakeEndText.textContent = "종료 시간";
+  confirmBtn.textContent = "일정 추가";
+}
+
+/* ======================================================
+   모달
+====================================================== */
+addBtn.onclick = () => {
+  resetForm();
+  applyForm();
+  modal.classList.add("is-open");
+};
+
+closeBtn.onclick = () => {
+  modal.classList.remove("is-open");
+  resetForm();
+};
+
+/* ======================================================
+   select 연동
+====================================================== */
+dept.onchange = () => {
+  emp.innerHTML = `<option value="">선택</option>`;
+  if (jobByDept[dept.value]) {
+    [...job.options].forEach(
+      (o) => (o.selected = o.textContent === jobByDept[dept.value])
+    );
+  }
+  employeesData[dept.value]?.forEach((name) => {
+    const o = document.createElement("option");
+    o.value = name;
+    o.textContent = name;
+    emp.appendChild(o);
+  });
+};
+
+/* ======================================================
+   fake picker
+====================================================== */
+fakeDate.onclick = () => workDate.showPicker?.() || workDate.click();
+fakeStart.onclick = () => startTime.showPicker?.() || startTime.click();
+fakeEnd.onclick = () => endTime.showPicker?.() || endTime.click();
+
+setToday.onclick = () => {
+  workDate.value = new Date().toISOString().slice(0, 10);
+  workDate.dispatchEvent(new Event("change"));
+};
+
+workDate.onchange = () => {
+  const d = new Date(workDate.value);
+  fakeDateText.textContent = `${d.getMonth() + 1}월 ${d.getDate()}일`;
+};
+startTime.onchange = () => (fakeStartText.textContent = startTime.value);
+endTime.onchange = () => (fakeEndText.textContent = endTime.value);
+
+/* ======================================================
+   추가 / 수정
+====================================================== */
+confirmBtn.onclick = () => {
+  if (
+    !workDate.value ||
+    !emp.value ||
+    !job.value ||
+    !dept.value ||
+    !startTime.value ||
+    !endTime.value
+  ) {
+    alert("모든 값을 입력해주세요");
+    return;
+  }
+
+  drafts[workDate.value] ??= [];
+
+  const item = {
+    id: editingId || crypto.randomUUID(),
+    type: mixToggle.checked ? "vacation" : "work",
+    dept: dept.value,
+    name: emp.value,
+    job: job.value,
+    jobText: job.options[job.selectedIndex]?.text || "",
+    start: startTime.value,
+    end: endTime.value,
+  };
+
+  if (editingId) {
+    const i = drafts[workDate.value].findIndex((v) => v.id === editingId);
+    drafts[workDate.value][i] = item;
+  } else {
+    drafts[workDate.value].push(item);
+  }
+
+  modal.classList.remove("is-open");
+  resetForm();
+  render();
+};
+
+/* ======================================================
+   렌더
+====================================================== */
+function render() {
+  body.innerHTML = "";
+
+  const draftsToday = drafts[currentDate] || [];
+  const savedToday = saved[currentDate] || [];
+
+  // 🔴 휴가 토글 OFF면 휴가 제거
+  const allItems = [...savedToday, ...draftsToday].filter((item) => {
+    if (!mixToggle.checked) return item.type !== "vacation";
+    return true;
+  });
+
+  // 🔴 같은 사람끼리 묶기
+  const grouped = {};
+  allItems.forEach((item) => {
+    const key = item.name;
+    grouped[key] ??= [];
+    grouped[key].push(item);
+  });
+
+  Object.values(grouped).forEach((items) => {
+    renderRow(items);
+  });
+}
+
+function renderRow(items) {
+  const work = items.find((v) => v.type === "work");
+  const vacation = items.find((v) => v.type === "vacation");
+
+  const base = work || vacation;
+  if (!base) return;
+
+  // ⭐ draft 여부 판단
+  const isDraft = items.some((v) =>
+    drafts[currentDate]?.some((d) => d.id === v.id)
+  );
+
+  body.insertAdjacentHTML(
+    "beforeend",
+    `
+    <div class="schedule-row ${isDraft ? "draft" : "saved"}">
+      <div class="employee">
+        <strong>${base.name}</strong>
+        <span>${base.dept} / ${items
+      .filter((v) => v.type === "work")
+      .reduce((sum, v) => sum + calcHours(v.start, v.end), 0)}h</span>
+      </div>
+
+      <div class="timeline">
+        ${vacation ? renderShift(vacation, true) : ""}
+        ${
+          work
+            ? renderShift(work, false, vacation && isOverlap(work, vacation))
+            : ""
+        }
+      </div>
+
+      ${
+        isDraft
+          ? `
+      <div class="draft-actions">
+        <button class="draft-edit">수정</button>
+        <button class="draft-delete">삭제</button>
+      </div>`
+          : ""
+      }
+    </div>
+    `
+  );
+}
+
+function renderShift(item, isVacation, dimmed = false) {
+  const { left, width } = calcPosition(item.start, item.end);
+  return `
+    <div class="shift ${isVacation ? "vacation" : item.job} ${
+    dimmed ? "dimmed" : ""
+  }"
+         style="left:${left}%; width:${width}%; ${
+    isVacation ? "z-index:2;" : ""
+  }">
+      ${item.start} - ${item.end}
+      <small>${item.jobText || ""}</small>
+    </div>
+  `;
+}
+
+/* ======================================================
+   클릭
+====================================================== */
+body.onclick = (e) => {
   const row = e.target.closest(".schedule-row");
   if (!row) return;
 
   const id = row.dataset.id;
+  const list = drafts[currentDate] || [];
 
-  // ===== draft =====
-  if (row.classList.contains("draft")) {
-    const list = schedulesDraft[currentDate];
-    if (!list) return;
-
-    const item = list.find((v) => v.id === id);
-    if (!item) return;
-
-    if (e.target.classList.contains("draft-edit")) {
-      editingSource = "draft";
-      openEditModal(item);
-    }
-
-    if (e.target.classList.contains("draft-delete")) {
-      deleteDraft(id);
+  if (e.target.classList.contains("draft-delete")) {
+    if (confirm("이 근무일정을 삭제하시겠습니까?")) {
+      drafts[currentDate] = list.filter((v) => v.id !== id);
     }
   }
 
-  // ===== saved =====
-  if (row.classList.contains("saved")) {
-    const list = schedules[currentDate];
-    if (!list) return;
-
+  if (e.target.classList.contains("draft-edit")) {
     const item = list.find((v) => v.id === id);
-    if (!item) return;
+    editingId = id;
+    modalTitle.textContent = "근무일정 수정";
+    confirmBtn.textContent = "수정 완료";
+    applyForm(item.type);
+    modal.classList.add("is-open");
 
-    if (e.target.classList.contains("draft-edit")) {
-      editingSource = "saved";
-      openEditModal(item);
-    }
-
-    if (e.target.classList.contains("draft-delete")) {
-      deleteSaved(id);
-    }
+    dept.value = item.dept;
+    dept.dispatchEvent(new Event("change"));
+    emp.value = item.name;
+    job.value = item.job;
+    startTime.value = item.start;
+    endTime.value = item.end;
+    fakeStartText.textContent = item.start || "시작 시간";
+    fakeEndText.textContent = item.end || "종료 시간";
   }
-});
 
-function saveToStorage() {
-  localStorage.setItem("schedules", JSON.stringify(schedules));
+  render();
+};
+
+/* ======================================================
+   확정
+====================================================== */
+saveBtn.onclick = () => {
+  Object.keys(drafts).forEach((date) => {
+    saved[date] ??= [];
+    saved[date].push(...drafts[date]);
+    delete drafts[date];
+  });
+  localStorage.setItem("schedules", JSON.stringify(saved));
+  render();
+};
+
+/* ======================================================
+   휴가 토글
+====================================================== */
+mixToggle.onchange = (e) => {
+  manageMode = e.target.checked ? "vacation" : "work";
+  addBtn.textContent =
+    manageMode === "vacation" ? "+ 휴가일정 추가하기" : "+ 근무일정 추가하기";
+  render();
+};
+
+function applyForm() {
+  if (manageMode === "vacation") {
+    modalTitle.textContent = "휴가일정 추가";
+    dateLabel.textContent = "휴가날짜";
+    timeLabel.textContent = "휴가시간";
+    confirmBtn.textContent = "일정 추가";
+    jobLabel.textContent = "휴가";
+
+    job.innerHTML = `
+      <option value="">선택</option>
+      <option value="vacation">연차</option>
+      <option value="vacation">반차</option>
+      <option value="vacation">병가</option>
+      <option value="vacation">휴가</option>
+    `;
+  } else {
+    modalTitle.textContent = "근무일정 추가";
+    dateLabel.textContent = "근무날짜";
+    timeLabel.textContent = "근무시간";
+    confirmBtn.textContent = editingId ? "근무일정 수정" : "일정 추가";
+    jobLabel.textContent = "직무";
+
+    job.innerHTML = `
+      <option value="">선택</option>
+      <option value="red">Management</option>
+      <option value="blue">Sales</option>
+      <option value="purple">Marketing</option>
+      <option value="yellow">Design</option>
+      <option value="green">Production</option>
+      <option value="orange">R&D</option>
+    `;
+  }
 }
-function deleteDraft(id) {
-  if (!schedulesDraft[currentDate]) return;
 
-  schedulesDraft[currentDate] = schedulesDraft[currentDate].filter(
-    (v) => v.id !== id
-  );
-
-  renderSchedule();
-  renderScheduleDraft();
-}
-
-function deleteSaved(id) {
-  if (!schedules[currentDate]) return;
-
-  schedules[currentDate] = schedules[currentDate].filter((v) => v.id !== id);
-
-  saveToStorage();
-  renderSchedule();
-}
+/* ======================================================
+   초기
+====================================================== */
+render();
