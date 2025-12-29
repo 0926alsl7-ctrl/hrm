@@ -391,89 +391,6 @@
                     </div>
                     <div class="schedule-body"></div>
                   </div>
-                  <div class="schedule-add-modal">
-                    <div class="schedule-add-modal-content">
-                      <div class="schedule-add-modal-head">
-                        <h3>근무일정 추가</h3>
-                        <img
-                          src="images/close.svg"
-                          alt="close"
-                          class="schedule-close-modal"
-                        />
-                      </div>
-
-                      <div class="form-group">
-                        <label>부서</label>
-                        <select class="depart">
-                          <option value="">선택</option>
-                          <option>Management</option>
-                          <option>Sales</option>
-                          <option>Marketing</option>
-                          <option>Design</option>
-                          <option>Production</option>
-                          <option>R&D</option>
-                        </select>
-                      </div>
-
-                      <div class="form-group">
-                        <label>사원</label>
-                        <select class="employee">
-                          <option value="">부서 선택</option>
-                        </select>
-                      </div>
-
-                      <div class="form-group">
-                        <label id="jobLabel">직무</label>
-                        <select class="job">
-                          <option value="">선택</option>
-                          <option value="red">Management</option>
-                          <option value="blue">Sales</option>
-                          <option value="purple">Marketing</option>
-                          <option value="yellow">Design</option>
-                          <option value="green">Production</option>
-                          <option value="orange">R&D</option>
-                          <option value="teal">출장</option>
-                        </select>
-                      </div>
-
-                      <div class="form-group inline">
-                        <label>근무날짜</label>
-
-                        <div class="fake-input fakeDate">
-                          <img src="images/schedule2.svg" alt="icon" />
-                          <span class="fakeDateText">날짜 선택</span>
-                        </div>
-
-                        <input type="date" class="workDate" hidden />
-                        <button type="button" class="setToday">오늘</button>
-                      </div>
-
-                      <div class="form-group inline">
-                        <label>근무시간</label>
-
-                        <div class="fake-input fakeStart">
-                          <img src="images/timecheck.svg" alt="icon" />
-                          <span class="fakeStartText">시작 시간</span>
-                        </div>
-                        <input
-                          type="time"
-                          class="startTime"
-                          step="600"
-                          hidden
-                        />
-
-                        <span>~</span>
-
-                        <div class="fake-input fakeEnd">
-                          <img src="images/timecheck.svg" alt="icon" />
-                          <span class="fakeEndText">종료 시간</span>
-                        </div>
-                        <input type="time" class="endTime" step="600" hidden />
-                      </div>
-
-                      <button class="confirm-add">일정 추가</button>
-                    </div>
-                  </div>
                 </div>
               </section>
               <section class="section" data-page="attendance">
@@ -488,7 +405,7 @@
                   </div>
                 </div>
               </section>
-              <section class="section" data-page="vacation">
+              <section class="section is-active" data-page="vacation">
                 <div class="dashboard vacation">
                   <div class="schedule-top">
                     <div class="schedule-title">
@@ -567,86 +484,6 @@
                       </div>
                     </div>
                     <div class="vacation-body"></div>
-                  </div>
-                  <div class="schedule-add-modal">
-                    <div class="schedule-add-modal-content">
-                      <div class="schedule-add-modal-head">
-                        <h3>휴가일정 추가</h3>
-                        <img
-                          src="images/close.svg"
-                          alt="close"
-                          class="vacation-close-modal"
-                        />
-                      </div>
-
-                      <div class="form-group">
-                        <label>부서</label>
-                        <select class="depart">
-                          <option value="">선택</option>
-                          <option>Management</option>
-                          <option>Sales</option>
-                          <option>Marketing</option>
-                          <option>Design</option>
-                          <option>Production</option>
-                          <option>R&D</option>
-                        </select>
-                      </div>
-
-                      <div class="form-group">
-                        <label>사원</label>
-                        <select class="employee">
-                          <option value="">부서 선택</option>
-                        </select>
-                      </div>
-
-                      <div class="form-group">
-                        <label>휴가 종류</label>
-                        <select class="job">
-                          <option value="">선택</option>
-                          <option value="red">병가</option>
-                          <option value="yellow">반차</option>
-                          <option value="blue">연차</option>
-                          <option value="gray">휴가</option>
-                        </select>
-                      </div>
-
-                      <div class="form-group inline">
-                        <label>휴가 날짜</label>
-
-                        <div class="fake-input fakeDate">
-                          <img src="images/schedule2.svg" alt="icon" />
-                          <span class="fakeDateText">날짜 선택</span>
-                        </div>
-
-                        <input type="date" class="workDate" hidden />
-                        <button type="button" class="setToday">오늘</button>
-                      </div>
-
-                      <div class="form-group inline">
-                        <label>휴가 시간</label>
-
-                        <div class="fake-input fakeStart">
-                          <img src="images/timecheck.svg" alt="icon" />
-                          <span class="fakeStartText">시작 시간</span>
-                        </div>
-                        <input
-                          type="time"
-                          class="startTime"
-                          step="600"
-                          hidden
-                        />
-
-                        <span>~</span>
-
-                        <div class="fake-input fakeEnd">
-                          <img src="images/timecheck.svg" alt="icon" />
-                          <span class="fakeEndText">종료 시간</span>
-                        </div>
-                        <input type="time" class="endTime" step="600" hidden />
-                      </div>
-
-                      <button class="confirm-add">휴가 추가</button>
-                    </div>
                   </div>
                 </div>
               </section>
@@ -732,7 +569,7 @@
                   </div>
                 </div>
               </section>
-              <section class="section is-active" data-page="contract">
+              <section class="section" data-page="contract">
                 <div class="dashboard contract">
                   <div class="schedule-top">
                     <div class="schedule-title">
@@ -851,15 +688,98 @@
         </div>
       </div>
     </div>
+    <div class="schedule-add-modal">
+      <div class="schedule-add-modal-content">
+        <div class="schedule-add-modal-head">
+          <h3>근무일정 추가</h3>
+          <img
+            src="images/close.svg"
+            alt="close"
+            class="schedule-close-modal"
+          />
+        </div>
+
+        <div class="form-group">
+          <label>부서</label>
+          <select class="depart">
+            <option value="">선택</option>
+            <option>Management</option>
+            <option>Sales</option>
+            <option>Marketing</option>
+            <option>Design</option>
+            <option>Production</option>
+            <option>R&D</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>사원</label>
+          <select class="employee">
+            <option value="">부서 선택</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label id="jobLabel">직무</label>
+          <select class="job">
+            <option value="">선택</option>
+            <option value="red">Management</option>
+            <option value="blue">Sales</option>
+            <option value="purple">Marketing</option>
+            <option value="yellow">Design</option>
+            <option value="green">Production</option>
+            <option value="orange">R&D</option>
+            <option value="teal">출장</option>
+          </select>
+        </div>
+
+        <div class="form-group inline">
+          <label>근무날짜</label>
+
+          <div class="fake-input fakeDate">
+            <img src="images/schedule2.svg" alt="icon" />
+            <span class="fakeDateText">날짜 선택</span>
+          </div>
+
+          <input type="date" class="workDate" hidden />
+          <button type="button" class="setToday">오늘</button>
+        </div>
+
+        <div class="form-group inline">
+          <label>근무시간</label>
+
+          <div class="fake-input fakeStart">
+            <img src="images/timecheck.svg" alt="icon" />
+            <span class="fakeStartText">시작 시간</span>
+          </div>
+          <input type="time" class="startTime" step="600" hidden />
+
+          <span>~</span>
+
+          <div class="fake-input fakeEnd">
+            <img src="images/timecheck.svg" alt="icon" />
+            <span class="fakeEndText">종료 시간</span>
+          </div>
+          <input type="time" class="endTime" step="600" hidden />
+        </div>
+
+        <button class="confirm-add">일정 추가</button>
+      </div>
+    </div>
     <div class="row-action-modal modal is-hidden">
       <div class="row-action-card modal-card">
         <div class="row-action-card-head modal-head">
-          <h4 class="modal-title-text">ddd</h4>
+          <h4 class="row-action-modal-title-text modal-title-text">
+            확정 일정 수정
+          </h4>
           <button class="close">
             <img src="images/close.svg" alt="close" />
           </button>
         </div>
-        <div class="action">
+        <div class="row-action-modal-content modal-content">
+          <h5 class="row-action-modal-shedule-text"></h5>
+        </div>
+        <div class="row-action-modal-action action">
           <button class="edit">수정</button>
           <button class="delete">삭제</button>
         </div>

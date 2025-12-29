@@ -59,6 +59,7 @@ document.querySelectorAll(".progress-bar").forEach((bar) => {
    DOM
 ====================================================== */
 const body = document.querySelector(".schedule-body");
+const vacationBody = document.querySelector(".vacation-body");
 const addBtn = document.querySelector(".schedule-add-btn");
 const saveBtn = document.querySelector(".schedule-save");
 
@@ -86,7 +87,7 @@ const fakeStartText = document.querySelector(".fakeStartText");
 const fakeEnd = document.querySelector(".fakeEnd");
 const fakeEndText = document.querySelector(".fakeEndText");
 
-const todayText = document.querySelector(".data-text-today");
+const todayText = document.querySelectorAll(".data-text-today");
 const prevBtn = document.querySelector(".schedule-prev-btn");
 const nextBtn = document.querySelector(".schedule-next-btn");
 const todayBtn = document.querySelector(".today-btn");
@@ -130,9 +131,11 @@ const employeesData = {
 function updateDateText() {
   const d = new Date(currentDate);
   const week = ["일", "월", "화", "수", "목", "금", "토"];
-  todayText.textContent = `${d.getFullYear()}년 ${
-    d.getMonth() + 1
-  }월 ${d.getDate()}일 (${week[d.getDay()]})`;
+  const text = `${d.getFullYear()}년 ${d.getMonth() + 1}월 ${d.getDate()}일 (${
+    week[d.getDay()]
+  })`;
+
+  todayText.forEach((el) => (el.textContent = text));
 }
 
 function changeDate(diff) {
@@ -227,6 +230,7 @@ function resetForm() {
    모달
 ====================================================== */
 addBtn.onclick = () => {
+  manageMode = "work";
   resetForm();
   applyForm();
   modal.classList.add("is-open");
@@ -236,6 +240,17 @@ closeBtn.onclick = () => {
   modal.classList.remove("is-open");
   resetForm();
 };
+
+const vacationAddBtn = document.querySelector(".vacation-add-btn");
+
+if (vacationAddBtn) {
+  vacationAddBtn.onclick = () => {
+    manageMode = "vacation";
+    resetForm();
+    applyForm();
+    modal.classList.add("is-open");
+  };
+}
 
 /* ======================================================
    select 연동
@@ -335,6 +350,8 @@ confirmBtn.onclick = () => {
   modal.classList.remove("is-open");
   resetForm();
   render();
+
+  renderVacation();
 };
 
 /* ======================================================
@@ -368,9 +385,34 @@ function render() {
   Object.values(grouped).forEach((items) => {
     renderRow(items);
   });
+
+  renderVacation();
+}
+function renderVacation() {
+  if (!vacationBody) return;
+
+  vacationBody.innerHTML = "";
+
+  const draftsToday = drafts[currentDate] || [];
+  const savedToday = saved[currentDate] || [];
+
+  // draft + saved 모두 포함
+  const all = [...draftsToday, ...savedToday];
+
+  const vacationItems = all.filter((v) => v.type === "vacation");
+
+  const grouped = {};
+  vacationItems.forEach((item) => {
+    grouped[item.name] ??= [];
+    grouped[item.name].push(item);
+  });
+
+  Object.values(grouped).forEach((items) => {
+    renderRow(items, vacationBody);
+  });
 }
 
-function renderRow(items) {
+function renderRow(items, target = body) {
   const work = items.find((v) => v.type === "work");
   const vacation = items.find((v) => v.type === "vacation");
 
@@ -384,7 +426,7 @@ function renderRow(items) {
   const workHours = calcNetWorkHours(items);
   const hasWork = items.some((v) => v.type === "work");
 
-  body.insertAdjacentHTML(
+  target.insertAdjacentHTML(
     "beforeend",
     `
     <div class="schedule-row ${isDraft ? "draft" : "saved"}"
@@ -505,6 +547,58 @@ body.onclick = (e) => {
   render();
 };
 
+function handleRowClick(e) {
+  const row = e.target.closest(".schedule-row");
+  if (!row) return;
+
+  const id = row.dataset.id;
+  const date = row.dataset.date;
+
+  if (e.target.classList.contains("row-check")) return;
+
+  // draft 삭제
+  if (e.target.classList.contains("draft-delete")) {
+    if (confirm("삭제하시겠습니까?")) {
+      drafts[date] = (drafts[date] || []).filter((v) => v.id !== id);
+      render();
+    }
+    return;
+  }
+
+  // draft 수정
+  if (e.target.classList.contains("draft-edit")) {
+    const item = (drafts[date] || []).find((v) => v.id === id);
+    if (!item) return;
+
+    editingId = id;
+    manageMode = item.type;
+    applyForm();
+
+    modalTitle.textContent = "일정 수정";
+    confirmBtn.textContent = "수정 완료";
+    modal.classList.add("is-open");
+
+    dept.value = item.dept;
+    dept.dispatchEvent(new Event("change"));
+    emp.value = item.name;
+    job.value = item.job;
+    startTime.value = item.start;
+    endTime.value = item.end;
+
+    fakeStartText.textContent = item.start;
+    fakeEndText.textContent = item.end;
+    return;
+  }
+
+  // ✅ 확정 일정 클릭
+  if (row.classList.contains("saved")) {
+    openRowActionModal(row);
+  }
+}
+
+body.onclick = handleRowClick;
+vacationBody.onclick = handleRowClick;
+
 function openEditModal(id, date) {
   const list = saved[date] || [];
   const item = list.find((v) => v.id === id);
@@ -544,13 +638,54 @@ function deleteSavedItem(id, date) {
   render();
 }
 function openRowActionModal(row) {
+  document
+    .querySelectorAll(".schedule-row.saved.active")
+    .forEach((r) => r.classList.remove("active"));
+
+  // 클릭한 row 활성화
+  row.classList.add("active");
   const modal = document.querySelector(".row-action-modal");
   if (!modal) return;
 
-  modal.classList.remove("is-hidden");
+  const titleEl = modal.querySelector(".row-action-modal-title-text");
+  const contentEl = modal.querySelector(".row-action-modal-shedule-text");
 
   const id = row.dataset.id;
   const date = row.dataset.date;
+
+  const items = (saved[date] || []).filter((v) => v.id === id);
+  if (!items.length) return;
+
+  const work = items.find((v) => v.type === "work");
+  const vacation = items.find((v) => v.type === "vacation");
+  const base = work || vacation;
+
+  titleEl.textContent =
+    base.type === "vacation" ? "확정 휴가일정 변경" : "확정 근무일정 변경";
+
+  const hoursText = work ? `${calcNetWorkHours(items)}h` : "";
+
+  const subInfo = `
+    <span class="sub">
+      (${base.dept}${hoursText ? " / " + hoursText : ""})
+    </span>
+  `;
+
+  const jobClass = base.type === "vacation" ? "job gray" : `job ${base.job}`;
+
+  const jobText = `
+    <span class="${jobClass}">
+      ${vacation ? vacation.jobText : base.jobText}
+    </span>
+  `;
+
+  contentEl.innerHTML = `
+    <strong class="name">${base.name}</strong>
+    ${subInfo}
+    ${jobText}
+  `;
+
+  modal.classList.remove("is-hidden");
 
   modal.querySelector(".edit").onclick = () => {
     openEditModal(id, date);
@@ -593,8 +728,11 @@ saveBtn.onclick = () => {
     drafts[date] = list.filter((v) => v.id !== id);
   });
 
+  checkAll.checked = false;
+
   localStorage.setItem("schedules", JSON.stringify(saved));
   render();
+  renderVacation();
 };
 
 const checkAll = document.getElementById("checkAll");

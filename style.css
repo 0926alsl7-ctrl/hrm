@@ -810,6 +810,7 @@ body.darkmode {
 
 .time-header {
   display: grid;
+  gap: 8px;
   grid-template-columns: 24px 180px 1fr 72px;
   row-gap: 4px;
 }
@@ -837,7 +838,6 @@ body.darkmode {
   grid-template-columns: repeat(24, 1fr);
   font-size: 11px;
   color: var(--grayColor400);
-  border-left: 1px solid var(--grayColor100);
 }
 .time-scale span {
   text-align: center;
@@ -847,6 +847,7 @@ body.darkmode {
 .schedule-row {
   display: grid;
   grid-template-columns: 24px 180px 1fr 72px;
+  gap: 8px;
   align-items: center;
   border-bottom: 1px solid #f1f1f1;
   min-height: 60px;
@@ -1012,28 +1013,34 @@ body.darkmode {
   margin-top: 16px;
 }
 
-.shift.red {
+.shift.red,
+.job.red {
   background: #fb8890;
 }
-.shift.blue {
+
+.shift.blue,
+.job.blue {
   background: #64a8ff;
 }
-.shift.purple {
+.shift.purple,
+.job.purple {
   background: #c770e4;
 }
-.shift.yellow {
+.shift.yellow,
+.job.yellow {
   background: #ffdd78;
 }
-.shift.green {
+.shift.green,
+.job.green {
   background: #3fd599;
 }
-.shift.orange {
+.shift.orange .job.orange {
   background: #ffbd51;
 }
-.shift.gray {
+.shift.gray .job.gray {
   background: #d1d6db;
 }
-.shift.teal {
+.shift.teal .job.teal {
   background: #58c7c7;
 }
 .shift.dimmed {
@@ -1192,6 +1199,13 @@ body:not(.show-vacation) .work-hours {
   height: 22px;
   cursor: pointer;
 }
+.dashboard.vacation .shift.vacation {
+  background: var(--button-bg-color-blue-weak);
+  color: #2563eb;
+  border: 1px solid #bfdbfe;
+}
+
+
 /* section(3) - attendance ============================================ */
 .dashboard.attendance .help-btn::before {
   content: "신뢰가는 출퇴근기록과 자동화된 근태관리를 제공합니다";
@@ -1505,12 +1519,17 @@ body:not(.show-vacation) .work-hours {
   box-shadow: var(--shdow-m);
   position: relative;
 }
+.row-action-card{width: 340px;}
 
 .modal-head {
   display: flex;
   align-items: center;
   justify-content: space-between;
   margin-bottom: 14px;
+}
+.row-action-card-head {
+  padding-bottom: 20px;
+  border-bottom: 2px solid var(--grayColor100);
 }
 .modal-title-text {
   color: var(--mainTextColor);
@@ -1534,6 +1553,30 @@ body:not(.show-vacation) .work-hours {
   align-items: center;
   gap: 6px;
   margin-bottom: 12px;
+}
+.row-action-modal-action {
+  justify-content: right;
+}
+.row-action-modal-shedule-text .name,
+.row-action-modal-shedule-text .job {
+  font-size: 15px;
+  color: var(--grayColor700);
+}
+.row-action-modal-shedule-text .job {
+  padding: 2px 8px;
+  margin-left: 6px;
+  border: none;
+  border-radius: 2px;
+}
+.row-action-modal-shedule-text .sub {
+  margin-left: 2px;
+  font-size: 11px;
+  color: var(--grayColor500);
+  font-weight: lighter;
+}
+
+.row-action-modal-content {
+  margin: 30px auto;
 }
 
 .action button {
