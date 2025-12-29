@@ -46,8 +46,18 @@
                   </button>
                 </li>
                 <li class="header-bar-list-item">
-                  <button class="icon-btn">
-                    <img src="images/darkmode.svg" alt="darkmode" />
+                  <button class="icon-btn" id="darkmode">
+                    <img
+                      src="images/darkmode.svg"
+                      alt="lightmode"
+                      class="lightmode-img"
+                    />
+                    <img
+                      src="images/darkmode-fill.svg"
+                      alt="darkmode"
+                      class="darkmode-img"
+                      style="display: none"
+                    />
                   </button>
                 </li>
                 <li class="header-bar-list-item dropdown">
@@ -291,7 +301,7 @@
                   </div>
                 </div>
               </section>
-              <section class="section is-active" data-page="schedule">
+              <section class="section" data-page="schedule">
                 <div class="dashboard schedule">
                   <div class="schedule-top">
                     <div class="schedule-title">
@@ -332,7 +342,6 @@
                       </button>
                       <span class="data-text-today"></span>
                     </div>
-
                     <div class="schedule-mode">
                       <button class="schedule-save">확정하기</button>
                       <button class="view-mode day active">일</button>
@@ -342,6 +351,12 @@
                   </div>
                   <div class="schedule-board">
                     <div class="time-header">
+                      <div class="check-all-header">
+                        <label class="check-all">
+                          <input type="checkbox" id="checkAll" />
+                          <span class="check-all-txt">전체</span>
+                        </label>
+                      </div>
                       <div class="employee-col"></div>
                       <div class="am-pm">
                         <div class="time-col">AM</div>
@@ -461,7 +476,18 @@
                   </div>
                 </div>
               </section>
-              <section class="section" data-page="attendance"></section>
+              <section class="section" data-page="attendance">
+                <div class="dashboard attendance">
+                  <div class="schedule-top">
+                    <div class="schedule-title">
+                      <h1>출퇴근기록</h1>
+                      <button class="help-btn">
+                        <img src="images/help.svg" alt="도움말" />
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </section>
               <section class="section" data-page="vacation">
                 <div class="dashboard vacation">
                   <div class="schedule-top">
@@ -618,7 +644,81 @@
                 </div>
               </section>
               <section class="section" data-page="payroll"></section>
-              <section class="section" data-page="approval"></section>
+              <section class="section is-active" data-page="approval">
+                <div class="dashboard approval">
+                  <div class="schedule-top">
+                    <div class="schedule-title">
+                      <h1>전자결재</h1>
+                      <button class="help-btn">
+                        <img src="images/help.svg" alt="도움말" />
+                      </button>
+                    </div>
+                  </div>
+                  <div class="approval-control">
+                    <div class="approval-process">
+                      <button class="process-btn active" data-process="all">
+                        전체
+                      </button>
+                      <button class="process-btn" data-process="pending">
+                        진행
+                      </button>
+                      <button class="process-btn" data-process="approved">
+                        완료
+                      </button>
+                      <button class="process-btn" data-process="rejected">
+                        반려
+                      </button>
+                    </div>
+                    <div class="approval-filters">
+                      <button class="filter-btn" data-filter="vacation">
+                        휴가 신청
+                      </button>
+                      <button class="filter-btn" data-filter="schedule">
+                        근무일정 변경
+                      </button>
+                      <button class="filter-btn" data-filter="payroll">
+                        연장근무 신청
+                      </button>
+                      <button class="filter-btn" data-filter="contract">
+                        계약 신청
+                      </button>
+                    </div>
+                  </div>
+                  <div class="approval-board">
+                    <div class="approval-board-head">
+                      <div class="approval-item">
+                        <span class="approval-head-txt">요청 종류</span>
+                      </div>
+                      <div class="approval-content">
+                        <span class="approval-head-txt">요청 사항</span>
+                      </div>
+                      <div class="approval-status">
+                        <span class="approval-head-txt">상태</span>
+                      </div>
+                      <div class="approval-action">
+                        <span class="approval-head-txt">결재</span>
+                      </div>
+                    </div>
+                    <div class="approval-board-body">
+                      <div class="approval-item" style="cursor: default">
+                        <span class="approval-body-txt">휴가 생성</span>
+                      </div>
+                      <div class="approval-content">
+                        <span class="approval-body-txt"
+                          >6월 7일 (목) / 반차(오전)</span
+                        >
+                      </div>
+                      <div class="approval-status">
+                        <button class="approval-status-wait">승인 대기</button>
+                      </div>
+                      <div class="approval-action">
+                        <button class="approve-btn">승인</button>
+                        <button class="reject-btn">거절</button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </section>
               <section class="section" data-page="contract"></section>
               <section class="section" data-page="notice"></section>
               <section class="section" data-page="message"></section>
@@ -626,6 +726,79 @@
               <section class="section" data-page="desktop"></section>
             </div>
           </div>
+        </div>
+      </div>
+    </div>
+    <div class="row-action-modal modal is-hidden">
+      <div class="row-action-card modal-card">
+        <div class="row-action-card-head modal-head">
+          <h4 class="modal-title-text">ddd</h4>
+          <button class="close">
+            <img src="images/close.svg" alt="close" />
+          </button>
+        </div>
+        <div class="action">
+          <button class="edit">수정</button>
+          <button class="delete">삭제</button>
+        </div>
+      </div>
+    </div>
+    <div class="reject-action-modal modal is-hidden">
+      <div class="reject-modal-card modal-card">
+        <div class="reject-action-card-head modal-head">
+          <div class="reject-modal-head">
+            <h4 class="modal-title-text">해당요청을 반려하시겠습니까?</h4>
+            <span class="modal-text">* 이 작업은 되돌릴 수 없습니다</span>
+          </div>
+          <button class="close">
+            <img src="images/close.svg" alt="close" />
+          </button>
+        </div>
+        <div class="reject-modal-content modal-content">
+          <select name="" id="reject-modal-reason">
+            <option value="">선택</option>
+            <option value="">기준 미달</option>
+            <option value="">중복·누락 정보</option>
+            <option value="">형식·서류 미비</option>
+            <option value="">정책·제도 위반</option>
+            <option value="">요청 내용 불분명</option>
+            <option value="">기타</option>
+          </select>
+          <input
+            type="text"
+            name=""
+            id="reject-modal-reason-etc"
+            placeholder="반려 사유를 입력해주세요"
+          />
+        </div>
+        <div class="reject-modal-action action">
+          <button class="approval">반려하기</button>
+          <button class="cancel">취소</button>
+        </div>
+      </div>
+    </div>
+    <div class="approve-action-modal modal is-hidden">
+      <div class="approve-modal-card modal-card">
+        <div class="approve-action-card-head modal-head">
+          <div class="approve-modal-head">
+            <h4 class="modal-title-text">해당요청을 승인하시겠습니까?</h4>
+            <span class="modal-text">* 이 작업은 되돌릴 수 없습니다</span>
+          </div>
+          <button class="close">
+            <img src="images/close.svg" alt="close" />
+          </button>
+        </div>
+        <div class="approve-modal-content modal-content">
+          <input
+            type="text"
+            name=""
+            id=""
+            placeholder="근무일정 생성 요청 내용 확인했습니다"
+          />
+        </div>
+        <div class="approve-modal-action action">
+          <button class="approval">승인하기</button>
+          <button class="cancel">취소</button>
         </div>
       </div>
     </div>

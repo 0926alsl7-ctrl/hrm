@@ -19,6 +19,7 @@ body {
   box-sizing: border-box;
   color: var(--mainTextColor);
 }
+
 ul,
 li,
 dl {
@@ -98,6 +99,12 @@ img {
   --shdow-l: 0 24px 40px 0 rgba(0, 23, 51, 0.02),
     0 16px 24px 0 rgba(0, 27, 55, 0.1), 0 0 8px 0 rgba(0, 27, 55, 0.1);
 }
+/* darkmode */
+body.darkmode {
+  background-color: var(--darkBackground);
+  color: #fff;
+}
+/*  */
 /* section */
 .wrap {
   width: 100%;
@@ -801,10 +808,11 @@ img {
 
 .time-header {
   display: grid;
-  grid-template-columns: 180px 1fr 72px;
+  grid-template-columns: 24px 180px 1fr 72px;
   row-gap: 4px;
 }
 .am-pm {
+  grid-column: 3/4;
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   text-align: center;
@@ -822,8 +830,8 @@ img {
 }
 
 .time-scale {
+  grid-column: 3 / 4;
   display: grid;
-  grid-column: 2;
   grid-template-columns: repeat(24, 1fr);
   font-size: 11px;
   color: var(--grayColor400);
@@ -836,9 +844,8 @@ img {
 
 .schedule-row {
   display: grid;
-  grid-template-columns: 180px 1fr 72px;
+  grid-template-columns: 24px 180px 1fr 72px;
   align-items: center;
-  gap: 12px;
   border-bottom: 1px solid #f1f1f1;
   min-height: 60px;
 }
@@ -846,6 +853,7 @@ img {
 .employee {
   padding: 12px;
   border-right: 1px solid #eee;
+  white-space: nowrap;
 }
 
 .employee span {
@@ -853,6 +861,7 @@ img {
   font-size: 12px;
   color: #999;
   padding-top: 4px;
+  gap: 2px;
 }
 
 .timeline {
@@ -874,6 +883,7 @@ img {
 }
 
 .schedule-row:not(.draft) .shift {
+  cursor: pointer;
   opacity: 1;
 }
 
@@ -1027,15 +1037,24 @@ img {
 .shift.dimmed {
   opacity: 0.35;
 }
+body:not(.show-vacation) .vacation-type {
+  display: none;
+}
+body:not(.show-vacation) .work-hours {
+  display: inline;
+}
+
 .shift.vacation {
-  background: repeating-linear-gradient(
+  /* background: repeating-linear-gradient(
     45deg,
     rgba(0, 0, 0, 0.15),
     rgba(0, 0, 0, 0.15) 2px,
     transparent 4px,
     transparent 8px
-  );
-  color: #333;
+  ); */
+  background: hsla(0, 0%, 100%, 0.6);
+  backdrop-filter: blur(10px);
+  color: var(--mainTextColor);
   z-index: 2;
 }
 
@@ -1064,6 +1083,73 @@ img {
 .draft-actions .draft-delete {
   background: var(--btn-dagner-weak-bg);
   color: var(--btn-dagnger-weak-color);
+}
+.schedule-row.saved .row-check-wrap,
+.schedule-row.saved .draft-actions {
+  visibility: hidden;
+  pointer-events: none;
+}
+.check-all {
+  display: flex;
+  align-items: center;
+}
+.check-all-txt {
+  font-size: 13px;
+  color: var(--grayColor400);
+}
+
+.row-check,
+#checkAll {
+  justify-self: center;
+  appearance: none;
+  width: 16px;
+  height: 16px;
+  border-radius: 8px;
+  background: #fff;
+  border: 2px solid var(--grayColor300);
+  cursor: pointer;
+  position: relative;
+  transition: all 0.18s ease;
+  margin-right: 10px;
+  flex-shrink: 0;
+}
+#checkAll {
+  margin-right: 6px;
+}
+
+.row-check:checked,
+#checkAll:checked {
+  background: #3182f6;
+  border-color: #3182f6;
+}
+#checkAll:checked + .check-all-txt {
+  color: var(--blueColor600);
+}
+.row-check::after,
+#checkAll::after {
+  content: "";
+  position: absolute;
+  left: 4px;
+  top: 1px;
+  width: 3px;
+  height: 6px;
+  border: solid #fff;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg) scale(0);
+  opacity: 0;
+  transition: all 0.15s ease;
+}
+.row-check:checked::after,
+#checkAll:checked::after {
+  transform: rotate(45deg) scale(1);
+  opacity: 1;
+}
+.row-check:active,
+#checkAll:active {
+  transform: scale(0.9);
+}
+.row-check:checked ~ .employee {
+  opacity: 0.8;
 }
 /* section (2) vacation ============================================= */
 .dashboard.vacation {
@@ -1104,7 +1190,328 @@ img {
   height: 22px;
   cursor: pointer;
 }
+/* section(3) - attendance ============================================ */
+.dashboard.attendance .help-btn::before {
+  content: "신뢰가는 출퇴근기록과 자동화된 근태관리를 제공합니다";
+  position: absolute;
+  bottom: -26px;
+  left: 0;
+  font-size: 11px;
+  color: var(--grayColor700);
+  white-space: nowrap;
+  background-color: #fff;
+  display: inline-block;
+  opacity: 0;
+  transition: 0.2s ease-in;
+}
+/* section(4) - payroll ============================================ */
+.dashboard.payroll .help-btn::before {
+  content: "연장, 야간, 휴일근로 등 근태 및 급여에 대한 실시간 정산 데이터를 제공합니다";
+  position: absolute;
+  bottom: -26px;
+  left: 0;
+  font-size: 11px;
+  color: var(--grayColor700);
+  white-space: nowrap;
+  background-color: #fff;
+  display: inline-block;
+  opacity: 0;
+  transition: 0.2s ease-in;
+}
+/* section(5) - approval ============================================ */
+.dashboard.approval {
+  grid-template-columns: repeat(1, 1fr);
+}
+.dashboard.approval .help-btn::before {
+  content: "고도화된 근태 결재와 맞춤형 결재를 지원합니다";
+  position: absolute;
+  bottom: -26px;
+  left: 0;
+  font-size: 11px;
+  color: var(--grayColor700);
+  white-space: nowrap;
+  background-color: #fff;
+  display: inline-block;
+  opacity: 0;
+  transition: 0.2s ease-in;
+}
+.approval-board-head {
+  display: grid;
+  grid-template-columns: 84px 1fr 96px 138px;
+  align-items: center;
+  border-bottom: 2px solid #f1f1f1;
+  min-height: 50px;
+}
+.approval-head-txt {
+  font-size: 13px;
+  color: var(--blueColor500);
+}
+.approval-board-body {
+  margin-top: 10px;
+  display: grid;
+  grid-template-columns: 84px 1fr 96px 138px;
+}
+.approval-board-body .approval-content {
+  cursor: pointer;
+}
+.approval-body-txt {
+  color: var(--grayColor500);
+  font-size: 13px;
+}
+.approval-body-txt.approve {
+  color: var(--mainTextColor);
+}
+.approval-board-body .approval-status {
+  display: flex;
+  align-items: center;
+}
+.approval-status button {
+  cursor: default;
+  padding: 6px 12px;
+  font-size: 12px;
+  border-radius: 8px;
+  white-space: nowrap;
+}
+.approval-status-wait {
+  color: var(--grayOpacity500);
+  background-color: var(--grayOpacity200);
+}
+.approval-status-approved {
+  color: #fff;
+  background-color: var(--blueColor500);
+}
+.approval-status-approve {
+  color: #fff;
+}
+.approval-status-reject {
+  color: #fff;
+  background-color: var(--btn-danger-bg);
+}
+.approval-board-body .approval-action {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  /* justify-content: center; */
+}
+.approval-board-body .approval-action button {
+  border: none;
+  padding: 6px 18px;
+  font-size: 12px;
+  cursor: pointer;
+  border-radius: 8px;
+  white-space: nowrap;
+  background: #fff;
+}
+.approval-board-body .approval-action .approve-btn {
+  background: var(--button-bg-color-blue-weak);
+  color: var(--blueColor500);
+}
 
+.approval-board-body .approval-action .reject-btn {
+  background: var(--btn-dagner-weak-bg);
+  color: var(--btn-dagnger-weak-color);
+}
+.approval-control {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.approval-process {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.approval-process .process-btn {
+  border: none;
+  padding: 6px 12px;
+  font-size: 12px;
+  cursor: pointer;
+  border-radius: 8px;
+}
+/* section(6) - contract ============================================ */
+.dashboard.contract .help-btn::before {
+  content: "사내 모든 계약서를 템플릿으로 관리하고 복잡한 계약과정을 간소화합니다";
+  position: absolute;
+  bottom: -26px;
+  left: 0;
+  font-size: 11px;
+  color: var(--grayColor700);
+  white-space: nowrap;
+  background-color: #fff;
+  display: inline-block;
+  opacity: 0;
+  transition: 0.2s ease-in;
+}
+/* section(7) - notice ============================================ */
+.dashboard.notice .help-btn::before {
+  content: "사내 공지와 맞춤화된 사내 알림을 데이터와 연계하여 발송합니다";
+  position: absolute;
+  bottom: -26px;
+  left: 0;
+  font-size: 11px;
+  color: var(--grayColor700);
+  white-space: nowrap;
+  background-color: #fff;
+  display: inline-block;
+  opacity: 0;
+  transition: 0.2s ease-in;
+}
+/* section(8) - message ============================================ */
+.dashboard.message .help-btn::before {
+  content: "";
+  position: absolute;
+  bottom: -26px;
+  left: 0;
+  font-size: 11px;
+  color: var(--grayColor700);
+  white-space: nowrap;
+  background-color: #fff;
+  display: inline-block;
+  opacity: 0;
+  transition: 0.2s ease-in;
+}
+/* modal */
+.modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.35);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 999;
+}
+.is-hidden {
+  display: none;
+}
+
+.modal-card {
+  background: #fff;
+  border-radius: 8px;
+  padding: 20px 18px 8px;
+  max-width: 420px;
+  box-shadow: var(--shdow-m);
+  position: relative;
+}
+
+.modal-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 14px;
+}
+.modal-title-text {
+  color: var(--mainTextColor);
+  font-size: 16px;
+}
+.modal-text {
+  font-size: 11px;
+  color: var(--grayColor400);
+}
+.modal .close {
+  border: none;
+  background: none;
+  font-size: 16px;
+  cursor: pointer;
+  color: var(--grayColor300);
+}
+
+.action {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 12px;
+}
+
+.action button {
+  border: none;
+  padding: 6px 14px;
+  font-size: 12px;
+  cursor: pointer;
+  border-radius: 8px;
+  white-space: nowrap;
+  background: #fff;
+}
+
+.action .edit {
+  background: var(--button-bg-color-blue-weak);
+  color: var(--blueColor500);
+}
+
+.action .delete {
+  background: var(--btn-dagner-weak-bg);
+  color: var(--btn-dagnger-weak-color);
+}
+.approve-modal-card {
+  width: 360px;
+}
+.approve-action-card-head {
+  padding-bottom: 20px;
+  border-bottom: 2px solid var(--grayColor100);
+}
+.approve-modal-head {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+.approve-modal-content input {
+  width: 100%;
+  border: 1px solid var(--grayColor100);
+  border-radius: 4px;
+  min-height: 40px;
+  padding: 0 10px;
+}
+.approve-modal-content input::placeholder {
+  color: var(--grayColor500);
+  font-size: 12px;
+}
+.approve-modal-action {
+  justify-content: right;
+  padding-top: 20px;
+}
+.approve-modal-action .approval {
+  background: var(--button-bg-color-blue-weak);
+  color: var(--blueColor500);
+}
+.approve-modal-action .cancel {
+  background: var(--btn-dagner-weak-bg);
+  color: var(--btn-dagnger-weak-color);
+}
+.reject-modal-card {
+  width: 360px;
+}
+.reject-modal-action {
+  justify-content: right;
+  padding-top: 20px;
+}
+.reject-modal-action .approval {
+  background: var(--btn-dagner-weak-bg);
+  color: var(--btn-dagnger-weak-color);
+}
+.reject-modal-action .cancel {
+  background: var(--btn-bg-base);
+  color: var(--btn-color-base);
+}
+#reject-modal-reason {
+  font-size: 13px;
+  width: 100%;
+  border: none;
+  outline: none;
+  border-radius: 4px;
+  padding: 10px;
+  resize: none;
+}
+#reject-modal-reason-etc {
+  width: 100%;
+  border: 1px solid var(--grayColor100);
+  border-radius: 4px;
+  min-height: 80px;
+  padding: 0 10px;
+}
+#reject-modal-reason-etc::placeholder {
+  color: var(--grayColor500);
+  font-size: 12px;
+}
 /* ===== Mobile ===== */
 @media (max-width: 833px) {
   .dashboard {
