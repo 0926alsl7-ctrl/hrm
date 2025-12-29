@@ -64,19 +64,21 @@ img {
   --blueColor600: #2272eb;
   --blueColor700: #1b64da;
   --disableblueColor500: #c9e2ff;
+  --grayColor50: #f9fafb;
   --grayColor100: #f2f4f6;
+  --grayColor200: #e5e8eb;
   --grayColor300: #d1d6db;
   --grayColor400: #b0b8c1;
   --grayColor500: #8b95a1;
+  --grayColor600: #6b7684;
   --grayColor700: #4e5968;
   --grayOpacity500: rgba(3, 24, 50, 0.46);
   --grayOpacity300: rgba(0, 29, 58, 0.18);
   --grayOpacity200: rgba(0, 27, 55, 0.1);
   --grayOpacity100: rgba(2, 32, 71, 0.05);
+  --grayOpacity50: rgba(0, 23, 51, 0.02);
   --backgroundColor: #f6f7f9;
   --backgroundGrayColor: #f2f4f6;
-  --grayColor50: #f9fafb;
-  --grayColor100: #f2f4f6;
   --redColor500: #f04452;
   --button-danger-bg-color-weak: #ffeeee;
   --button-danger-bg-color: rgba(244, 67, 54, 0.16);
@@ -1204,6 +1206,9 @@ body:not(.show-vacation) .work-hours {
   opacity: 0;
   transition: 0.2s ease-in;
 }
+.dashboard.attendance .help-btn:hover::before {
+  opacity: 1;
+}
 /* section(4) - payroll ============================================ */
 .dashboard.payroll .help-btn::before {
   content: "연장, 야간, 휴일근로 등 근태 및 급여에 대한 실시간 정산 데이터를 제공합니다";
@@ -1218,15 +1223,22 @@ body:not(.show-vacation) .work-hours {
   opacity: 0;
   transition: 0.2s ease-in;
 }
+.dashboard.payroll .help-btn:hover::before {
+  opacity: 1;
+}
 /* section(5) - approval ============================================ */
 .dashboard.approval {
   grid-template-columns: repeat(1, 1fr);
+  gap: 10px;
+}
+.dashboard.approval .help-btn:hover::before {
+  opacity: 1;
 }
 .dashboard.approval .help-btn::before {
   content: "고도화된 근태 결재와 맞춤형 결재를 지원합니다";
   position: absolute;
-  bottom: -26px;
-  left: 0;
+  top: 3px;
+  right: -224px;
   font-size: 11px;
   color: var(--grayColor700);
   white-space: nowrap;
@@ -1243,8 +1255,9 @@ body:not(.show-vacation) .work-hours {
   min-height: 50px;
 }
 .approval-head-txt {
-  font-size: 13px;
+  font-size: 12px;
   color: var(--blueColor500);
+  font-weight: 600;
 }
 .approval-board-body {
   margin-top: 10px;
@@ -1325,15 +1338,63 @@ body:not(.show-vacation) .work-hours {
   border: none;
   padding: 6px 12px;
   font-size: 12px;
+  color: var(--grayColor500);
+  cursor: pointer;
+  border-radius: 8px;
+  position: relative;
+}
+.approval-process .process-btn:hover {
+  background-color: var(--grayOpacity100);
+}
+.approval-process .process-btn.active {
+  color: var(--mainTextColor);
+}
+.approval-process .process-btn.active::before {
+  width: 74%;
+}
+.approval-process .process-btn::before {
+  content: "";
+  position: absolute;
+  bottom: -3px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 2px;
+  border-radius: 2px;
+  background-color: var(--blueColor500);
+  transition: 0.2s ease-in;
+  transform-origin: center;
+}
+.approval-filters {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.approval-filters .filter-btn {
+  border: none;
+  padding: 6px 12px;
+  font-size: 12px;
+  color: var(--grayColor500);
   cursor: pointer;
   border-radius: 8px;
 }
+.approval-filters .filter-btn:hover {
+  background-color: var(--grayOpacity100);
+}
+.approval-filters .filter-btn.active {
+  background: var(--button-bg-color-blue-weak);
+  color: var(--blueColor600);
+}
 /* section(6) - contract ============================================ */
+.dashboard.contract {
+  grid-template-columns: repeat(1, 1fr);
+  gap: 12px;
+}
 .dashboard.contract .help-btn::before {
   content: "사내 모든 계약서를 템플릿으로 관리하고 복잡한 계약과정을 간소화합니다";
   position: absolute;
-  bottom: -26px;
-  left: 0;
+  top: 3px;
+  right: -340px;
   font-size: 11px;
   color: var(--grayColor700);
   white-space: nowrap;
@@ -1342,6 +1403,52 @@ body:not(.show-vacation) .work-hours {
   opacity: 0;
   transition: 0.2s ease-in;
 }
+.dashboard.contract .help-btn:hover::before {
+  opacity: 1;
+}
+.contract-items {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.contract-items .contract-item {
+  padding: 6px 12px;
+  font-size: 12px;
+  border-radius: 8px;
+  background: var(--backgroundColor);
+  cursor: pointer;
+  white-space: nowrap;
+}
+.contract-items .contract-item.active {
+  background: var(--blueColor500);
+  color: #fff;
+}
+.contract-wrap {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.contract-request img,
+.contract-add img,
+.contract-edit img {
+  width: 18px;
+  height: 18px;
+  opacity: 0.8;
+}
+.contract-wrap button {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 8px;
+  font-size: 13px;
+  cursor: pointer;
+  border-radius: 8px;
+  white-space: nowrap;
+  background: var(--button-bg-color-blue-weak);
+  color: var(--blueColor700);
+  font-weight: 500;
+}
+
 /* section(7) - notice ============================================ */
 .dashboard.notice .help-btn::before {
   content: "사내 공지와 맞춤화된 사내 알림을 데이터와 연계하여 발송합니다";
@@ -1356,6 +1463,9 @@ body:not(.show-vacation) .work-hours {
   opacity: 0;
   transition: 0.2s ease-in;
 }
+.dashboard.notice .help-btn:hover::before {
+  opacity: 1;
+}
 /* section(8) - message ============================================ */
 .dashboard.message .help-btn::before {
   content: "";
@@ -1369,6 +1479,9 @@ body:not(.show-vacation) .work-hours {
   display: inline-block;
   opacity: 0;
   transition: 0.2s ease-in;
+}
+.dashboard.message .help-btn:hover::before {
+  opacity: 1;
 }
 /* modal */
 .modal {
@@ -1509,6 +1622,154 @@ body:not(.show-vacation) .work-hours {
   padding: 0 10px;
 }
 #reject-modal-reason-etc::placeholder {
+  color: var(--grayColor500);
+  font-size: 12px;
+}
+.approval-detail-modal-card {
+  width: 480px;
+}
+.approval-detail-card-head {
+  padding-bottom: 16px;
+  border-bottom: 2px solid var(--grayColor100);
+}
+.approval-detail-content {
+  display: flex;
+  width: 100%;
+  /* display: grid;
+  grid-template-columns: 120px 1fr;
+  gap: 16px; */
+}
+.approval-detail-row {
+  margin-bottom: 16px;
+}
+.approval-detail-row-title {
+  width: 100%;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--mainTextColor);
+  margin-bottom: 6px;
+}
+.approval-employee-detail {
+  margin-top: 4px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 13px;
+  color: var(--grayColor600);
+}
+.approval-employee-job {
+  font-size: 11px;
+}
+.approval-detail-content-left {
+  width: 40%;
+}
+.approval-detail-content-right {
+  width: 60%;
+}
+.contract-request-modal select {
+  border: 1px solid var(--grayColor100);
+  border-radius: 4px;
+  padding: 10px;
+  font-size: 13px;
+  outline: none;
+  appearance: none;
+}
+.contract-request-card-head {
+  padding-bottom: 16px;
+  border-bottom: 2px solid var(--grayColor100);
+}
+.contract-request-card {
+  width: 520px;
+  max-width: 550px;
+}
+.contract-request-modal-row {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 40px;
+  min-height: 50px;
+}
+.contract-request-modal-col {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.contract-request-modal-col.sign-order {
+  flex: 1;
+}
+.contract-request-modal-col.request-message {
+  flex: 1;
+  margin-top: 30px;
+}
+.contract-request-form {
+  width: 100%;
+  margin-top: 30px;
+  line-height: 30px;
+  padding: 20px 10px;
+  border-radius: 4px;
+  border: 2px solid var(--grayColor100);
+}
+#contract-request-message {
+  padding: 12px 10px;
+  width: 100%;
+}
+.contract-request-action .approval {
+  background: var(--blueColor500);
+  color: #fff;
+}
+.contract-request-action .cancel {
+  background: var(--btn-bg-base);
+  color: var(--btn-color-base);
+}
+.modal-request-checkbox {
+  appearance: none;
+  width: 16px;
+  height: 16px;
+  border-radius: 8px;
+  background-color: #fff;
+  border: 1px solid var(--grayColor300);
+  cursor: pointer;
+  position: relative;
+  transition: all 0.18s ease;
+  margin-right: 10px;
+  flex-shrink: 0;
+}
+.modal-request-checkbox:checked {
+  background-color: #3182f6;
+  border-color: #3182f6;
+}
+
+.modal-request-checkbox::after {
+  content: "";
+  position: absolute;
+  left: 4px;
+  top: 2px;
+  width: 3px;
+  height: 6px;
+  border: solid #fff;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg) scale(0);
+  opacity: 0;
+  transition: all 0.15s ease;
+}
+.modal-request-checkbox-text {
+  font-size: 13px;
+  color: var(--grayColor400);
+}
+.modal-request-checkbox:checked + .modal-request-checkbox-text {
+  color: var(--blueColor600);
+}
+.modal-request-checkbox:checked::after {
+  transform: rotate(45deg) scale(1);
+  opacity: 1;
+}
+.modal-request-checkbox:active {
+  transform: scale(0.9);
+}
+.contract-request-action {
+  justify-content: right;
+}
+#contract-request-message::placeholder {
   color: var(--grayColor500);
   font-size: 12px;
 }

@@ -663,6 +663,7 @@ function applyForm() {
       <option value="yellow">Design</option>
       <option value="green">Production</option>
       <option value="orange">R&D</option>
+      <option value="teal">출장</option>
     `;
   }
 }
