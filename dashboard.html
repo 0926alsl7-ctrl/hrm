@@ -19,7 +19,10 @@
     />
     <link rel="stylesheet" href="style.css" />
     <link rel="stylesheet" href="m-style.css" media="(max-width:768px)" />
+    <script src="jquery-3.7.1.min.js"></script>
     <script src="dashboard.js" defer></script>
+    <script src="schedule.js" defer></script>
+    <script src="approval.js" defer></script>
   </head>
   <body>
     <div class="wrap">
@@ -301,7 +304,7 @@
                   </div>
                 </div>
               </section>
-              <section class="section" data-page="schedule">
+              <section class="section is-active" data-page="schedule">
                 <div class="dashboard schedule">
                   <div class="schedule-top">
                     <div class="schedule-title">
@@ -344,52 +347,33 @@
                     </div>
                     <div class="schedule-mode">
                       <button class="schedule-save">확정하기</button>
-                      <button class="view-mode day active">일</button>
-                      <button class="view-mode week">주</button>
-                      <button class="view-mode month">월</button>
+                      <button type="button" class="view-mode day active">
+                        일
+                      </button>
+                      <button type="button" class="view-mode week">주</button>
+                      <button type="button" class="view-mode month">월</button>
                     </div>
                   </div>
                   <div class="schedule-board">
                     <div class="time-header">
                       <div class="check-all-header">
                         <label class="check-all">
-                          <input type="checkbox" id="checkAll" />
+                          <input
+                            type="checkbox"
+                            class="checkAll"
+                            data-scope="schedule"
+                          />
                           <span class="check-all-txt">전체</span>
                         </label>
                       </div>
-                      <div class="employee-col"></div>
-                      <div class="am-pm">
-                        <div class="time-col">AM</div>
-                        <div class="time-col">PM</div>
-                      </div>
-                      <div class="time-scale">
-                        <span>12</span>
-                        <span>1</span>
-                        <span>2</span>
-                        <span>3</span>
-                        <span>4</span>
-                        <span>5</span>
-                        <span>6</span>
-                        <span>7</span>
-                        <span>8</span>
-                        <span>9</span>
-                        <span>10</span>
-                        <span>11</span>
-                        <span>12</span>
-                        <span>1</span>
-                        <span>2</span>
-                        <span>3</span>
-                        <span>4</span>
-                        <span>5</span>
-                        <span>6</span>
-                        <span>7</span>
-                        <span>8</span>
-                        <span>9</span>
-                        <span>10</span>
-                        <span>11</span>
-                      </div>
+                      <div class="empt"></div>
+                      <div
+                        class="schedule-header-main"
+                        id="scheduleHeaderMain"
+                      ></div>
                     </div>
-                    <div class="schedule-body"></div>
+                      <div class="schedule-body"></div>
+                    </div>
                   </div>
                 </div>
               </section>
@@ -405,7 +389,7 @@
                   </div>
                 </div>
               </section>
-              <section class="section is-active" data-page="vacation">
+              <section class="section" data-page="vacation">
                 <div class="dashboard vacation">
                   <div class="schedule-top">
                     <div class="schedule-title">
@@ -438,50 +422,31 @@
 
                     <div class="schedule-mode">
                       <button class="schedule-save">확정하기</button>
-                      <button class="view-mode day active">일</button>
-                      <button class="view-mode week">주</button>
-                      <button class="view-mode month">월</button>
+                      <button type="button" class="view-mode day active">
+                        일
+                      </button>
+                      <button type="button" class="view-mode week">주</button>
+                      <button type="button" class="view-mode month">월</button>
                     </div>
                   </div>
                   <div class="schedule-board">
                     <div class="time-header">
                       <div class="check-all-header">
                         <label class="check-all">
-                          <input type="checkbox" id="checkAll" />
+                          <input
+                            type="checkbox"
+                            class="checkAll"
+                            data-scope="vacation"
+                          />
                           <span class="check-all-txt">전체</span>
                         </label>
                       </div>
-                      <div class="employee-col"></div>
-                      <div class="am-pm">
-                        <div class="time-col">AM</div>
-                        <div class="time-col">PM</div>
-                      </div>
-                      <div class="time-scale">
-                        <span>12</span>
-                        <span>1</span>
-                        <span>2</span>
-                        <span>3</span>
-                        <span>4</span>
-                        <span>5</span>
-                        <span>6</span>
-                        <span>7</span>
-                        <span>8</span>
-                        <span>9</span>
-                        <span>10</span>
-                        <span>11</span>
-                        <span>12</span>
-                        <span>1</span>
-                        <span>2</span>
-                        <span>3</span>
-                        <span>4</span>
-                        <span>5</span>
-                        <span>6</span>
-                        <span>7</span>
-                        <span>8</span>
-                        <span>9</span>
-                        <span>10</span>
-                        <span>11</span>
-                      </div>
+                      <div class="empt"></div>
+                      <div
+                        class="schedule-header-main"
+                        id="scheduleHeaderMain"
+                      ></div>
+                      
                     </div>
                     <div class="vacation-body"></div>
                   </div>
