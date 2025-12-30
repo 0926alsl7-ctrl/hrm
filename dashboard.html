@@ -20,9 +20,11 @@
     <link rel="stylesheet" href="style.css" />
     <link rel="stylesheet" href="m-style.css" media="(max-width:768px)" />
     <script src="jquery-3.7.1.min.js"></script>
+    <script src="data.js" defer></script>
     <script src="dashboard.js" defer></script>
     <script src="schedule.js" defer></script>
     <script src="approval.js" defer></script>
+    <script src="contract.js" defer></script>
   </head>
   <body>
     <div class="wrap">
@@ -304,7 +306,7 @@
                   </div>
                 </div>
               </section>
-              <section class="section is-active" data-page="schedule">
+              <section class="section" data-page="schedule">
                 <div class="dashboard schedule">
                   <div class="schedule-top">
                     <div class="schedule-title">
@@ -479,23 +481,23 @@
                       </button>
                     </div>
                     <div class="approval-filters">
-                      <div class="approval-filters-img">
+                      <div class="approval-filters-img filter-btn active" data-filter="all">
                         <img src="images/filter2.svg" alt="filter" />
                       </div>
-                      <button class="filter-btn active" data-filter="vacation">
+                      <button class="filter-btn" data-filter="vacation">
                         휴가 신청
                       </button>
                       <button class="filter-btn" data-filter="schedule">
                         근무일정 변경
                       </button>
-                      <button class="filter-btn" data-filter="schedule">
+                      <button class="filter-btn" data-filter="trip">
                         출장 신청
                       </button>
                       <button class="filter-btn" data-filter="payroll">
                         연장근무 신청
                       </button>
-                      <button class="filter-btn" data-filter="contract">
-                        전자계약
+                      <button class="filter-btn" data-filter="etc">
+                        기타
                       </button>
                     </div>
                   </div>
@@ -511,30 +513,16 @@
                         <span class="approval-head-txt">상태</span>
                       </div>
                       <div class="approval-action">
-                        <span class="approval-head-txt">결재</span>
+                        <span class="approval-head-txt">관리</span>
                       </div>
                     </div>
                     <div class="approval-board-body">
-                      <div class="approval-item" style="cursor: default">
-                        <span class="approval-body-txt">휴가 생성</span>
-                      </div>
-                      <div class="approval-content">
-                        <span class="approval-body-txt"
-                          >6월 7일 (목) / 반차(오전)</span
-                        >
-                      </div>
-                      <div class="approval-status">
-                        <button class="approval-status-wait">승인 대기</button>
-                      </div>
-                      <div class="approval-action">
-                        <button class="approve-btn">승인</button>
-                        <button class="reject-btn">거절</button>
-                      </div>
+                      
                     </div>
                   </div>
                 </div>
               </section>
-              <section class="section" data-page="contract">
+              <section class="section is-active" data-page="contract">
                 <div class="dashboard contract">
                   <div class="schedule-top">
                     <div class="schedule-title">
@@ -764,8 +752,8 @@
               <label for="">
                 <span class="approval-detail-row-title">요청자</span>
                 <div class="approval-employee-detail">
-                  <span class="approval-employee-name">강대희</span>
-                  <span class="approval-employee-job">(Managment)</span>
+                  <span class="approval-employee-name"></span>
+                  <span class="approval-employee-job"></span>
                 </div>
               </label>
             </div>
@@ -898,16 +886,16 @@
         <div class="contract-request-content modal-content">
           <div class="contract-request-modal-row">
             <h5 class="modal-subtitle-text">템플릿</h5>
-            <select name="" id="">
+            <select name="contractTemplate" id="contract-template-select">
               <option value="">선택</option>
-              <option value="">근로계약서</option>
-              <option value="">정보보호 서약서</option>
-              <option value="">연차휴가 사용 촉진서</option>
-              <option value="">연차 휴가 사용 계획서 1차</option>
-              <option value="">연차 휴가 사용 계획서 2차</option>
-              <option value="">연봉계약서</option>
-              <option value="">사내 업무 협조 요청서</option>
-              <option value="">근로자 개인정보 수집/활용 동의서</option>
+              <option value="contract-work">근로계약서</option>
+              <option value="contract-protect">정보보호 서약서</option>
+              <option value="contract-vacation">연차휴가 사용 촉진서</option>
+              <option value="contract-vacation-plan1">연차 휴가 사용 계획서 1차</option>
+              <option value="contract-vacation-plan2">연차 휴가 사용 계획서 2차</option>
+              <option value="contract-salary">연봉계약서</option>
+              <option value="contract-internal">사내 업무 협조 요청서</option>
+              <option value="contract-personal-inefo">근로자 개인정보 수집/활용 동의서</option>
             </select>
           </div>
           <div class="contract-request-modal-row">
