@@ -648,7 +648,7 @@ body.darkmode {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 16px;
+  margin-bottom: 12px;
 }
 .schedule-top .schedule-title {
   display: flex;
@@ -675,7 +675,7 @@ body.darkmode {
 .dashboard.schedule .help-btn::before {
   content: "근로/휴게시간을 계획하고 각종 근로제도 및 근무유형에 대응합니다";
   position: absolute;
-  bottom: -26px;
+  bottom: -22px;
   left: 0;
   font-size: 11px;
   color: var(--grayColor700);
@@ -878,10 +878,12 @@ body.darkmode {
   padding-bottom: 4px;
   line-height: 1.4;
 }
-.week-days span:nth-child(1) {
+.week-days span:nth-child(1),
+.month-header span:nth-child(1) {
   color: var(--redColor500);
 }
-.week-days span:nth-child(7) {
+.week-days span:nth-child(7),
+.month-header span:nth-child(7) {
   color: var(--blueColor500);
 }
 .week-dates .is-outside,
@@ -891,7 +893,7 @@ body.darkmode {
 .week-dates .is-today,
 .week-days .is-today {
   font-weight: 700;
-  background: var(--grayOpacity100);
+  /* background: var(--grayOpacity100); */
   color: var(--mainTextColor);
 }
 .week-dates .is-today {
@@ -902,26 +904,65 @@ body.darkmode {
   position: relative;
   border-radius: 0 0 100px 100px;
 }
-body[data-view-mode="month"] .check-all-header {
+body[data-view-mode="month"] .check-all-header,
+body[data-view-mode="month"] .time-header,
+body[data-view-mode="month"] .schedule-save {
   display: none;
 }
-.month-calendar {
-  padding: 12px;
+body[data-view-mode="month"] .schedule-board {
+  border-radius: 0;
+  padding: 10px 24px;
 }
+/* body[data-view-mode="month"] .schedule-body {
+  width: calc(100% - 30px);
+} */
+
+/* .month-calendar {
+  width: 100%;
+ min-width: 768px;
+  max-width: 1300px; 
+} */
 
 .month-header,
 .month-grid {
+  gap: 18px;
   display: grid;
   grid-template-columns: repeat(7, 1fr);
 }
-
-.month-day {
-  border: 1px solid #eee;
-  min-height: 110px;
-  padding: 6px;
+.month-header {
+  padding: 12px 0;
+  border-radius: 8px;
+  margin-bottom: 24px;
+  text-align: center;
+  color: var(--mainTextColor);
+  font-weight: 600;
+  background: var(--grayColor50);
   font-size: 12px;
 }
+.month-grid {
+  background: #fff;
+}
 
+.month-day {
+  position: relative;
+  cursor: pointer;
+  border-radius: 8px;
+  min-height: 88px;
+  padding: 11px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 11px;
+  color: var(--grayColor400);
+}
+.month-day:hover {
+  color: var(--mainTextColor);
+  background-color: var(--grayColor50);
+}
+.month-day.is-today {
+  color: var(--mainTextColor);
+  background-color: var(--grayColor50);
+}
 .month-day .date {
   font-weight: 600;
   margin-bottom: 4px;
@@ -932,17 +973,38 @@ body[data-view-mode="month"] .check-all-header {
   align-items: center;
   gap: 4px;
   cursor: pointer;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.month-day:not(.is-today) .count-dot {
+  background: var(--grayColor50);
+  color: var(--grayColor500);
+}
+.count-dot {
+  background: var(--redColor500);
+  color: #fff;
+  font-size: 8px;
+  border-radius: 100%;
+  text-align: center;
+  align-content: center;
+  position: absolute;
+  right: 8px;
+  top: 8px;
+  width: 16px;
+  height: 16px;
 }
 
 .month-item .dot {
   width: 6px;
   height: 6px;
   border-radius: 50%;
+  flex-shrink: 0;
 }
 
 .month-tooltip {
   position: absolute;
-  background: #111;
+  background: var(--darkFloatBackground);
   color: #fff;
   padding: 8px;
   border-radius: 6px;
@@ -952,6 +1014,16 @@ body[data-view-mode="month"] .check-all-header {
 }
 .month-tooltip.show {
   display: block;
+}
+
+.month-tooltip .line1 span {
+  padding: 2px 4px;
+  border-radius: 4px;
+  font-size: 10px;
+}
+.month-tooltip .line1,
+.month-tooltip .line2 {
+  padding: 3px 0;
 }
 
 .schedule-row {
@@ -1145,35 +1217,46 @@ body[data-view-mode="week"] .timeline {
   width: 6px !important;
   border-radius: 50%;
 }
+.dept {
+  color: #fff;
+  padding: 4px 6px;
+  border-radius: 4px;
+}
 .shift.red,
 .job.red,
-.dept-Management {
+.dept-Management,
+.month-item .dot.red {
   background: #fb8890;
 }
 
 .shift.blue,
 .job.blue,
-.dept-Sales {
+.dept-Sales,
+.month-item .dot.blue {
   background: #64a8ff;
 }
 .shift.purple,
 .job.purple,
-.dept-Marketing {
+.dept-Marketing,
+.month-item .dot.purple {
   background: #c770e4;
 }
 .shift.yellow,
 .job.yellow,
-.dept-Design {
+.dept-Design,
+.month-item .dot.yellow {
   background: #ffdd78;
 }
 .shift.green,
 .job.green,
-.dept-Production {
+.dept-Production,
+.month-item .dot.green {
   background: #3fd599;
 }
 .shift.orange,
 .job.orange,
-.dept-RD {
+.dept-RD,
+.month-item .dot.orange {
   background: #ffbd51;
 }
 .shift.gray {
@@ -1185,6 +1268,9 @@ body[data-view-mode="week"] .timeline {
 }
 .shift.dimmed {
   opacity: 0.35;
+}
+.dot.gray {
+  background: var(--grayColor700);
 }
 .job.gray {
   background: var(--grayColor100) !important;
@@ -1201,6 +1287,9 @@ body.show-vacation .shift:not(.vacation) {
   opacity: 0.7;
   pointer-events: none !important;
 }
+/* body.show-vacation .schedule-save {
+  display: none;
+} */
 
 .shift.vacation {
   /* background: repeating-linear-gradient(
@@ -1708,11 +1797,12 @@ body.show-vacation .shift:not(.vacation) {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 14px;
+  margin-bottom: 16px;
+  padding-bottom: 16px;
+  border-bottom: 2px solid var(--grayColor100);
 }
 .row-action-card-head {
   padding-bottom: 20px;
-  border-bottom: 2px solid var(--grayColor100);
 }
 .modal-title-text {
   color: var(--mainTextColor);
@@ -1733,14 +1823,12 @@ body.show-vacation .shift:not(.vacation) {
 .action {
   width: 100%;
   display: flex;
+  justify-content: right;
   align-items: center;
   gap: 6px;
-  margin-bottom: 12px;
+  margin: 14px 0;
 }
-.row-action-modal-action {
-  justify-content: right;
-  margin-top: 10px;
-}
+
 .row-action-modal-shedule-text .name {
   font-size: 17px;
   font-weight: 700;
@@ -1801,13 +1889,98 @@ body.show-vacation .shift:not(.vacation) {
   background: var(--btn-dagner-weak-bg);
   color: var(--btn-dagnger-weak-color);
 }
+.month-saved-modal-card {
+  width: 420px;
+}
+.month-saved-modal-content {
+  font-size: 13px;
+}
+.month-saved-modal-content .dept {
+  font-size: 11px;
+}
+.month-saved-modal-content .name {
+  color: var(--mainTextColor);
+  font-size: 13px;
+  font-weight: 600;
+}
+.month-saved-modal-action .edit.disabled {
+  opacity: 0.4;
+}
+.month-item-row {
+  display: grid;
+  grid-template-columns: 20px 1fr auto auto;
+  gap: 8px;
+  align-items: center;
+  padding: 10px 12px;
+  cursor: pointer;
+}
+
+.month-item-row:hover {
+  background: #f8f9fa;
+}
+.month-item-row input {
+  display: none;
+}
+.month-saved-modal .check-all-btn {
+  background: var(--btn-bg-base);
+  color: var(--btn-color-base);
+  border-radius: var(--btn-border-radius);
+  line-height: var(--btn-line-height);
+  padding: 4px 7px;
+  font-size: 12px;
+  margin-bottom: 4px;
+}
+.month-saved-modal .check-all-btn.active {
+  background: var(--blueColor500);
+  color: #fff;
+  border-radius: var(--btn-border-radius);
+  line-height: var(--btn-line-height);
+  padding: 4px 7px;
+  font-size: 12px;
+}
+
+.check-ui {
+  appearance: none;
+  width: 16px;
+  height: 16px;
+  border-radius: 8px;
+  background-color: #fff;
+  border: 1px solid var(--grayColor300);
+  cursor: pointer;
+  position: relative;
+  transition: all 0.18s ease;
+  margin-right: 10px;
+  flex-shrink: 0;
+}
+
+.month-item-row input:checked + .check-ui {
+  background: #3182f6;
+  border-color: #3182f6;
+}
+.check-ui::after {
+  content: "";
+  position: absolute;
+  left: 4px;
+  top: 2px;
+  width: 3px;
+  height: 6px;
+  border: solid #fff;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg) scale(0);
+  opacity: 0;
+  transition: all 0.15s ease;
+}
+.check-ui:active {
+  transform: scale(0.9);
+}
+.month-item-row input:checked + .check-ui::after {
+  transform: rotate(45deg) scale(1);
+  opacity: 1;
+}
 .approve-modal-card {
   width: 360px;
 }
-.approve-action-card-head {
-  padding-bottom: 20px;
-  border-bottom: 2px solid var(--grayColor100);
-}
+
 .approve-modal-head {
   display: flex;
   flex-direction: column;
@@ -1825,7 +1998,6 @@ body.show-vacation .shift:not(.vacation) {
   font-size: 12px;
 }
 .approve-modal-action {
-  justify-content: right;
   padding-top: 20px;
 }
 .approve-modal-action .approval {
@@ -1840,7 +2012,6 @@ body.show-vacation .shift:not(.vacation) {
   width: 360px;
 }
 .reject-modal-action {
-  justify-content: right;
   padding-top: 20px;
 }
 .reject-modal-action .approval {
@@ -1874,10 +2045,7 @@ body.show-vacation .shift:not(.vacation) {
 .approval-detail-modal-card {
   width: 480px;
 }
-.approval-detail-card-head {
-  padding-bottom: 16px;
-  border-bottom: 2px solid var(--grayColor100);
-}
+
 .approval-detail-content {
   display: flex;
   width: 100%;
@@ -1929,10 +2097,7 @@ body.show-vacation .shift:not(.vacation) {
   outline: none;
   appearance: none;
 }
-.contract-request-card-head {
-  padding-bottom: 16px;
-  border-bottom: 2px solid var(--grayColor100);
-}
+
 .contract-request-card {
   width: 520px;
   max-width: 550px;
@@ -1976,6 +2141,7 @@ body.show-vacation .shift:not(.vacation) {
   background: var(--btn-bg-base);
   color: var(--btn-color-base);
 }
+
 .modal-request-checkbox {
   appearance: none;
   width: 16px;
@@ -2021,9 +2187,7 @@ body.show-vacation .shift:not(.vacation) {
 .modal-request-checkbox:active {
   transform: scale(0.9);
 }
-.contract-request-action {
-  justify-content: right;
-}
+
 #contract-request-message::placeholder {
   color: var(--grayColor500);
   font-size: 12px;

@@ -38,25 +38,6 @@ const todayBtns = document.querySelectorAll(".today-btn");
 const mixToggle = document.getElementById("mixToggle");
 const scheduleHeaderMain = document.getElementById("scheduleHeaderMain");
 
-// // (1) 직무
-// const jobByDept = {
-//   Management: "Management",
-//   Sales: "Sales",
-//   Marketing: "Marketing",
-//   Design: "Design",
-//   Production: "Production",
-//   "R&D": "R&D",
-// };
-
-// // (2) 직원
-// const employeesData = {
-//   Management: ["정희석", "강대희", "이민", "권동주", "김준성", "권동현"],
-//   Sales: ["이유정", "김민석", "김민지", "이유준", "이은빈", "김태환"],
-//   Marketing: ["정하늘", "이담희", "정승훈", "김성길", "강대웅"],
-//   Design: ["하다경", "이기자", "한진수", "박지원", "이은수", "권민지"],
-//   Production: ["김형선", "이동욱", "이진", "김여원", "박채린"],
-//   "R&D": ["김민이", "심진우", "진예진", "강민서", "최소윤", "장재영"],
-// };
 /* ======================================================
    상태
 ====================================================== */
@@ -180,26 +161,31 @@ function isOverlap(a, b) {
   return toMin(a.start) < toMin(b.end) && toMin(b.start) < toMin(a.end);
 }
 
+const DAY_START = 1 * 60;
+const DAY_END = 24 * 60;
+const DAY_RANGE = DAY_END - DAY_START;
+
 function calcPosition(start, end) {
-  const startMin = start
-    ? Number(start.split(":")[0]) * 60 + Number(start.split(":")[1])
-    : 0;
-  const endMin = end
-    ? Number(end.split(":")[0]) * 60 + Number(end.split(":")[1])
-    : startMin;
-  const left = (startMin / 1440) * 100;
-  const width = ((endMin - startMin) / 1440) * 100;
+  const toMin = (t) => {
+    const [h, m] = t.split(":").map(Number);
+    return h * 60 + m;
+  };
+
+  const startMin = Math.max(toMin(start), DAY_START);
+  const endMin = Math.min(toMin(end), DAY_END);
+
+  const left = ((startMin - DAY_START) / DAY_RANGE) * 100;
+  const width = ((endMin - startMin) / DAY_RANGE) * 100;
+
   return { left, width };
 }
 
 function calcPositonWeek(item) {
-  const startOfWeek = getWeekStart(currentDate);
-  const itemDate = new Date(item.date || currentDate);
-
-  const dayIndex = itemDate.getDay();
+  const itemDate = new Date(item.date); // item 자체가 가진 날짜를 써야 함
+  const dayIndex = itemDate.getDay(); // 0(일) ~ 6(토)
 
   const left = (dayIndex / 7) * 100;
-  const width = 100 / 7;
+  const width = (1 / 7) * 100; // 한 칸의 너비는 무조건 1/7
   return { left, width };
 }
 
@@ -223,16 +209,22 @@ function showMonthTooltip(target, item) {
     document.body.appendChild(tip);
   }
 
+  const safeDept = item.dept.replace(/[^a-zA-Z0-9_-]/g, "");
+
   tip.innerHTML = `
+    <div class = line1>
     <strong>${item.name}</strong>
-    <div>${item.dept}</div>
-    <div>${item.jobText}</div>
-    <div>${item.start} ~ ${item.end}</div>
+    <span class="dept-${safeDept}">(${item.dept})</span>
+    </div>
+    <div class = line2>
+    <span>${item.jobText}</span>
+    (${item.start} - ${item.end})
+    </div>
   `;
 
   const rect = target.getBoundingClientRect();
-  tip.style.top = rect.bottom + window.scrollY + 6 + "px";
-  tip.style.left = rect.left + "px";
+  tip.style.top = rect.top + window.scrollY + "px";
+  tip.style.left = rect.right + 8 + "px";
   tip.classList.add("show");
 }
 
@@ -289,8 +281,15 @@ dept.onchange = () => {
    fake picker
 ====================================================== */
 fakeDate.onclick = () => workDate.showPicker?.() || workDate.click();
-fakeStart.onclick = () => startTime.showPicker?.() || startTime.click();
-fakeEnd.onclick = () => endTime.showPicker?.() || endTime.click();
+fakeStart.onclick = () => {
+  if (startTime.disabled) return;
+  startTime.showPicker?.() || startTime.click();
+};
+
+fakeEnd.onclick = () => {
+  if (endTime.disabled) return;
+  endTime.showPicker?.() || endTime.click();
+};
 
 setToday.onclick = () => {
   workDate.value = new Date().toISOString().slice(0, 10);
@@ -338,6 +337,7 @@ confirmBtn.onclick = () => {
   const item = {
     id: editingId || crypto.randomUUID(),
     type: manageMode,
+    date: workDate.value,
     dept: dept.value,
     name: emp.value,
     job: job.value,
@@ -353,22 +353,23 @@ confirmBtn.onclick = () => {
     end,
   };
 
-  if (manageMode === "vacation" && mixToggle.checked) {
+  if (viewMode === "month") {
     saved[workDate.value] ??= [];
     saved[workDate.value].push(item);
     localStorage.setItem("schedules", JSON.stringify(saved));
-  } else {
-    drafts[workDate.value] ??= [];
-
-    if (editingId) {
-      const i = drafts[workDate.value].findIndex((v) => v.id === editingId);
-      drafts[workDate.value][i] = item;
-    } else {
-      drafts[workDate.value].push(item);
-    }
+    modal.classList.remove("is-open");
+    resetForm();
+    render();
+    return;
   }
 
-  /* ============================ */
+  drafts[workDate.value] ??= [];
+  if (editingId) {
+    const i = drafts[workDate.value].findIndex((v) => v.id === editingId);
+    drafts[workDate.value][i] = item;
+  } else {
+    drafts[workDate.value].push(item);
+  }
 
   modal.classList.remove("is-open");
   resetForm();
@@ -387,26 +388,41 @@ function render() {
     return;
   }
 
-  const draftsToday = drafts[currentDate] || [];
-  const savedToday = saved[currentDate] || [];
+  let dates = [];
 
-  const ordered = [...draftsToday, ...savedToday].sort((a, b) => {
-    if (a.type === b.type) {
-      return a.name.localeCompare(b.name);
+  if (viewMode === "day") {
+    dates = [currentDate];
+  } else if (viewMode === "week") {
+    const start = getWeekStart(currentDate);
+    for (let i = 0; i < 7; i++) {
+      const d = new Date(start);
+      d.setDate(start.getDate() + i);
+      dates.push(d.toISOString().slice(0, 10));
     }
-    return a.type === "work" ? -1 : 1;
+  }
+
+  const allItems = [];
+
+  dates.forEach((date) => {
+    (drafts[date] || []).forEach((i) => allItems.push(i));
+    (saved[date] || []).forEach((i) => allItems.push(i));
   });
 
-  const allItems = [...savedToday, ...draftsToday].filter((item) => {
-    if (!mixToggle.checked) return item.type !== "vacation";
-    return true;
+  const filtered = allItems.filter((item) => {
+    if (mixToggle.checked) {
+      return item.type === "vacation";
+    }
+    return item.type === "work";
   });
 
+  // 기존 grouped 로직을 아래 의도로 이해하고 수정 위치를 잡으세요.
   const grouped = {};
-  allItems.forEach((item) => {
-    const key = item.name;
-    grouped[key] ??= [];
-    grouped[key].push(item);
+  filtered.forEach((item) => {
+    // 주 모드일 때는 같은 사람이라도 날짜가 다르면 다른 줄에 나오게 하거나,
+    // 혹은 한 줄에 나오게 하려면 renderRow의 timeline 구조를 바꿔야 합니다.
+    // 님은 "같은 사람 = 한 줄"을 원하시므로 아래처럼 유지하되 renderRow를 고칩니다.
+    grouped[item.name] ??= [];
+    grouped[item.name].push(item);
   });
 
   Object.values(grouped).forEach((items) => {
@@ -445,7 +461,8 @@ function renderRow(items, target = body) {
   const base = work || vacation;
   if (!base) return;
 
-  const isDraft = drafts[currentDate]?.some((d) => d.id === base.id);
+  const rowDate = base.date;
+  const isDraft = drafts[rowDate]?.some((d) => d.id === base.id);
 
   const workHours = calcNetWorkHours(items);
   const hasWork = items.some((v) => v.type === "work");
@@ -454,16 +471,15 @@ function renderRow(items, target = body) {
     "beforeend",
     `
     <div class="schedule-row ${isDraft ? "draft" : "saved"}"
+        data-id="${base.id}"
          data-name="${base.name}"
-         data-date="${currentDate}">
+         data-date="${rowDate}">
 
       <div class="row-check-wrap">
         <input type="checkbox" class="row-check" 
-        data-type="work"
-        data-name="${base.name}" data-date="${currentDate}"
-        
-
-
+        data-type="${base.type}"
+        data-name="${base.name}"
+        data-date="${rowDate}"
         ${isDraft ? "" : "disabled"} />
       </div>
 
@@ -491,12 +507,7 @@ function renderRow(items, target = body) {
       </div>
 
       <div class="timeline">
-        ${vacation ? renderShift(vacation, true) : ""}
-        ${
-          work
-            ? renderShift(work, false, vacation && isOverlap(work, vacation))
-            : ""
-        }
+  ${items.map((item) => renderShift(item, item.type === "vacation")).join("")}
       </div>
 
         ${
@@ -542,7 +553,12 @@ function renderShift(item, isVacation, dimmed = false) {
    style="left:${pos.left}%; width:${pos.width}%; ${
     isVacation ? "z-index:2;" : ""
   }">
-  ${item.start} - ${item.end}<small>${item.jobText || ""}</small>
+
+    ${
+      viewMode === "week"
+        ? `<small>${item.jobText || ""}</small>`
+        : `${item.start} - ${item.end}<small>${item.jobText || ""}</small>`
+    }
     </div>
   `;
 }
@@ -567,7 +583,6 @@ function renderMonth() {
   const startDay = firstDay.getDay();
   const lastDate = new Date(year, month + 1, 0).getDate();
 
-  // 앞 빈칸
   for (let i = 0; i < startDay; i++) {
     grid.appendChild(document.createElement("div"));
   }
@@ -581,16 +596,48 @@ function renderMonth() {
     cell.className = "month-day";
     cell.innerHTML = `<div class="date">${d}</div>`;
 
+    cell.onclick = () => {
+      openMonthSavedModal(dateStr);
+    };
+
+    const todayStr = new Date().toISOString().slice(0, 10);
+    if (dateStr === todayStr) {
+      cell.classList.add("is-today");
+    }
+
     const items = saved[dateStr] || [];
 
-    items.forEach((item) => {
+    const filtered = items.filter((item) => {
+      if (mixToggle.checked) return item.type === "vacation";
+      return item.type === "work";
+    });
+
+    if (filtered.length > 0) {
+      cell
+        .querySelector(".date")
+        .insertAdjacentHTML(
+          "beforeend",
+          `<span class="count-dot">${filtered.length}</span>`
+        );
+    }
+
+    filtered.slice(0, 3).forEach((item) => {
       const el = document.createElement("div");
-      el.className = `month-item ${item.type} ${item.job}`;
+      el.className = "month-item";
+
+      const text =
+        item.type === "vacation"
+          ? `${item.name} (${item.jobText})`
+          : `${item.name} (${item.start} ~ ${item.end})`;
+
+      const dotClass = item.type === "vacation" ? "gray" : item.job;
+
       el.innerHTML = `
-        <span class="dot"></span>
-        <span class="text">${item.name} (${item.dept})</span>
+        <span class="dot ${dotClass}"></span>
+        <span class="text">${text}</span>
       `;
 
+      el.onclick = () => openMonthSavedModal(dateStr);
       el.onmouseenter = () => showMonthTooltip(el, item);
       el.onmouseleave = hideMonthTooltip;
 
@@ -601,6 +648,112 @@ function renderMonth() {
   }
 }
 
+function openMonthSavedModal(date) {
+  const modal = document.querySelector(".month-saved-modal");
+  const titleEl = modal.querySelector(".month-saved-modal-text");
+  const content = modal.querySelector(".month-saved-modal-content");
+  const checkAllBtn = modal.querySelector(".check-all-btn");
+  const editBtn = modal.querySelector(".edit");
+  const deleteBtn = modal.querySelector(".delete");
+
+  const d = new Date(date);
+  const titleDate = `${String(d.getFullYear()).slice(2)}/${String(
+    d.getMonth() + 1
+  ).padStart(2, "0")}/${String(d.getDate()).padStart(2, "0")}`;
+
+  titleEl.textContent = `${titleDate} ${
+    mixToggle.checked ? "휴가일정 변경" : "근무일정 변경"
+  }`;
+
+  const items = (saved[date] || []).filter((item) =>
+    mixToggle.checked ? item.type === "vacation" : item.type === "work"
+  );
+
+  content.innerHTML = items
+    .map((item) => {
+      const safeDept = item.dept.replace(/[^a-zA-Z0-9_-]/g, "");
+      return `
+      <label class="month-item-row">
+        <input type="checkbox" data-id="${item.id}" />
+        <span class="check-ui"></span>
+
+        <span class="name">
+          ${item.name}
+          <span class="dept dept-${safeDept}">(${item.dept})</span>
+        </span>
+
+        <span class="job">[${item.jobText || ""}]</span>
+        <span class="time">${item.start} ~ ${item.end}</span>
+      </label>
+    `;
+    })
+    .join("");
+
+  const checkboxes = [...content.querySelectorAll("input[type='checkbox']")];
+
+  /* ---------- 상태 업데이트 ---------- */
+  function updateButtonState() {
+    const checkedCount = checkboxes.filter((c) => c.checked).length;
+
+    const disableEdit = checkedCount > 1;
+    editBtn.disabled = disableEdit;
+    editBtn.classList.toggle("disabled", disableEdit);
+
+    // 삭제: 1개 이상이면 가능
+    deleteBtn.disabled = checkedCount === 0;
+    deleteBtn.classList.toggle("disabled", checkedCount === 0);
+  }
+
+  checkboxes.forEach((chk) =>
+    chk.addEventListener("change", updateButtonState)
+  );
+
+  /* ---------- 전체 선택 ---------- */
+  checkAllBtn.style.display = "inline-flex";
+  checkAllBtn.onclick = () => {
+    const allChecked = checkboxes.every((c) => c.checked);
+    checkboxes.forEach((c) => (c.checked = !allChecked));
+    checkAllBtn.classList.toggle("active", !allChecked);
+    updateButtonState();
+  };
+
+  updateButtonState();
+
+  /* ---------- 수정 ---------- */
+  editBtn.onclick = () => {
+    if (editBtn.disabled) return;
+
+    const checked = checkboxes.find((c) => c.checked);
+    if (!checked) return;
+
+    openEditModal(checked.dataset.id, date);
+    modal.classList.add("is-hidden");
+  };
+
+  /* ---------- 삭제 ---------- */
+  deleteBtn.onclick = () => {
+    const checked = checkboxes.filter((c) => c.checked);
+    if (!checked.length) return;
+
+    if (!confirm("선택한 일정을 삭제하시겠습니까?")) return;
+
+    saved[date] = saved[date].filter(
+      (v) => !checked.some((c) => c.dataset.id === v.id)
+    );
+    localStorage.setItem("schedules", JSON.stringify(saved));
+    modal.classList.add("is-hidden");
+    render();
+  };
+
+  /* ---------- 닫기 ---------- */
+  modal.querySelector(".close").onclick = () => {
+    modal.classList.add("is-hidden");
+  };
+
+  modal.classList.remove("is-hidden");
+}
+
+// view-mode header
 function getDayHeaderHTML() {
   return `
     <div class="day-header">
@@ -609,7 +762,9 @@ function getDayHeaderHTML() {
         <div>PM</div>
       </div>
       <div class="time-scale">
-        ${Array.from({ length: 24 }, (_, i) => `<span>${i}</span>`).join("")}
+        ${Array.from({ length: 24 }, (_, i) => `<span>${i + 1}</span>`).join(
+          ""
+        )}
       </div>
     </div>
   `;
@@ -692,7 +847,6 @@ function handleRowClick(e) {
   const row = e.target.closest(".schedule-row");
   if (!row) return;
 
-  // ✅ [여기!!!] 휴가 토글 ON + 근무 shift 클릭 차단
   if (
     mixToggle.checked &&
     clickedShift &&
@@ -756,11 +910,6 @@ function openEditModal(id, date) {
   const item = list.find((v) => v.id === id);
   if (!item) return;
 
-  saved[date] = list.filter((v) => v.id !== id);
-
-  drafts[date] ??= [];
-  drafts[date].push(item);
-
   editingId = id;
   manageMode = item.type;
   applyForm();
@@ -778,9 +927,6 @@ function openEditModal(id, date) {
   endTime.value = item.end;
   fakeStartText.textContent = item.start;
   fakeEndText.textContent = item.end;
-
-  localStorage.setItem("schedules", JSON.stringify(saved));
-  render();
 }
 
 function deleteSavedItem(id, date) {
@@ -879,10 +1025,10 @@ saveBtns.forEach((saveBtn) => {
     }
 
     checked.forEach((chk) => {
-      const { type, name, date } = chk.dataset;
+      const { name, date } = chk.dataset;
 
       const list = drafts[date] || [];
-      const idx = list.findIndex((v) => v.name === name && v.type === type);
+      const idx = list.findIndex((v) => v.name === name);
       if (idx === -1) return;
 
       const item = list[idx];
@@ -986,12 +1132,14 @@ function applyForm() {
   endTime.disabled = manageMode === "vacation";
 }
 // viewmode 적용
-document.querySelectorAll(".view-mode").forEach((btn) => {
+document.querySelectorAll(".schedule .view-mode").forEach((btn) => {
   btn.onclick = () => {
     document
-      .querySelectorAll(".view-mode")
+      .querySelectorAll(".schedule .view-mode")
       .forEach((b) => b.classList.remove("active"));
+
     btn.classList.add("active");
+
     viewMode = btn.classList.contains("day")
       ? "day"
       : btn.classList.contains("week")
@@ -999,6 +1147,28 @@ document.querySelectorAll(".view-mode").forEach((btn) => {
       : "month";
 
     document.body.dataset.viewMode = viewMode;
+
+    updateDateText();
+    renderTimeHeader();
+    render();
+  };
+});
+document.querySelectorAll(".vacation .view-mode").forEach((btn) => {
+  btn.onclick = () => {
+    document
+      .querySelectorAll(".vacation .view-mode")
+      .forEach((b) => b.classList.remove("active"));
+
+    btn.classList.add("active");
+
+    viewMode = btn.classList.contains("day")
+      ? "day"
+      : btn.classList.contains("week")
+      ? "week"
+      : "month";
+
+    document.body.dataset.viewMode = viewMode;
+
     updateDateText();
     renderTimeHeader();
     render();
