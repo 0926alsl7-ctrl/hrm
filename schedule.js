@@ -353,28 +353,23 @@ confirmBtn.onclick = () => {
     end,
   };
 
-  if (viewMode === "month") {
+  if (viewMode === "month" || viewMode === "week") {
     saved[workDate.value] ??= [];
     saved[workDate.value].push(item);
     localStorage.setItem("schedules", JSON.stringify(saved));
-    modal.classList.remove("is-open");
-    resetForm();
-    render();
-    return;
-  }
-
-  drafts[workDate.value] ??= [];
-  if (editingId) {
-    const i = drafts[workDate.value].findIndex((v) => v.id === editingId);
-    drafts[workDate.value][i] = item;
   } else {
-    drafts[workDate.value].push(item);
+    drafts[workDate.value] ??= [];
+    if (editingId) {
+      const i = drafts[workDate.value].findIndex((v) => v.id === editingId);
+      drafts[workDate.value][i] = item;
+    } else {
+      drafts[workDate.value].push(item);
+    }
   }
 
   modal.classList.remove("is-open");
   resetForm();
   render();
-  renderVacation();
 };
 
 /* ======================================================
@@ -463,6 +458,7 @@ function renderRow(items, target = body) {
 
   const rowDate = base.date;
   const isDraft = drafts[rowDate]?.some((d) => d.id === base.id);
+  const statusClass = isDraft ? "draft" : "saved";
 
   const workHours = calcNetWorkHours(items);
   const hasWork = items.some((v) => v.type === "work");
@@ -470,7 +466,7 @@ function renderRow(items, target = body) {
   target.insertAdjacentHTML(
     "beforeend",
     `
-    <div class="schedule-row ${isDraft ? "draft" : "saved"}"
+    <div class="schedule-row ${statusClass}"
         data-id="${base.id}"
          data-name="${base.name}"
          data-date="${rowDate}">
@@ -550,6 +546,8 @@ function renderShift(item, isVacation, dimmed = false) {
   return `
   <div class="shift ${isVacation ? "vacation" : item.job}
   ${dimmed ? "dimmed" : ""}"
+  data-id="${item.id}"
+  data-date="${item.date}"
    style="left:${pos.left}%; width:${pos.width}%; ${
     isVacation ? "z-index:2;" : ""
   }">
@@ -656,100 +654,138 @@ function openMonthSavedModal(date) {
   const editBtn = modal.querySelector(".edit");
   const deleteBtn = modal.querySelector(".delete");
 
+  if (!modal || !content) return;
+  if (checkAllBtn) {
+    checkAllBtn.classList.remove("active");
+  }
+
+  let filterWrap = modal.querySelector(".month-dept-filter");
+  if (!filterWrap) {
+    filterWrap = document.createElement("div");
+    filterWrap.className = "month-dept-filter";
+    modal.querySelector(".modal-card").insertBefore(filterWrap, checkAllBtn);
+  }
+
+  const depts = [
+    "전체",
+    "Management",
+    "Sales",
+    "Marketing",
+    "Design",
+    "Production",
+    "R&D",
+  ];
+  let currentFilter = "전체";
+
   const d = new Date(date);
   const titleDate = `${String(d.getFullYear()).slice(2)}/${String(
     d.getMonth() + 1
   ).padStart(2, "0")}/${String(d.getDate()).padStart(2, "0")}`;
-
   titleEl.textContent = `${titleDate} ${
     mixToggle.checked ? "휴가일정 변경" : "근무일정 변경"
   }`;
 
-  const items = (saved[date] || []).filter((item) =>
-    mixToggle.checked ? item.type === "vacation" : item.type === "work"
-  );
+  // 내부 렌더링 함수
+  function renderFilteredItems() {
+    if (checkAllBtn) checkAllBtn.classList.remove("active");
+    const allItems = (saved[date] || []).filter((item) =>
+      mixToggle.checked ? item.type === "vacation" : item.type === "work"
+    );
 
-  content.innerHTML = items
-    .map((item) => {
-      const safeDept = item.dept.replace(/[^a-zA-Z0-9_-]/g, "");
-      return `
-      <label class="month-item-row">
-        <input type="checkbox" data-id="${item.id}" />
-        <span class="check-ui"></span>
+    const filteredItems = allItems.filter(
+      (item) => currentFilter === "전체" || item.dept === currentFilter
+    );
 
-        <span class="name">
-          ${item.name}
-          <span class="dept dept-${safeDept}">(${item.dept})</span>
-        </span>
+    content.innerHTML = filteredItems
+      .map((item) => {
+        const safeDept = item.dept.replace(/[^a-zA-Z0-9_-]/g, "");
+        return `
+        <label class="month-item-row">
+          <input type="checkbox" data-id="${item.id}" />
+          <span class="check-ui"></span>
+          <span class="name">
+            ${item.name} <span class="dept dept-${safeDept}">(${
+          item.dept
+        })</span>
+          </span>
+          <span class="job">[${item.jobText || ""}]</span>
+          <span class="time">${item.start} ~ ${item.end}</span>
+        </label>
+      `;
+      })
+      .join("");
 
-        <span class="job">[${item.jobText || ""}]</span>
-        <span class="time">${item.start} ~ ${item.end}</span>
-      </label>
-    `;
-    })
-    .join("");
+    const checkboxes = [...content.querySelectorAll("input[type='checkbox']")];
+    const updateButtonState = () => {
+      const checkedCount = checkboxes.filter((c) => c.checked).length;
+      editBtn.disabled = checkedCount !== 1;
+      editBtn.classList.toggle("disabled", checkedCount !== 1);
+      deleteBtn.disabled = checkedCount === 0;
+      deleteBtn.classList.toggle("disabled", checkedCount === 0);
+    };
 
-  const checkboxes = [...content.querySelectorAll("input[type='checkbox']")];
+    checkboxes.forEach((chk) => (chk.onchange = updateButtonState));
+    if (checkAllBtn) {
+      checkAllBtn.onclick = () => {
+        const allChecked =
+          checkboxes.length > 0 && checkboxes.every((c) => c.checked);
+        checkboxes.forEach((c) => (c.checked = !allChecked));
+        checkAllBtn.classList.toggle("active", !allChecked);
+        updateButtonState();
+      };
+    }
 
-  /* ---------- 상태 업데이트 ---------- */
-  function updateButtonState() {
-    const checkedCount = checkboxes.filter((c) => c.checked).length;
-
-    const disableEdit = checkedCount > 1;
-    editBtn.disabled = disableEdit;
-    editBtn.classList.toggle("disabled", disableEdit);
-
-    // 삭제: 1개 이상이면 가능
-    deleteBtn.disabled = checkedCount === 0;
-    deleteBtn.classList.toggle("disabled", checkedCount === 0);
+    updateButtonState();
   }
 
-  checkboxes.forEach((chk) =>
-    chk.addEventListener("change", updateButtonState)
-  );
+  // 필터 버튼 생성
+  filterWrap.innerHTML = depts
+    .map(
+      (deptName) =>
+        `<button type="button" class="dept-filter-btn ${
+          currentFilter === deptName ? "active" : ""
+        }" data-dept="${deptName}">${deptName}</button>`
+    )
+    .join("");
 
-  /* ---------- 전체 선택 ---------- */
-  checkAllBtn.style.display = "inline-flex";
-  checkAllBtn.onclick = () => {
-    const allChecked = checkboxes.every((c) => c.checked);
-    checkboxes.forEach((c) => (c.checked = !allChecked));
-    checkAllBtn.classList.toggle("active", !allChecked);
-    updateButtonState();
+  // 필터 클릭 이벤트 (중복 방지를 위해 함수 할당)
+  filterWrap.onclick = (e) => {
+    const btn = e.target.closest(".dept-filter-btn");
+    if (!btn) return;
+    currentFilter = btn.dataset.dept;
+    filterWrap
+      .querySelectorAll(".dept-filter-btn")
+      .forEach((b) => b.classList.remove("active"));
+    btn.classList.add("active");
+    renderFilteredItems();
   };
 
-  updateButtonState();
-
-  /* ---------- 수정 ---------- */
+  /* ---------- 버튼 액션들 ---------- */
   editBtn.onclick = () => {
-    if (editBtn.disabled) return;
-
-    const checked = checkboxes.find((c) => c.checked);
+    const checked = content.querySelector("input[type='checkbox']:checked");
     if (!checked) return;
-
     openEditModal(checked.dataset.id, date);
     modal.classList.add("is-hidden");
   };
 
-  /* ---------- 삭제 ---------- */
   deleteBtn.onclick = () => {
-    const checked = checkboxes.filter((c) => c.checked);
-    if (!checked.length) return;
-
-    if (!confirm("선택한 일정을 삭제하시겠습니까?")) return;
-
+    const checked = [
+      ...content.querySelectorAll("input[type='checkbox']:checked"),
+    ];
+    if (!checked.length || !confirm("선택한 일정을 삭제하시겠습니까?")) return;
     saved[date] = saved[date].filter(
       (v) => !checked.some((c) => c.dataset.id === v.id)
     );
     localStorage.setItem("schedules", JSON.stringify(saved));
     modal.classList.add("is-hidden");
-    render();
+    render(); // 메인 달력 갱신
   };
 
-  /* ---------- 닫기 ---------- */
-  modal.querySelector(".close").onclick = () => {
+  modal.querySelector(".close").onclick = () =>
     modal.classList.add("is-hidden");
-  };
 
+  // 모달 초기 실행
+  renderFilteredItems();
   modal.classList.remove("is-hidden");
 }
 
@@ -855,12 +891,11 @@ function handleRowClick(e) {
     return;
   }
 
-  const id = row.dataset.id;
-  const date = row.dataset.date;
+  const id = clickedShift ? clickedShift.dataset.id : row.dataset.id;
+  const date = clickedShift ? clickedShift.dataset.date : row.dataset.date;
 
   if (e.target.classList.contains("row-check")) return;
 
-  // draft 삭제
   if (e.target.classList.contains("draft-delete")) {
     if (confirm("삭제하시겠습니까?")) {
       drafts[date] = (drafts[date] || []).filter((v) => v.id !== id);
@@ -869,7 +904,6 @@ function handleRowClick(e) {
     return;
   }
 
-  // draft 수정
   if (e.target.classList.contains("draft-edit")) {
     const item = (drafts[date] || []).find((v) => v.id === id);
     if (!item) return;
@@ -891,11 +925,16 @@ function handleRowClick(e) {
 
     fakeStartText.textContent = item.start;
     fakeEndText.textContent = item.end;
+    workDate.value = date;
+    fakeDateText.textContent = `${new Date(date).getMonth() + 1}월 ${new Date(
+      date
+    ).getDate()}일`;
+
     return;
   }
 
-  if (row.classList.contains("saved")) {
-    openRowActionModal(row, clickedShift);
+  if (row.classList.contains("saved") && clickedShift) {
+    openRowActionModal(row, clickedShift, id, date);
     return;
   }
 
@@ -936,74 +975,55 @@ function deleteSavedItem(id, date) {
   localStorage.setItem("schedules", JSON.stringify(saved));
   render();
 }
-function openRowActionModal(row, clickedShift) {
+function openRowActionModal(row, clickedShift, targetId, targetDate) {
+  if (!clickedShift) return;
   document
     .querySelectorAll(".schedule-row.saved.active")
     .forEach((r) => r.classList.remove("active"));
-
-  // 클릭한 row 활성화
   row.classList.add("active");
+
   const modal = document.querySelector(".row-action-modal");
   if (!modal) return;
 
   const titleEl = modal.querySelector(".row-action-modal-title-text");
   const contentEl = modal.querySelector(".row-action-modal-shedule-text");
 
-  const id = row.dataset.id;
-  const date = row.dataset.date;
+ 
+  const dayItems = saved[targetDate] || [];
+  const targetItem = dayItems.find((item) => item.id === targetId);
 
-  const items = (saved[date] || []).filter(
-    (v) => v.name === row.querySelector(".employee strong").textContent
-  );
-  if (!items.length) return;
-
-  const work = items.find((v) => v.type === "work");
-  const vacation = items.find((v) => v.type === "vacation");
-
-  let base;
-  if (clickedShift?.classList.contains("vacation")) {
-    base = vacation;
-  } else {
-    base = work || vacation;
-  }
+  if (!targetItem) return;
 
   titleEl.textContent =
-    base.type === "vacation" ? "확정 휴가일정 변경" : "확정 근무일정 변경";
+    targetItem.type === "vacation"
+      ? "확정 휴가일정 변경"
+      : "확정 근무일정 변경";
 
-  const hoursText = work ? `${calcNetWorkHours(items)}h` : "";
-  const jobClass = base.type === "vacation" ? "job gray" : `job ${base.job}`;
+  const jobClass =
+    targetItem.type === "vacation" ? "job gray" : `job ${targetItem.job}`;
+  const jobText = `<span class="${jobClass}">${targetItem.jobText}</span>`;
+  const timeText = `${targetItem.start} ~ ${targetItem.end}`;
 
-  const jobText = `
-    <span class="${jobClass}">
-      ${vacation ? vacation.jobText : base.jobText}
-    </span>
-  `;
-
-  const timeText = `${base.start} ~ ${base.end}`;
-
+  // 5. 모달 내용 채우기
   contentEl.innerHTML = `
-  <div class="modal-row line1">
-    <strong class="name">${base.name}</strong>
-    <span class="sub">
-      (${base.dept}${hoursText ? " / " + hoursText : ""})
-    </span>
-  </div>
-
-  <div class="modal-row line2">
-    ${jobText}
-    <span class="time">${timeText}</span>
-  </div>
-`;
+    <div class="modal-row line1">
+      <strong class="name">${targetItem.name}</strong>
+      <span class="sub">(${targetItem.dept})</span>
+    </div>
+    <div class="modal-row line2">
+      ${jobText} <span class="time">${timeText}</span>
+    </div>
+  `;
 
   modal.classList.remove("is-hidden");
 
   modal.querySelector(".edit").onclick = () => {
-    openEditModal(id, date);
+    openEditModal(targetId, targetDate); 
     modal.classList.add("is-hidden");
   };
 
   modal.querySelector(".delete").onclick = () => {
-    deleteSavedItem(id, date);
+    deleteSavedItem(targetId, targetDate); 
     modal.classList.add("is-hidden");
   };
 
@@ -1015,6 +1035,7 @@ function openRowActionModal(row, clickedShift) {
 /* ======================================================
    확정
 ====================================================== */
+/* 기존 saveBtns.forEach 부분을 이 코드로 덮어쓰세요 */
 saveBtns.forEach((saveBtn) => {
   saveBtn.onclick = () => {
     const checked = document.querySelectorAll(".row-check:checked");
@@ -1026,26 +1047,54 @@ saveBtns.forEach((saveBtn) => {
 
     checked.forEach((chk) => {
       const { name, date } = chk.dataset;
-
       const list = drafts[date] || [];
       const idx = list.findIndex((v) => v.name === name);
       if (idx === -1) return;
 
-      const item = list[idx];
+      const newItem = list[idx]; // 지금 확정하려는 일정 (예: 출장 15:00-18:00)
+
+      // [데이터 자르기 로직]
+      if (saved[date]) {
+        saved[date].forEach((existingItem) => {
+          // 같은 사람의 기존 '근무(work)' 일정이 있을 경우에만 작동
+          if (existingItem.name === name && existingItem.type === "work") {
+            // 상황 1: 기존 근무가 진행 중인데 새 일정이 시작됨 (끝부분 자르기)
+            // 예: 기존(09:00-18:00) / 새일정(15:00-18:00) -> 기존을 15:00에 끝냄
+            if (
+              existingItem.start < newItem.start &&
+              existingItem.end > newItem.start
+            ) {
+              existingItem.end = newItem.start;
+            }
+
+            // 상황 2: 새 일정이 끝난 후에 기존 근무가 시작되어야 함 (앞부분 자르기)
+            // 예: 기존(09:00-18:00) / 새일정(09:00-12:00) -> 기존을 12:00에 시작함
+            else if (
+              existingItem.start < newItem.end &&
+              existingItem.end > newItem.end
+            ) {
+              existingItem.start = newItem.end;
+            }
+          }
+        });
+      }
+
       saved[date] ??= [];
-      saved[date].push(item);
+      saved[date].push(newItem);
       list.splice(idx, 1);
     });
 
     localStorage.setItem("schedules", JSON.stringify(saved));
     render();
     renderVacation();
-    document.querySelectorAll(".row-check").forEach((chk) => {
-      chk.checked = false;
-    });
-    document.querySelectorAll(".check-all input").forEach((all) => {
-      all.checked = false;
-    });
+
+    // 체크박스 초기화
+    document
+      .querySelectorAll(".row-check")
+      .forEach((chk) => (chk.checked = false));
+    document
+      .querySelectorAll(".check-all input")
+      .forEach((all) => (all.checked = false));
   };
 });
 

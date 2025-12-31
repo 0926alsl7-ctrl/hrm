@@ -306,7 +306,7 @@
                   </div>
                 </div>
               </section>
-              <section class="section is-active" data-page="schedule">
+              <section class="section" data-page="schedule">
                 <div class="dashboard schedule">
                   <div class="schedule-top">
                     <div class="schedule-title">
@@ -390,7 +390,7 @@
                   </div>
                 </div>
               </section>
-              <section class="section" data-page="vacation">
+              <section class="section is-active" data-page="vacation">
                 <div class="dashboard vacation">
                   <div class="schedule-top">
                     <div class="schedule-title">
@@ -399,9 +399,14 @@
                         <img src="images/help.svg" alt="도움말" />
                       </button>
                     </div>
-                    <button type="button" class="vacation-add-btn">
-                      + 휴가일정 추가하기
-                    </button>
+                    <div class="vacation-btn-group">
+                      <button type="button" class="vacation-rate-btn">
+                        연차휴가 사용률
+                      </button>
+                      <button type="button" class="vacation-add-btn">
+                        + 휴가일정 추가하기
+                      </button>
+                    </div>
                   </div>
                   <div class="schedule-control">
                     <div class="date-nav">
@@ -749,7 +754,7 @@
               <img src="images/close.svg" alt="close" />
             </button>
           </div>
-          <button class="check-all-btn">전체</button>
+          <button class="check-all-btn" data-dept="all">전체</button>
           <div class="month-saved-modal-content modal-content"></div>
           <div class="month-saved-modal-action action">
             <button class="edit">수정</button>

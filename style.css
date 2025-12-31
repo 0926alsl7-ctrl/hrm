@@ -1033,6 +1033,7 @@ body[data-view-mode="month"] .schedule-board {
   align-items: center;
   border-bottom: 1px solid #f1f1f1;
   min-height: 60px;
+  height: auto;
 }
 
 .employee {
@@ -1064,13 +1065,11 @@ body[data-view-mode="month"] .schedule-board {
   );
 }
 body[data-view-mode="week"] .timeline {
-  background: repeating-linear-gradient(
-    to right,
-    #f5f7fa,
-    #f5f7fa 1px,
-    transparent 1px,
-    transparent calc(100% / 7)
-  );
+  background: #fff;
+}
+body[data-view-mode="week"] .timeline small {
+  padding: 0;
+  text-align: center;
 }
 .timeline small {
   padding-top: 4px;
@@ -1088,7 +1087,7 @@ body[data-view-mode="week"] .timeline {
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
-  height: 36px;
+  height: auto;
   border-radius: 8px;
   padding: 6px 10px;
   font-size: 12px;
@@ -1290,22 +1289,21 @@ body.show-vacation .shift:not(.vacation) {
 /* body.show-vacation .schedule-save {
   display: none;
 } */
-
 .shift.vacation {
-  /* background: repeating-linear-gradient(
-    45deg,
-    rgba(0, 0, 0, 0.15),
-    rgba(0, 0, 0, 0.15) 2px,
-    transparent 4px,
-    transparent 8px
-  ); */
-  background: hsla(0, 0%, 100%, 0.73);
-  backdrop-filter: blur(10px);
   color: var(--mainTextColor);
+  background: var(--grayColor100);
   z-index: 5;
   pointer-events: auto;
 }
 
+body[data-view-mode="week"] .check-all-header {
+  visibility: hidden;
+}
+
+body[data-view-mode="week"] .shift.vacation {
+  background: #fff;
+  color: var(--mainTextColor);
+}
 .draft-actions {
   display: flex;
   align-items: center;
@@ -1438,9 +1436,7 @@ body.show-vacation .shift:not(.vacation) {
   height: 22px;
   cursor: pointer;
 }
-.dashboard.schedule .shift.vacation {
-  box-shadow: var(--shdow-s);
-}
+
 .dashboard.vacation .shift.vacation {
   background: var(--button-bg-color-blue-weak);
   color: #2563eb;
@@ -1797,7 +1793,6 @@ body.show-vacation .shift:not(.vacation) {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 16px;
   padding-bottom: 16px;
   border-bottom: 2px solid var(--grayColor100);
 }
@@ -1890,7 +1885,8 @@ body.show-vacation .shift:not(.vacation) {
   color: var(--btn-dagnger-weak-color);
 }
 .month-saved-modal-card {
-  width: 420px;
+  max-width: 540px;
+  width: auto;
 }
 .month-saved-modal-content {
   font-size: 13px;
@@ -1911,7 +1907,7 @@ body.show-vacation .shift:not(.vacation) {
   grid-template-columns: 20px 1fr auto auto;
   gap: 8px;
   align-items: center;
-  padding: 10px 12px;
+  padding: 11px 12px;
   cursor: pointer;
 }
 
@@ -1921,7 +1917,7 @@ body.show-vacation .shift:not(.vacation) {
 .month-item-row input {
   display: none;
 }
-.month-saved-modal .check-all-btn {
+.dept-filter-btn {
   background: var(--btn-bg-base);
   color: var(--btn-color-base);
   border-radius: var(--btn-border-radius);
@@ -1930,7 +1926,18 @@ body.show-vacation .shift:not(.vacation) {
   font-size: 12px;
   margin-bottom: 4px;
 }
-.month-saved-modal .check-all-btn.active {
+.month-saved-modal .check-all-btn {
+  color: var(--grayColor300);
+  padding: 4px 10px;
+  font-size: 11px;
+}
+.month-dept-filter {
+  display: flex;
+  flex-wrap: nowrap;
+  gap: 6px;
+  padding: 10px 6px;
+}
+.dept-filter-btn.active {
   background: var(--blueColor500);
   color: #fff;
   border-radius: var(--btn-border-radius);
@@ -1938,18 +1945,20 @@ body.show-vacation .shift:not(.vacation) {
   padding: 4px 7px;
   font-size: 12px;
 }
+.month-saved-modal .check-all-btn.active {
+  color: var(--blueColor500);
+}
 
 .check-ui {
   appearance: none;
-  width: 16px;
-  height: 16px;
+  width: 15px;
+  height: 15px;
   border-radius: 8px;
   background-color: #fff;
   border: 1px solid var(--grayColor300);
   cursor: pointer;
   position: relative;
   transition: all 0.18s ease;
-  margin-right: 10px;
   flex-shrink: 0;
 }
 
@@ -1960,7 +1969,7 @@ body.show-vacation .shift:not(.vacation) {
 .check-ui::after {
   content: "";
   position: absolute;
-  left: 4px;
+  left: 5px;
   top: 2px;
   width: 3px;
   height: 6px;
