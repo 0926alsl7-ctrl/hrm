@@ -56,7 +56,7 @@ const detailedReasons = [
   "개인사정으로 인한 근무 일정 변경 요청입니다.",
   "가족 행사로 인한 급한 연차 신청입니다.",
   "인원 부족으로 현장 지원 요청 받았습니다. 승인 부탁드립니다",
-  "요청하신 결재 서류 입니다. 승인 부탁드립니다."
+  "요청하신 결재 서류 입니다. 승인 부탁드립니다.",
 ];
 
 // 2. 랜덤 데이터 생성 (현실적으로!)
@@ -82,7 +82,9 @@ const approvalData = Array.from({ length: 20 }, (_, i) => {
     date: "2025-06-07",
     reason: detailedReasons[Math.floor(Math.random() * detailedReasons.length)],
     rejectReason:
-      status === "rejected" ? rejectReasons[Math.floor(Math.random() * rejectReasons.length)] : "",
+      status === "rejected"
+        ? rejectReasons[Math.floor(Math.random() * rejectReasons.length)]
+        : "",
   };
 });
 

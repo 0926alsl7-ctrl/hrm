@@ -1,177 +1,239 @@
-// // 1. 계약 데이터 (현실적인 샘플)
-// const contractData = [
-//   {
-//     id: 1,
-//     name: "2024년 연봉계약서",
-//     status: "signed",
-//     turn: "완료",
-//     requester: "인사팀",
-//     part: "나, 김팀장",
-//     type: "contract-salary",
-//   },
-//   {
-//     id: 2,
-//     name: "정보보호 서약서",
-//     status: "pending",
-//     turn: "내 차례",
-//     requester: "보안팀",
-//     part: "나",
-//     type: "contract-protect",
-//   },
-// ];
+/* === contract.js 최종 통합본 === */
 
-// // 2. 계약 보드 렌더링
-// function renderContractBoard(filter = "contract-all") {
-//   const container = document.querySelector(".contract-board-body");
-//   if (!container) return;
-//   container.innerHTML = "";
+// [데이터] 랜덤 생성용 초기 데이터
+const contractTemplates = [
+  "근로계약서",
+  "정보보호 서약서",
+  "연차휴가 사용 촉진서",
+  "연차 휴가 사용 계획서",
+  "연봉계약서",
+  "사내 업무 협조 요청서",
+];
+const contractStatuses = ["진행", "완료", "반려"];
+let contractData = [];
 
-//   const filtered = contractData.filter(
-//     (d) => filter === "contract-all" || d.type === filter
-//   );
+// [유틸] 1년 뒤 하루 전날 계산 (2026.01.01 -> 2026.12.31)
+function getOneYearMinusOneDay(dateStr) {
+  const start = new Date(dateStr);
+  if (isNaN(start)) return "";
+  const end = new Date(start);
+  end.setFullYear(start.getFullYear() + 1);
+  end.setDate(end.getDate() - 1);
+  return end.toISOString().split("T")[0];
+}
 
-//   filtered.forEach((item) => {
-//     const row = document.createElement("div");
-//     row.className = "contract-board-body-row"; // CSS는 위 모바일 적용됨
-//     row.style.display = "grid";
-//     row.style.gridTemplateColumns = "1fr 100px 100px 120px 120px"; // PC 버전 기본값
+// [유틸] 모달 초기화
+function resetContractModal() {
+  const tSelect = document.getElementById("contract-template-select");
+  const targetSelect = document.getElementById("contract-target-select");
+  const msgInput = document.getElementById("contract-request-message");
+  const formContainer = document.getElementById("dynamic-form-fields");
+  const chk1 = document.querySelector(".order-chk-1");
+  const chk2 = document.querySelector(".order-chk-2");
 
-//     row.innerHTML = `
-//       <div class="contract-name"><span class="approval-body-txt">${
-//         item.name
-//       }</span></div>
-//       <div class="contract-status"><button class="approval-status-wait">${
-//         item.status === "signed" ? "체결완료" : "진행중"
-//       }</button></div>
-//       <div class="contract-turn"><span class="approval-body-txt">${
-//         item.turn
-//       }</span></div>
-//       <div class="contract-request"><span class="approval-body-txt">${
-//         item.requester
-//       }</span></div>
-//       <div class="contract-part"><span class="approval-body-txt">${
-//         item.part
-//       }</span></div>
-//     `;
-//     container.appendChild(row);
-//   });
-// }
+  if (tSelect) tSelect.value = "";
+  if (targetSelect) targetSelect.value = "";
+  if (msgInput) msgInput.value = "";
+  if (formContainer) formContainer.innerHTML = "";
+  if (chk1) chk1.checked = false;
+  if (chk2) chk2.checked = false;
+}
 
-// // 3. 이벤트 바인딩 (DOMContentLoaded 안에 넣으세요)
-// document.addEventListener("DOMContentLoaded", () => {
-//   renderContractBoard();
+// [기능] 게시판 데이터 랜덤 생성 (팀장 매칭 & 차수 계산 포함)
+function generateRandomContracts() {
+  const data = [];
+  const depts = Object.keys(employeesData || {});
+  if (depts.length === 0) return [];
 
-//   // "전자계약서 요청" 버튼 클릭 시 모달 오픈
-//   const reqBtn = document.querySelector(".contract-request-btn");
-//   if (reqBtn) {
-//     reqBtn.onclick = () =>
-//       document
-//         .querySelector(".contract-request-modal")
-//         .classList.remove("is-hidden");
-//   }
+  for (let i = 0; i < 10; i++) {
+    const dept = depts[Math.floor(Math.random() * depts.length)];
+    const empList = employeesData[dept];
+    const empName = empList[Math.floor(Math.random() * empList.length)];
+    const leaderName = empList[0]; // 각 부서 첫 번째 사람을 팀장으로 간주
 
-//   // 계약 종류 필터 클릭
-//   document.querySelectorAll(".contract-item").forEach((btn) => {
-//     btn.onclick = () => {
-//       document
-//         .querySelectorAll(".contract-item")
-//         .forEach((b) => b.classList.remove("active"));
-//       btn.classList.add("active");
-//       renderContractBoard(btn.dataset.item);
-//     };
-//   });
-// });
-// // [추가] 모달에서 입력된 값으로 새 계약서를 생성하는 함수
-// function createNewContract() {
-//   const modal = document.querySelector(".contract-request-modal");
+    // 서명 차수 로직: 체크박스 1개(2회차), 2개(3회차)
+    const isBothChecked = Math.random() > 0.5;
+    const turnCount = isBothChecked ? 3 : 2;
 
-//   // 입력값 가져오기
-//   const templateSelect = modal.querySelector(
-//     ".contract-request-modal-row:nth-of-type(1) select"
-//   );
-//   const signEmployeeSelect = modal.querySelector(
-//     ".contract-request-modal-row:nth-of-type(2) select"
-//   );
-//   const messageInput = modal.querySelector("#contract-request-message");
+    data.push({
+      id: Date.now() + i,
+      title:
+        contractTemplates[Math.floor(Math.random() * contractTemplates.length)],
+      status:
+        contractStatuses[Math.floor(Math.random() * contractStatuses.length)],
+      turn: turnCount,
+      requester: `${empName}(${dept})`,
+      participants: isBothChecked
+        ? `1차: ${empName}, 2차: ${leaderName}`
+        : `1차: ${empName}`,
+      dept: dept,
+    });
+  }
+  return data;
+}
 
-//   const contractName =
-//     templateSelect.options[templateSelect.selectedIndex].text;
-//   const requestedBy =
-//     signEmployeeSelect.options[signEmployeeSelect.selectedIndex].text;
-//   const message = messageInput.value.trim();
+// [기능] 게시판 렌더링
+function renderContractBoard(filterStatus = "all") {
+  const boardBody = document.querySelector(".contract-board-body");
+  if (!boardBody) return;
 
-//   // 간단한 유효성 검사
-//   if (contractName === "선택" || requestedBy === "선택") {
-//     alert("템플릿과 서명 요청할 직원을 선택해주세요.");
-//     return;
-//   }
+  boardBody.innerHTML = "";
+  const statusMap = { pending: "진행", approved: "완료", rejected: "반려" };
 
-//   // 새 계약서 객체 생성
-//   const newContract = {
-//     id: contractData.length + 1, // 고유 ID 부여
-//     name: contractName,
-//     status: "pending", // 새로 요청했으니 '진행중'
-//     turn: "내 차례", // 초기 요청자는 본인 차례로 설정
-//     requester: "나", // 현재 로그인 사용자라고 가정
-//     part: requestedBy === "전체" ? "전체 직원" : requestedBy, // "전체"면 "전체 직원"으로 표시
-//     type: templateSelect.value, // 필터링을 위한 값
-//   };
+  const filtered = contractData.filter((item) => {
+    return filterStatus === "all" || item.status === statusMap[filterStatus];
+  });
 
-//   contractData.push(newContract); // 데이터 배열에 추가
-//   renderContractBoard(); // 리스트 다시 그리기
-//   closeModal(); // 모달 닫기
+  filtered.forEach((item) => {
+    const statusClass =
+      item.status === "진행"
+        ? "status-ing"
+        : item.status === "완료"
+        ? "status-done"
+        : "status-cancel";
+    const row = document.createElement("div");
+    row.className = "contract-board-row";
+    row.innerHTML = `
+      <div class="contract-name"><span>${item.title}</span></div>
+      <div class="contract-status"><span class="badge ${statusClass}">${item.status}</span></div>
+      <div class="contract-turn"><span>${item.turn}회차</span></div>
+      <div class="contract-request"><span>${item.requester}</span></div>
+      <div class="contract-part"><span>${item.participants}</span></div>
+    `;
+    boardBody.appendChild(row);
+  });
+}
 
-//   alert("전자계약 요청이 완료되었습니다!");
+// [기능] 템플릿 필드 생성 (연차 15일 고정 및 자동 계산 포함)
+function renderTemplateFields(templateId) {
+  const formContainer = document.getElementById("dynamic-form-fields");
+  const msgInput = document.getElementById("contract-request-message");
+  if (!formContainer) return;
 
-//   // 모달 입력 필드 초기화 (선택사항)
-//   templateSelect.value = "";
-//   signEmployeeSelect.value = "";
-//   messageInput.value = "";
-// }
+  const config = templateFields[templateId];
+  if (!config) {
+    formContainer.innerHTML = "";
+    return;
+  }
 
-// // [수정] DOMContentLoaded 이벤트 리스너 안에 '요청하기' 버튼 클릭 이벤트 추가
-// document.addEventListener("DOMContentLoaded", () => {
-//   // ... (기존 approval 및 contract 관련 초기화 코드들) ...
+  formContainer.innerHTML =
+    '<h6 class="modal-subtitle-text">문서 내용 연결</h6>';
+  if (msgInput) msgInput.value = config.msg;
 
-//   // "전자계약서 요청" 모달의 '요청하기' 버튼에 이벤트 연결
-//   const contractRequestConfirmBtn = document.querySelector(
-//     ".contract-request-action .approval"
-//   );
-//   if (contractRequestConfirmBtn) {
-//     contractRequestConfirmBtn.onclick = createNewContract;
-//   }
-// });
+  config.fields.forEach((field) => {
+    const fieldWrap = document.createElement("div");
+    fieldWrap.className = "contract-request-modal-row";
+    let inputHtml = "";
 
-// // [수정] renderContractBoard 함수 안의 상태 버튼 텍스트 변경 (pending 상태 추가)
-// function renderContractBoard(filter = "contract-all") {
-//   // ... (기존 코드) ...
-//   filtered.forEach((item) => {
-//     // ... (기존 코드) ...
-//     row.innerHTML = `
-//             <div class="contract-name"><span class="approval-body-txt">${
-//               item.name
-//             }</span></div>
-//             <div class="contract-status">
-//                 <button class="approval-status-wait">
-//                     ${
-//                       item.status === "signed"
-//                         ? "체결완료"
-//                         : item.status === "pending"
-//                         ? "진행중"
-//                         : "알 수 없음"
-//                     }
-//                 </button>
-//             </div>
-//             <div class="contract-turn"><span class="approval-body-txt">${
-//               item.turn
-//             }</span></div>
-//             <div class="contract-request"><span class="approval-body-txt">${
-//               item.requester
-//             }</span></div>
-//             <div class="contract-part"><span class="approval-body-txt">${
-//               item.part
-//             }</span></div>
-//         `;
-//     container.appendChild(row);
-//   });
-// }
+    if (field.type === "emp-select") {
+      inputHtml = `<select name="${field.name}" class="emp-auto-select"><option value="">직원 선택</option>`;
+      Object.keys(employeesData).forEach((dept) => {
+        employeesData[dept].forEach((name) => {
+          inputHtml += `<option value="${name}" data-dept="${dept}">${name} (${dept})</option>`;
+        });
+      });
+      inputHtml += `</select>`;
+    } else {
+      const isDays = field.name.includes("Days");
+      inputHtml = `<input type="${isDays ? "number" : field.type}" name="${
+        field.name
+      }" value="${field.defaultValue || ""}" ${
+        field.readonly ? "readonly" : ""
+      }>`;
+    }
+
+    fieldWrap.innerHTML = `<h5 class="modal-subtitle-text">${field.label}</h5>${inputHtml}`;
+    formContainer.appendChild(fieldWrap);
+  });
+
+  // 연차 계산 로직 연결
+  const vacStart = formContainer.querySelector('input[name="vacStart"]');
+  const totalInput = formContainer.querySelector('input[name="totalDays"]');
+  const usedInput = formContainer.querySelector('input[name="usedDays"]');
+  const remainInput = formContainer.querySelector('input[name="remainDays"]');
+
+  if (vacStart) {
+    vacStart.onchange = () => {
+      formContainer.querySelector('input[name="vacEnd"]').value =
+        getOneYearMinusOneDay(vacStart.value);
+      if (totalInput) totalInput.value = 15; // 15일 고정
+      if (remainInput)
+        remainInput.value = 15 - (parseFloat(usedInput?.value) || 0);
+    };
+  }
+  if (usedInput) {
+    usedInput.oninput = () => {
+      const total = parseFloat(totalInput?.value) || 15;
+      const used = parseFloat(usedInput.value) || 0;
+      if (remainInput)
+        remainInput.value = (total - used).toFixed(1).replace(/\.0$/, "");
+    };
+  }
+}
+
+// [이벤트] 페이지 초기화
+document.addEventListener("DOMContentLoaded", () => {
+  contractData = generateRandomContracts();
+  renderContractBoard();
+
+  const tSelect = document.getElementById("contract-template-select");
+  const targetSelect = document.getElementById("contract-target-select");
+  const chk1 = document.querySelector(".order-chk-1");
+  const chk2 = document.querySelector(".order-chk-2");
+
+  // 필터 버튼 클릭
+  document.querySelectorAll(".contract-process-btn").forEach((btn) => {
+    btn.onclick = (e) => {
+      document
+        .querySelectorAll(".contract-process-btn")
+        .forEach((b) => b.classList.remove("active"));
+      btn.classList.add("active");
+      renderContractBoard(btn.dataset.process);
+    };
+  });
+
+  // 요청 모달 열기
+  const reqBtn = document.querySelector(".contract-request-btn");
+  if (reqBtn) {
+    reqBtn.onclick = () =>
+      document
+        .querySelector(".contract-request-modal")
+        ?.classList.remove("is-hidden");
+  }
+
+  if (tSelect) tSelect.onchange = (e) => renderTemplateFields(e.target.value);
+
+  if (targetSelect) {
+    targetSelect.onchange = (e) => {
+      const val = e.target.value;
+      if (chk1) chk1.checked = val === "Personal" || val === "All";
+      if (chk2) chk2.checked = val === "leader";
+    };
+  }
+
+  // 최종 요청 버튼
+  const approvalBtn = document.querySelector(
+    ".contract-request-action .approval"
+  );
+  if (approvalBtn) {
+    approvalBtn.onclick = () => {
+      if (!tSelect.value || !targetSelect.value) {
+        alert("템플릿과 대상을 선택해주세요.");
+        return;
+      }
+      alert("전자계약 요청이 완료되었습니다!");
+      resetContractModal();
+      document
+        .querySelector(".contract-request-modal")
+        .classList.add("is-hidden");
+    };
+  }
+
+  document
+    .querySelectorAll(
+      ".contract-request-modal .close, .contract-request-modal .cancel"
+    )
+    .forEach((btn) => {
+      btn.onclick = resetContractModal;
+    });
+});

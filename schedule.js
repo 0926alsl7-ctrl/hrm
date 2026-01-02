@@ -38,9 +38,6 @@ const todayBtns = document.querySelectorAll(".today-btn");
 const mixToggle = document.getElementById("mixToggle");
 const scheduleHeaderMain = document.getElementById("scheduleHeaderMain");
 
-/* ======================================================
-   상태
-====================================================== */
 let viewMode = "day";
 let currentDate = new Date().toISOString().slice(0, 10);
 let manageMode = "work"; // work | vacation
@@ -49,9 +46,6 @@ let editingId = null;
 const drafts = {};
 const saved = JSON.parse(localStorage.getItem("schedules") || "{}");
 
-/* ======================================================
-   날짜
-====================================================== */
 function updateDateText() {
   const d = new Date(currentDate);
   const week = ["일", "월", "화", "수", "목", "금", "토"];
@@ -115,9 +109,6 @@ todayBtns.forEach((btn) => {
 
 updateDateText();
 
-/* ======================================================
-   유틸
-====================================================== */
 function calcNetWorkHours(items) {
   const work = items.find((v) => v.type === "work");
   const vacation = items.find((v) => v.type === "vacation");
@@ -233,9 +224,6 @@ function hideMonthTooltip() {
   if (tip) tip.classList.remove("show");
 }
 
-/* ======================================================
-   모달
-====================================================== */
 addBtn.onclick = () => {
   manageMode = mixToggle.checked ? "vacation" : "work";
   resetForm();
@@ -259,9 +247,6 @@ if (vacationAddBtn) {
   };
 }
 
-/* ======================================================
-   select 연동
-====================================================== */
 dept.onchange = () => {
   emp.innerHTML = `<option value="">선택</option>`;
   if (jobByDept[dept.value]) {
@@ -277,9 +262,6 @@ dept.onchange = () => {
   });
 };
 
-/* ======================================================
-   fake picker
-====================================================== */
 fakeDate.onclick = () => workDate.showPicker?.() || workDate.click();
 fakeStart.onclick = () => {
   if (startTime.disabled) return;
@@ -303,9 +285,6 @@ workDate.onchange = () => {
 startTime.onchange = () => (fakeStartText.textContent = startTime.value);
 endTime.onchange = () => (fakeEndText.textContent = endTime.value);
 
-/* ======================================================
-   추가 / 수정
-====================================================== */
 confirmBtn.onclick = () => {
   if (
     !workDate.value ||
@@ -372,19 +351,29 @@ confirmBtn.onclick = () => {
   render();
 };
 
-/* ======================================================
-   렌더
-====================================================== */
 function render() {
-  body.innerHTML = "";
+  const activeSection = document.querySelector(".section.is-active");
+  if (!activeSection) return;
+
+  const isVacationPage = activeSection.dataset.page === "vacation";
+  const targetBody = isVacationPage ? vacationBody : body;
+  const targetHeader = activeSection.querySelector(".schedule-header-main");
+
+  if (!targetBody) return;
+  targetBody.innerHTML = "";
+
+  if (targetHeader) {
+    if (viewMode === "day") targetHeader.innerHTML = getDayHeaderHTML();
+    else if (viewMode === "week") targetHeader.innerHTML = getWeekHeaderHTML();
+    else targetHeader.innerHTML = "";
+  }
 
   if (viewMode === "month") {
-    renderMonth();
+    renderMonth(targetBody, isVacationPage);
     return;
   }
 
   let dates = [];
-
   if (viewMode === "day") {
     dates = [currentDate];
   } else if (viewMode === "week") {
@@ -397,35 +386,29 @@ function render() {
   }
 
   const allItems = [];
-
   dates.forEach((date) => {
-    (drafts[date] || []).forEach((i) => allItems.push(i));
-    (saved[date] || []).forEach((i) => allItems.push(i));
+    if (viewMode === "day" && drafts[date]) allItems.push(...drafts[date]);
+    if (saved[date]) allItems.push(...saved[date]);
   });
 
   const filtered = allItems.filter((item) => {
-    if (mixToggle.checked) {
-      return item.type === "vacation";
-    }
-    return item.type === "work";
+    if (isVacationPage) return item.type === "vacation";
+    return mixToggle && mixToggle.checked
+      ? item.type === "vacation"
+      : item.type === "work";
   });
 
-  // 기존 grouped 로직을 아래 의도로 이해하고 수정 위치를 잡으세요.
   const grouped = {};
   filtered.forEach((item) => {
-    // 주 모드일 때는 같은 사람이라도 날짜가 다르면 다른 줄에 나오게 하거나,
-    // 혹은 한 줄에 나오게 하려면 renderRow의 timeline 구조를 바꿔야 합니다.
-    // 님은 "같은 사람 = 한 줄"을 원하시므로 아래처럼 유지하되 renderRow를 고칩니다.
     grouped[item.name] ??= [];
     grouped[item.name].push(item);
   });
 
   Object.values(grouped).forEach((items) => {
-    renderRow(items);
+    renderRow(items, targetBody);
   });
-
-  renderVacation();
 }
+
 function renderVacation() {
   if (!vacationBody) return;
 
@@ -452,7 +435,6 @@ function renderVacation() {
 function renderRow(items, target = body) {
   const work = items.find((v) => v.type === "work");
   const vacation = items.find((v) => v.type === "vacation");
-
   const base = work || vacation;
   if (!base) return;
 
@@ -460,40 +442,37 @@ function renderRow(items, target = body) {
   const isDraft = drafts[rowDate]?.some((d) => d.id === base.id);
   const statusClass = isDraft ? "draft" : "saved";
 
+  // [에러 해결] 변수 선언 추가
   const workHours = calcNetWorkHours(items);
   const hasWork = items.some((v) => v.type === "work");
+
+  // 주 모드에서는 체크박스/버튼 숨기기
+  const hideControls = viewMode === "week";
 
   target.insertAdjacentHTML(
     "beforeend",
     `
-    <div class="schedule-row ${statusClass}"
-        data-id="${base.id}"
-         data-name="${base.name}"
-         data-date="${rowDate}">
-
-      <div class="row-check-wrap">
+    <div class="schedule-row ${statusClass}" data-id="${base.id}" data-name="${
+      base.name
+    }" data-date="${rowDate}">
+      
+      <div class="row-check-wrap" style="${hideControls ? "display:none" : ""}">
         <input type="checkbox" class="row-check" 
-        data-type="${base.type}"
-        data-name="${base.name}"
-        data-date="${rowDate}"
+        data-type="${base.type}" data-name="${base.name}" data-date="${rowDate}"
         ${isDraft ? "" : "disabled"} />
       </div>
 
       <div class="employee">
         <strong>${base.name}</strong>
-
         <span class="employee-meta">
-        <span>${base.dept}</span>
-
-        ${
-          hasWork && workHours > 0
-            ? base.job === "teal"
-              ? `<span class="work-hours"> / ${calcNetWorkHours(
-                  items
-                )}h (출장)</span>`
-              : `<span class="work-hours"> / ${calcNetWorkHours(items)}h</span>`
-            : ""
-        }
+          <span>${base.dept}</span>
+            ${
+              hasWork && workHours > 0
+                ? base.job === "teal"
+                  ? `<span class="work-hours"> / ${workHours}h (출장)</span>`
+                  : `<span class="work-hours"> / ${workHours}h</span>`
+                : ""
+            }
          ${
            vacation
              ? `<span class="vacation-type"> / ${vacation.jobText}</span>`
@@ -503,21 +482,19 @@ function renderRow(items, target = body) {
       </div>
 
       <div class="timeline">
-  ${items.map((item) => renderShift(item, item.type === "vacation")).join("")}
+        ${items
+          .map((item) => renderShift(item, item.type === "vacation"))
+          .join("")}
       </div>
 
-        ${
-          isDraft
-            ? `
-          <div class="draft-actions">
-              <button class="draft-edit">수정</button>
-               <button class="draft-delete">삭제</button>
-          </div>
-          `
-            : ""
-        }
-      
-
+      ${
+        isDraft && !hideControls
+          ? `<div class="draft-actions">
+                <button class="draft-edit">수정</button>
+                <button class="draft-delete">삭제</button>
+             </div>`
+          : ""
+      }
     </div>
     `
   );
@@ -529,7 +506,13 @@ function renderShift(item, isVacation, dimmed = false) {
   if (viewMode === "day") {
     pos = calcPosition(item.start, item.end);
   } else if (viewMode === "week") {
-    pos = calcPositonWeek(item);
+    const itemDate = new Date(item.date);
+    const dayIndex = itemDate.getDay(); // 0~6
+
+    pos = {
+      left: (dayIndex / 7) * 100 + 0.6,
+      width: (1 / 7) * 100 - 1.2,
+    };
   } else {
     const d = new Date(currentDate);
     const daysInMonth = new Date(
@@ -544,14 +527,14 @@ function renderShift(item, isVacation, dimmed = false) {
   }
 
   return `
-  <div class="shift ${isVacation ? "vacation" : item.job}
-  ${dimmed ? "dimmed" : ""}"
-  data-id="${item.id}"
-  data-date="${item.date}"
-   style="left:${pos.left}%; width:${pos.width}%; ${
+  <div class="shift ${isVacation ? "vacation" : item.job} ${
+    dimmed ? "dimmed" : ""
+  }"
+    data-id="${item.id}"
+    data-date="${item.date}"
+    style="left:${pos.left}%; width:${pos.width}%; ${
     isVacation ? "z-index:2;" : ""
   }">
-
     ${
       viewMode === "week"
         ? `<small>${item.jobText || ""}</small>`
@@ -560,8 +543,11 @@ function renderShift(item, isVacation, dimmed = false) {
     </div>
   `;
 }
-function renderMonth() {
-  body.innerHTML = `
+
+// 1. 월 모드 렌더링 수정 (휴가 페이지 여부 판단 강화)
+function renderMonth(target, isVacationPage) {
+  if (!target) return;
+  target.innerHTML = `
     <div class="month-calendar">
       <div class="month-header">
         <span>일</span><span>월</span><span>화</span><span>수</span>
@@ -571,15 +557,14 @@ function renderMonth() {
     </div>
   `;
 
-  const grid = body.querySelector(".month-grid");
-
+  const grid = target.querySelector(".month-grid");
   const baseDate = new Date(currentDate);
   const year = baseDate.getFullYear();
   const month = baseDate.getMonth();
-
   const firstDay = new Date(year, month, 1);
   const startDay = firstDay.getDay();
   const lastDate = new Date(year, month + 1, 0).getDate();
+  const todayStr = new Date().toISOString().slice(0, 10);
 
   for (let i = 0; i < startDay; i++) {
     grid.appendChild(document.createElement("div"));
@@ -589,25 +574,19 @@ function renderMonth() {
     const dateStr = `${year}-${String(month + 1).padStart(2, "0")}-${String(
       d
     ).padStart(2, "0")}`;
-
     const cell = document.createElement("div");
-    cell.className = "month-day";
+    const isToday = dateStr === todayStr;
+    cell.className = `month-day ${isToday ? "is-today" : ""}`;
     cell.innerHTML = `<div class="date">${d}</div>`;
-
-    cell.onclick = () => {
-      openMonthSavedModal(dateStr);
-    };
-
-    const todayStr = new Date().toISOString().slice(0, 10);
-    if (dateStr === todayStr) {
-      cell.classList.add("is-today");
-    }
 
     const items = saved[dateStr] || [];
 
+    // [수정] 필터링 로직: 휴가 페이지면 무조건 휴가만, 아니면 토글 상태에 따라
     const filtered = items.filter((item) => {
-      if (mixToggle.checked) return item.type === "vacation";
-      return item.type === "work";
+      if (isVacationPage) return item.type === "vacation";
+      return mixToggle.checked
+        ? item.type === "vacation"
+        : item.type === "work";
     });
 
     if (filtered.length > 0) {
@@ -622,42 +601,38 @@ function renderMonth() {
     filtered.slice(0, 3).forEach((item) => {
       const el = document.createElement("div");
       el.className = "month-item";
-
       const text =
         item.type === "vacation"
-          ? `${item.name} (${item.jobText})`
-          : `${item.name} (${item.start} ~ ${item.end})`;
-
+          ? `${item.name}(${item.jobText})`
+          : `${item.name}(${item.start}~${item.end})`;
       const dotClass = item.type === "vacation" ? "gray" : item.job;
+      el.innerHTML = `<span class="dot ${dotClass}"></span><span class="text">${text}</span>`;
 
-      el.innerHTML = `
-        <span class="dot ${dotClass}"></span>
-        <span class="text">${text}</span>
-      `;
-
-      el.onclick = () => openMonthSavedModal(dateStr);
-      el.onmouseenter = () => showMonthTooltip(el, item);
-      el.onmouseleave = hideMonthTooltip;
-
+      el.onclick = (e) => {
+        e.stopPropagation();
+        openMonthSavedModal(dateStr, isVacationPage);
+      };
       cell.appendChild(el);
     });
 
+    cell.onclick = () => openMonthSavedModal(dateStr, isVacationPage);
     grid.appendChild(cell);
   }
 }
 
-function openMonthSavedModal(date) {
+function openMonthSavedModal(date, isVacationPage = false) {
   const modal = document.querySelector(".month-saved-modal");
   const titleEl = modal.querySelector(".month-saved-modal-text");
   const content = modal.querySelector(".month-saved-modal-content");
-  const checkAllBtn = modal.querySelector(".check-all-btn");
+  const checkAllBtn = modal.querySelector(".check-all-btn"); // 전체 선택 버튼
   const editBtn = modal.querySelector(".edit");
   const deleteBtn = modal.querySelector(".delete");
 
   if (!modal || !content) return;
-  if (checkAllBtn) {
-    checkAllBtn.classList.remove("active");
-  }
+
+  if (checkAllBtn) checkAllBtn.classList.remove("active");
+
+  const isVacationMode = isVacationPage || (mixToggle && mixToggle.checked);
 
   let filterWrap = modal.querySelector(".month-dept-filter");
   if (!filterWrap) {
@@ -681,15 +656,16 @@ function openMonthSavedModal(date) {
   const titleDate = `${String(d.getFullYear()).slice(2)}/${String(
     d.getMonth() + 1
   ).padStart(2, "0")}/${String(d.getDate()).padStart(2, "0")}`;
+
   titleEl.textContent = `${titleDate} ${
-    mixToggle.checked ? "휴가일정 변경" : "근무일정 변경"
+    isVacationMode ? "휴가일정 변경" : "근무일정 변경"
   }`;
 
-  // 내부 렌더링 함수
   function renderFilteredItems() {
     if (checkAllBtn) checkAllBtn.classList.remove("active");
+
     const allItems = (saved[date] || []).filter((item) =>
-      mixToggle.checked ? item.type === "vacation" : item.type === "work"
+      isVacationMode ? item.type === "vacation" : item.type === "work"
     );
 
     const filteredItems = allItems.filter(
@@ -716,21 +692,29 @@ function openMonthSavedModal(date) {
       .join("");
 
     const checkboxes = [...content.querySelectorAll("input[type='checkbox']")];
+
     const updateButtonState = () => {
       const checkedCount = checkboxes.filter((c) => c.checked).length;
       editBtn.disabled = checkedCount !== 1;
       editBtn.classList.toggle("disabled", checkedCount !== 1);
       deleteBtn.disabled = checkedCount === 0;
       deleteBtn.classList.toggle("disabled", checkedCount === 0);
+
+      if (checkAllBtn) {
+        checkAllBtn.classList.toggle(
+          "active",
+          checkboxes.length > 0 && checkedCount === checkboxes.length
+        );
+      }
     };
 
     checkboxes.forEach((chk) => (chk.onchange = updateButtonState));
+
     if (checkAllBtn) {
       checkAllBtn.onclick = () => {
         const allChecked =
           checkboxes.length > 0 && checkboxes.every((c) => c.checked);
         checkboxes.forEach((c) => (c.checked = !allChecked));
-        checkAllBtn.classList.toggle("active", !allChecked);
         updateButtonState();
       };
     }
@@ -738,7 +722,6 @@ function openMonthSavedModal(date) {
     updateButtonState();
   }
 
-  // 필터 버튼 생성
   filterWrap.innerHTML = depts
     .map(
       (deptName) =>
@@ -748,7 +731,6 @@ function openMonthSavedModal(date) {
     )
     .join("");
 
-  // 필터 클릭 이벤트 (중복 방지를 위해 함수 할당)
   filterWrap.onclick = (e) => {
     const btn = e.target.closest(".dept-filter-btn");
     if (!btn) return;
@@ -760,7 +742,6 @@ function openMonthSavedModal(date) {
     renderFilteredItems();
   };
 
-  /* ---------- 버튼 액션들 ---------- */
   editBtn.onclick = () => {
     const checked = content.querySelector("input[type='checkbox']:checked");
     if (!checked) return;
@@ -778,18 +759,16 @@ function openMonthSavedModal(date) {
     );
     localStorage.setItem("schedules", JSON.stringify(saved));
     modal.classList.add("is-hidden");
-    render(); // 메인 달력 갱신
+    render();
   };
 
   modal.querySelector(".close").onclick = () =>
     modal.classList.add("is-hidden");
 
-  // 모달 초기 실행
   renderFilteredItems();
   modal.classList.remove("is-hidden");
 }
 
-// view-mode header
 function getDayHeaderHTML() {
   return `
     <div class="day-header">
@@ -863,21 +842,16 @@ function getWeekHeaderHTML() {
 
 function renderTimeHeader() {
   if (!scheduleHeaderMain) return;
+
   if (viewMode === "day") {
     scheduleHeaderMain.innerHTML = getDayHeaderHTML();
-  }
-
-  if (viewMode === "week") {
+  } else if (viewMode === "week") {
     scheduleHeaderMain.innerHTML = getWeekHeaderHTML();
-  }
-
-  if (viewMode === "month") {
+  } else if (viewMode === "month") {
     scheduleHeaderMain.innerHTML = "";
   }
 }
-/* ======================================================
-   클릭
-====================================================== */
+
 function handleRowClick(e) {
   const clickedShift = e.target.closest(".shift");
   const row = e.target.closest(".schedule-row");
@@ -988,7 +962,6 @@ function openRowActionModal(row, clickedShift, targetId, targetDate) {
   const titleEl = modal.querySelector(".row-action-modal-title-text");
   const contentEl = modal.querySelector(".row-action-modal-shedule-text");
 
- 
   const dayItems = saved[targetDate] || [];
   const targetItem = dayItems.find((item) => item.id === targetId);
 
@@ -1004,7 +977,6 @@ function openRowActionModal(row, clickedShift, targetId, targetDate) {
   const jobText = `<span class="${jobClass}">${targetItem.jobText}</span>`;
   const timeText = `${targetItem.start} ~ ${targetItem.end}`;
 
-  // 5. 모달 내용 채우기
   contentEl.innerHTML = `
     <div class="modal-row line1">
       <strong class="name">${targetItem.name}</strong>
@@ -1018,12 +990,12 @@ function openRowActionModal(row, clickedShift, targetId, targetDate) {
   modal.classList.remove("is-hidden");
 
   modal.querySelector(".edit").onclick = () => {
-    openEditModal(targetId, targetDate); 
+    openEditModal(targetId, targetDate);
     modal.classList.add("is-hidden");
   };
 
   modal.querySelector(".delete").onclick = () => {
-    deleteSavedItem(targetId, targetDate); 
+    deleteSavedItem(targetId, targetDate);
     modal.classList.add("is-hidden");
   };
 
@@ -1032,10 +1004,6 @@ function openRowActionModal(row, clickedShift, targetId, targetDate) {
   };
 }
 
-/* ======================================================
-   확정
-====================================================== */
-/* 기존 saveBtns.forEach 부분을 이 코드로 덮어쓰세요 */
 saveBtns.forEach((saveBtn) => {
   saveBtn.onclick = () => {
     const checked = document.querySelectorAll(".row-check:checked");
@@ -1051,25 +1019,17 @@ saveBtns.forEach((saveBtn) => {
       const idx = list.findIndex((v) => v.name === name);
       if (idx === -1) return;
 
-      const newItem = list[idx]; // 지금 확정하려는 일정 (예: 출장 15:00-18:00)
+      const newItem = list[idx];
 
-      // [데이터 자르기 로직]
       if (saved[date]) {
         saved[date].forEach((existingItem) => {
-          // 같은 사람의 기존 '근무(work)' 일정이 있을 경우에만 작동
           if (existingItem.name === name && existingItem.type === "work") {
-            // 상황 1: 기존 근무가 진행 중인데 새 일정이 시작됨 (끝부분 자르기)
-            // 예: 기존(09:00-18:00) / 새일정(15:00-18:00) -> 기존을 15:00에 끝냄
             if (
               existingItem.start < newItem.start &&
               existingItem.end > newItem.start
             ) {
               existingItem.end = newItem.start;
-            }
-
-            // 상황 2: 새 일정이 끝난 후에 기존 근무가 시작되어야 함 (앞부분 자르기)
-            // 예: 기존(09:00-18:00) / 새일정(09:00-12:00) -> 기존을 12:00에 시작함
-            else if (
+            } else if (
               existingItem.start < newItem.end &&
               existingItem.end > newItem.end
             ) {
@@ -1088,7 +1048,6 @@ saveBtns.forEach((saveBtn) => {
     render();
     renderVacation();
 
-    // 체크박스 초기화
     document
       .querySelectorAll(".row-check")
       .forEach((chk) => (chk.checked = false));
@@ -1115,9 +1074,6 @@ document.querySelectorAll(".check-all").forEach((checkAll) => {
   };
 });
 
-/* ======================================================
-   연차/반차
-====================================================== */
 job.onchange = () => {
   if (manageMode === "vacation") {
     startTime.disabled = true;
@@ -1128,9 +1084,6 @@ job.onchange = () => {
   }
 };
 
-/* ======================================================
-   휴가 토글
-====================================================== */
 if (mixToggle) {
   mixToggle.onchange = (e) => {
     manageMode = e.target.checked ? "vacation" : "work";
@@ -1180,7 +1133,7 @@ function applyForm() {
   startTime.disabled = manageMode === "vacation";
   endTime.disabled = manageMode === "vacation";
 }
-// viewmode 적용
+
 document.querySelectorAll(".schedule .view-mode").forEach((btn) => {
   btn.onclick = () => {
     document
@@ -1224,7 +1177,6 @@ document.querySelectorAll(".vacation .view-mode").forEach((btn) => {
   };
 });
 
-// week
 function getWeekStart(dateStr) {
   const d = new Date(dateStr);
   const day = d.getDay();
@@ -1236,9 +1188,160 @@ function getWeekOfMonth(date) {
   return Math.ceil((date.getDate() + firstDay.getDay()) / 7);
 }
 
-/* ======================================================
-   초기
-====================================================== */
 updateDateText();
 renderTimeHeader();
 render();
+
+// section - vacation
+// 요소 선택
+const vRateBtn = document.querySelector(".vacation-rate-btn");
+const vRateModal = document.querySelector(".vacation-rate-modal");
+const vCloseBtns = document.querySelectorAll(
+  ".close-rate-modal, .vacation-rate-modal .confirm, .vacation-rate-modal .cancel"
+);
+const vPromoteBtn = vRateModal?.querySelector(".promote-btn");
+const vDeptSelect = vRateModal?.querySelector(".depart");
+const vEmpSelect = vRateModal?.querySelector(".employee");
+
+function resetVacationRateModal() {
+  if (!vRateModal) return;
+  if (vDeptSelect) vDeptSelect.value = "";
+  if (vEmpSelect) {
+    vEmpSelect.innerHTML = '<option value="">선택</option>';
+    vEmpSelect.value = "";
+  }
+  vRateModal
+    .querySelectorAll(".employee-rate-item")
+    .forEach((i) => i.classList.remove("active"));
+  vRateModal.classList.add("is-hidden");
+}
+
+if (vRateBtn) {
+  vRateBtn.onclick = () => {
+    vRateModal.classList.remove("is-hidden");
+
+    const bar = vRateModal.querySelector(".progress-bar");
+    if (bar) {
+      bar.style.width = "0%";
+      setTimeout(() => {
+        bar.style.width = bar.dataset.value + "%";
+      }, 200);
+    }
+
+    const listContainer = vRateModal.querySelector(".rate-employee-list");
+    if (listContainer) {
+      listContainer.innerHTML =
+        '<span class="list-title">연차휴가 사용 촉진 대상</span>';
+
+      const allEmps = [];
+      if (typeof employeesData !== "undefined") {
+        Object.keys(employeesData).forEach((deptName) => {
+          employeesData[deptName].forEach((name) =>
+            allEmps.push({ name, dept: deptName })
+          );
+        });
+      }
+
+      allEmps
+        .sort(() => 0.5 - Math.random())
+        .slice(0, 5)
+        .forEach((empData) => {
+          const fakeRate = Math.floor(Math.random() * 30) + 5;
+          const item = document.createElement("div");
+          item.className = "employee-rate-item";
+          item.innerHTML = `
+          <div class="emp-info"><strong>${empData.name}</strong> <span>${empData.dept}</span></div>
+          <div class="emp-graph">
+            <span>${fakeRate}%</span>
+          </div>
+        `;
+
+          item.onclick = () => {
+            vRateModal
+              .querySelectorAll(".employee-rate-item")
+              .forEach((i) => i.classList.remove("active"));
+            item.classList.add("active");
+
+            if (vDeptSelect) {
+              vDeptSelect.value = empData.dept;
+              vDeptSelect.dispatchEvent(new Event("change"));
+              if (vEmpSelect) vEmpSelect.value = empData.name;
+            }
+          };
+          listContainer.appendChild(item);
+        });
+    }
+  };
+}
+
+if (vDeptSelect && vEmpSelect) {
+  vDeptSelect.onchange = () => {
+    const selectedDept = vDeptSelect.value;
+    vEmpSelect.innerHTML = '<option value="">선택</option>';
+
+    if (
+      selectedDept &&
+      typeof employeesData !== "undefined" &&
+      employeesData[selectedDept]
+    ) {
+      employeesData[selectedDept].forEach((name) => {
+        const opt = document.createElement("option");
+        opt.value = name;
+        opt.textContent = name;
+        vEmpSelect.appendChild(opt);
+      });
+    }
+  };
+}
+
+vCloseBtns.forEach((btn) => {
+  btn.onclick = resetVacationRateModal;
+});
+
+if (vPromoteBtn) {
+  vPromoteBtn.onclick = () => {
+    const selectedName = vEmpSelect?.value;
+    const selectedDept = vDeptSelect?.value;
+
+    if (!selectedName || !selectedDept) {
+      alert("연차 촉진 부서/직원을 선택해주세요.");
+      return;
+    }
+
+    resetVacationRateModal();
+
+    const cModal =
+      document.querySelector(".contract-request-modal") ||
+      document.querySelector(".contract-modal");
+    if (cModal) {
+      cModal.classList.remove("is-hidden");
+
+      const tSelect = document.getElementById("contract-template-select");
+      if (tSelect) {
+        tSelect.value = "contract-vacation";
+
+        if (typeof renderTemplateFields === "function") {
+          renderTemplateFields("contract-vacation");
+
+          setTimeout(() => {
+            const formFields = document.getElementById("dynamic-form-fields");
+            const nameInput = formFields?.querySelector(
+              'select[name="empName"]'
+            );
+            if (nameInput) {
+              nameInput.value = selectedName;
+              nameInput.dispatchEvent(new Event("change"));
+            }
+          }, 50);
+        }
+      }
+
+      const targetSelect = cModal.querySelectorAll("select")[1];
+      if (targetSelect) targetSelect.value = "Personal";
+      targetSelect.dispatchEvent(new Event("change"));
+    } else {
+      console.warn("전자계약 모달이 없습니다.");
+      alert(`${selectedName}님 촉진 프로세스를 시작합니다.`);
+    }
+  };
+}

@@ -49,8 +49,10 @@ cards.forEach((card) => {
 
 document.querySelectorAll(".progress-bar").forEach((bar) => {
   const value = bar.dataset.value;
-  requestAnimationFrame(() => {
-    bar.style.width = value + "%";
-  });
+  if (bar) {
+    bar.style.width = "0%";
+    setTimeout(() => {
+      bar.style.width = bar.dataset.value + "%";
+    }, 200);
+  }
 });
-
