@@ -1825,6 +1825,43 @@ body[data-view-mode="week"] .shift.vacation {
   color: var(--grayColor500);
   font-size: 13px;
 }
+.contract-board-head {
+  display: grid;
+  grid-template-columns: 148px 134px 134px 240px 1fr;
+  align-items: center;
+  border-bottom: 2px solid #f1f1f1;
+  min-height: 50px;
+  padding: 0 16px;
+}
+
+.contract-board-body {
+  display: block;
+  font-size: 13px;
+}
+.contract-board-row {
+  min-height: 50px;
+  display: grid;
+  grid-template-columns: 148px 134px 134px 240px 1fr;
+  padding: 16px 10px;
+  border-bottom: 1px solid var(--grayColor100);
+  transition: background 0.2s;
+}
+.contract-head-txt {
+  font-size: 12px;
+  color: var(--blueColor500);
+  font-weight: 600;
+}
+
+.contract-board-row:hover {
+  background-color: #f9fafb;
+}
+.approval-board-body .approval-content {
+  cursor: pointer;
+}
+.approval-body-txt {
+  color: var(--grayColor500);
+  font-size: 13px;
+}
 
 /* section(7) - notice ============================================ */
 .dashboard.notice .help-btn::before {
