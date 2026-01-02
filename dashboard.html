@@ -21,10 +21,10 @@
     <link rel="stylesheet" href="m-style.css" media="(max-width:768px)" />
     <script src="jquery-3.7.1.min.js"></script>
     <script src="data.js" defer></script>
+    <script src="contract.js" defer></script>
     <script src="dashboard.js" defer></script>
     <script src="schedule.js" defer></script>
     <script src="approval.js" defer></script>
-    <script src="contract.js" defer></script>
   </head>
   <body>
     <div class="wrap">
@@ -40,11 +40,6 @@
             </div>
             <div class="header-bar">
               <ul class="header-bar-list flex">
-                <li class="header-bar-list-item">
-                  <button class="switch-btn">
-                    <span class="btn-txt">직원 모드로 전환</span>
-                  </button>
-                </li>
                 <li class="header-bar-list-item">
                   <button class="icon-btn">
                     <img src="images/refresh.svg" alt="change" />
@@ -327,7 +322,10 @@
                       </div>
                     </div>
                     <button type="button" class="schedule-add-btn">
-                      + 근무일정 추가하기
+                      <img
+                        src="images/scedule-add-btn.svg"
+                        alt="schedule-add"
+                      />근무일정 추가하기
                     </button>
                   </div>
                   <div class="schedule-control">
@@ -390,7 +388,7 @@
                   </div>
                 </div>
               </section>
-              <section class="section is-active" data-page="vacation">
+              <section class="section" data-page="vacation">
                 <div class="dashboard vacation">
                   <div class="schedule-top">
                     <div class="schedule-title">
@@ -401,10 +399,16 @@
                     </div>
                     <div class="vacation-btn-group">
                       <button type="button" class="vacation-rate-btn">
-                        연차휴가 사용률
+                        <img
+                          src="/images/vacation-rate.svg"
+                          alt="vacation-rate"
+                        />연차휴가 사용률
                       </button>
                       <button type="button" class="vacation-add-btn">
-                        + 휴가일정 추가하기
+                        <img
+                          src="images/vacation-add-btn.svg"
+                          alt="vacation-add"
+                        />휴가일정 추가하기
                       </button>
                     </div>
                   </div>
@@ -524,7 +528,7 @@
                   </div>
                 </div>
               </section>
-              <section class="section" data-page="contract">
+              <section class="section is-active" data-page="contract">
                 <div class="dashboard contract">
                   <div class="schedule-top">
                     <div class="schedule-title">
@@ -571,64 +575,99 @@
                     </div>
                   </div>
                   <div class="contract-control">
-                    <div class="contract-items">
+                    <div class="contract-process">
                       <button
-                        class="contract-item active"
-                        data-item="contract-all"
+                        class="contract-process-btn active"
+                        data-process="all"
                       >
                         전체
                       </button>
-                      <button class="contract-item" data-item="contract-work">
-                        근로계약서
+                      <button
+                        class="contract-process-btn"
+                        data-process="pending"
+                      >
+                        진행
                       </button>
                       <button
-                        class="contract-item"
-                        data-item="contract-protect"
+                        class="contract-process-btn"
+                        data-process="approved"
                       >
-                        정보보호 서약서
+                        완료
                       </button>
                       <button
-                        class="contract-item"
-                        data-item="contract-vacation"
+                        class="contract-process-btn"
+                        data-process="rejected"
                       >
-                        연차휴가 사용 촉진서
+                        반려
                       </button>
-                      <button
-                        class="contract-item"
-                        data-item="contract-vacation-plan1"
-                      >
-                        연차 휴가 사용 계획서 1차
-                      </button>
-                      <button
-                        class="contract-item"
-                        data-item="contract-vacation-plan2"
-                      >
-                        연차 휴가 사용 계획서 2차
-                      </button>
-                      <button class="contract-item" data-item="contract-salary">
-                        연봉계약서
-                      </button>
-                      <button
-                        class="contract-item"
-                        data-item="contract-internal"
-                      >
-                        사내 업무 협조 요청서
-                      </button>
-                      <button
-                        class="contract-item"
-                        data-item="contract-personal-info"
-                      >
-                        근로자 개인정보 수집/활용 동의서
-                      </button>
+                    </div>
+                    <div class="contract-filters">
+                      <div class="contract-items">
+                        <button
+                          class="contract-item active"
+                          data-item="contract-all"
+                        >
+                          전체
+                        </button>
+                        <button class="contract-item" data-item="contract-work">
+                          근로계약서
+                        </button>
+                        <button
+                          class="contract-item"
+                          data-item="contract-protect"
+                        >
+                          정보보호 서약서
+                        </button>
+                        <button
+                          class="contract-item"
+                          data-item="contract-vacation"
+                        >
+                          연차휴가 사용 촉진서
+                        </button>
+                        <button
+                          class="contract-item"
+                          data-item="contract-vacation-plan"
+                        >
+                          연차 휴가 사용 계획서
+                        </button>
+                        <button
+                          class="contract-item"
+                          data-item="contract-salary"
+                        >
+                          연봉계약서
+                        </button>
+                        <button
+                          class="contract-item"
+                          data-item="contract-internal"
+                        >
+                          사내 업무 협조 요청서
+                        </button>
+                        <button
+                          class="contract-item"
+                          data-item="contract-personal-info"
+                        >
+                          근로자 개인정보 수집/활용 동의서
+                        </button>
+                      </div>
                     </div>
                   </div>
                   <div class="contract-board">
                     <div class="contract-board-head">
-                      <div class="contract-name">계약서명</div>
-                      <div class="contract-status">상태</div>
-                      <div class="contract-turn">서명 차례</div>
-                      <div class="contract-request">요청 보낸 사람</div>
-                      <div class="contract-part">참여자</div>
+                      <div class="contract-name">
+                        <span class="contract-head-txt">계약서명</span>
+                      </div>
+                      <div class="contract-status">
+                        <span class="contract-head-txt">상태</span>
+                      </div>
+                      <div class="contract-turn">
+                        <span class="contract-head-txt">서명 차례</span>
+                      </div>
+                      <div class="contract-request">
+                        <span class="contract-head-txt">요청 보낸 사람</span>
+                      </div>
+                      <div class="contract-part">
+                        <span class="contract-head-txt">참여자</span>
+                      </div>
                     </div>
                     <div class="contract-board-body"></div>
                   </div>
@@ -724,6 +763,72 @@
           <div class="confirm-btn-wrap">
             <button class="confirm-add">일정 추가</button>
             <button class="confirm-cancel"></button>
+          </div>
+        </div>
+      </div>
+      <div class="vacation-rate-modal modal is-hidden">
+        <div class="vacation-rate-modal-card modal-card">
+          <div class="vacation-rate-modal-card-head modal-head">
+            <h3
+              class="vacation-rate-modal-card-modal-title-text modal-title-text"
+            >
+              연차휴가 사용률
+            </h3>
+            <button class="close-rate-modal">
+              <img src="images/close.svg" alt="close" />
+            </button>
+          </div>
+          <div class="vacation-rate-modal-content modal-content">
+            <div
+              class="vacation-rate-modal-summary-item summay-item rate-main-graph"
+            >
+              <div class="summary-row">
+                <div class="summary-text">
+                  <span class="label"> 전체 평균 사용률 </span>
+                  <strong class="value">64<span class="small">%</span></strong>
+                </div>
+                <span class="summary-sub">권장 사용률 대비 12% 증가</span>
+              </div>
+              <div class="progress toss">
+                <div class="progress-bar" data-value="64"></div>
+              </div>
+            </div>
+            <div class="rate-employee-list">
+              <h5 class="list-title"></h5>
+              <div class="employee-rate-item active"></div>
+            </div>
+            <div class="vacation-rate-request-form">
+              <div class="vacation-rate-request-form-wrap">
+                <div class="form-group">
+                  <label>부서</label>
+                  <select class="depart">
+                    <option value="">선택</option>
+                    <option>Management</option>
+                    <option>Sales</option>
+                    <option>Marketing</option>
+                    <option>Design</option>
+                    <option>Production</option>
+                    <option>R&D</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label>직원</label>
+                  <select class="employee">
+                    <option value="">선택</option>
+                    <option></option>
+                  </select>
+                </div>
+              </div>
+              <div class="vacation-rate-request-btn">
+                <button type="button" class="promote-btn">
+                  연차휴가 사용 촉진
+                </button>
+              </div>
+            </div>
+          </div>
+          <div class="vacation-rate-modal-action action">
+            <button class="confirm">확인</button>
+            <button class="cancel">취소</button>
           </div>
         </div>
       </div>
@@ -915,32 +1020,32 @@
                 <option value="contract-work">근로계약서</option>
                 <option value="contract-protect">정보보호 서약서</option>
                 <option value="contract-vacation">연차휴가 사용 촉진서</option>
-                <option value="contract-vacation-plan1">
-                  연차 휴가 사용 계획서 1차
-                </option>
-                <option value="contract-vacation-plan2">
-                  연차 휴가 사용 계획서 2차
-                </option>
                 <option value="contract-salary">연봉계약서</option>
                 <option value="contract-internal">사내 업무 협조 요청서</option>
                 <option value="contract-personal-inefo">
                   근로자 개인정보 수집/활용 동의서
                 </option>
+                <option value="contract-vacation-plan1" disabled>
+                  연차 휴가 사용 계획서 1차
+                </option>
+                <option value="contract-vacation-plan2" disabled>
+                  연차 휴가 사용 계획서 2차
+                </option>
               </select>
             </div>
             <div class="contract-request-modal-row">
               <h5 class="modal-subtitle-text">서명 요청할 직원들</h5>
-              <select name="" id="">
+              <select id="contract-target-select">
                 <option value="">선택</option>
                 <option value="All">전체</option>
                 <option value="leader">팀장</option>
+                <option value="Personal">개인</option>
                 <option value="Management">Management</option>
                 <option value="Sales">Sales</option>
                 <option value="Marketing">Marketing</option>
                 <option value="Design">Design</option>
                 <option value="Production">Production</option>
                 <option value="R&D">R&D</option>
-                <option value="Personal">개인</option>
               </select>
             </div>
             <div class="contract-request-modal-row">
@@ -950,34 +1055,35 @@
                   ><input
                     type="checkbox"
                     name="modal-request-checkbox"
-                    class="modal-request-checkbox"
+                    class="order-chk-1 modal-request-checkbox"
                   />1 (근로자)</label
                 >
                 <label for="" class="modal-request-checkbox-text"
                   ><input
                     type="checkbox"
                     name="modal-request-checkbox"
-                    class="modal-request-checkbox"
+                    class="order-chk-2 modal-request-checkbox"
                   />2 (팀장)</label
                 >
               </div>
             </div>
+            <div class="contract-request-modal-row sign">
+              <h5 class="modal-subtitle-text">서명 유효 기간</h5>
+              <input type="number" id="contract-expire-days" value="7" />
+              <h5 class="modal-subtitle-text gray">일</h5>
+            </div>
             <div class="contract-request-modal-row">
-              <form action="" class="contract-request-form">
+              <form
+                action=""
+                class="contract-request-form"
+                id="dynamic-form-fields"
+              >
                 <h6 class="modal-subtitle-text">문서 내용 연결</h6>
-                <h5 class="modal-subtitle-text">성명</h5>
-                <h5 class="modal-subtitle-text">근로개시일(입사일)</h5>
-                <h5 class="modal-subtitle-text">근무장소</h5>
-                <h5 class="modal-subtitle-text">전화</h5>
               </form>
             </div>
             <div class="contract-request-modal-col request-message">
               <h5 class="modal-subtitle-text">전자계약 요청 메시지</h5>
-              <input
-                type="text"
-                id="contract-request-message"
-                placeholder="근로기준법에 의거하여 근로계약서를 발송합니다."
-              />
+              <textarea id="contract-request-message"></textarea>
             </div>
           </div>
           <div class="contract-request-action action">

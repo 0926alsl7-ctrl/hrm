@@ -73,6 +73,7 @@ img {
   --grayColor600: #6b7684;
   --grayColor700: #4e5968;
   --grayOpacity500: rgba(3, 24, 50, 0.46);
+  --grayOpacity400: rgba(0, 25, 54, 0.31);
   --grayOpacity300: rgba(0, 29, 58, 0.18);
   --grayOpacity200: rgba(0, 27, 55, 0.1);
   --grayOpacity100: rgba(2, 32, 71, 0.05);
@@ -620,18 +621,26 @@ body.darkmode {
 .progress.toss .progress-bar {
   height: 100%;
   width: 0;
-  background: linear-gradient(90deg, #5b8cff, #007bff);
+  background: linear-gradient(
+    90deg,
+    var(--button-bg-color-blue-weak),
+    var(--disableblueColor500),
+    var(--blueColor300),
+    var(--blueColor400),
+    var(--blueColor500)
+  );
   border-radius: 999px;
-  transition: width 1s cubic-bezier(0.22, 1, 0.36, 1);
+  transition: width 2s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 .progress.toss.gray .progress-bar {
   background: linear-gradient(
     90deg,
-    var(--grayColor100),
-    var(--grayColor300),
-    var(--grayColor400),
-    var(--grayColor500)
+    var(--grayOpacity50),
+    var(--grayOpacity100),
+    var(--grayOpacity200),
+    var(--grayOpacity300),
+    var(--grayOpacity400)
   );
 }
 /* section (2) schedule ============================================= */
@@ -728,12 +737,19 @@ body.darkmode {
   transform: translateX(20px);
 }
 .schedule-add-btn {
+  display: flex;
+  align-items: center;
+  gap: 4px;
   background: var(--blueColor500);
   color: #fff;
   border-radius: var(--btn-border-radius);
   line-height: var(--btn-line-height);
-  padding: 8px 12px;
+  padding: 8px 10px;
   font-size: 13px;
+}
+.schedule-add-btn img {
+  width: 18px;
+  height: 18px;
 }
 .schedule-control {
   display: flex;
@@ -850,7 +866,7 @@ body.darkmode {
   font-size: 13px;
   font-weight: 600;
   margin-bottom: 8px;
-  padding-bottom: 8px;
+  padding-bottom: 10px;
   border-bottom: 1px solid var(--grayColor50);
   color: var(--mainTextColor);
 }
@@ -869,14 +885,15 @@ body.darkmode {
   color: var(--grayColor500);
 }
 .week-dates span {
-  padding-top: 6px;
+  padding-top: 2px;
   line-height: 1.4;
 }
 .week-days span {
   font-weight: 500;
   color: var(--grayColor400);
-  padding-bottom: 4px;
+  padding-bottom: 6px;
   line-height: 1.4;
+  position: relative;
 }
 .week-days span:nth-child(1),
 .month-header span:nth-child(1) {
@@ -896,14 +913,21 @@ body.darkmode {
   /* background: var(--grayOpacity100); */
   color: var(--mainTextColor);
 }
-.week-dates .is-today {
-  border-radius: 100px 100px 0 0;
+
+.week-days .is-today::after {
+  content: "";
+  height: 2px;
+  width: 60%;
+  border-radius: 4px;
+  border: 0;
+  background: var(--blueColor500);
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  transform-origin: center;
 }
 
-.week-days .is-today {
-  position: relative;
-  border-radius: 0 0 100px 100px;
-}
 body[data-view-mode="month"] .check-all-header,
 body[data-view-mode="month"] .time-header,
 body[data-view-mode="month"] .schedule-save {
@@ -913,15 +937,6 @@ body[data-view-mode="month"] .schedule-board {
   border-radius: 0;
   padding: 10px 24px;
 }
-/* body[data-view-mode="month"] .schedule-body {
-  width: calc(100% - 30px);
-} */
-
-/* .month-calendar {
-  width: 100%;
- min-width: 768px;
-  max-width: 1300px; 
-} */
 
 .month-header,
 .month-grid {
@@ -978,7 +993,7 @@ body[data-view-mode="month"] .schedule-board {
   text-overflow: ellipsis;
 }
 .month-day:not(.is-today) .count-dot {
-  background: var(--grayColor50);
+  background: var(--grayColor100);
   color: var(--grayColor500);
 }
 .count-dot {
@@ -1297,7 +1312,14 @@ body.show-vacation .shift:not(.vacation) {
 }
 
 body[data-view-mode="week"] .check-all-header {
-  visibility: hidden;
+  display: none;
+}
+body[data-view-mode="week"] .time-header,
+body[data-view-mode="week"] .schedule-row {
+  grid-template-columns: 156px 1fr;
+}
+body[data-view-mode="week"] .schedule-row .employee {
+  padding-left: 8px;
 }
 
 body[data-view-mode="week"] .shift.vacation {
@@ -1404,7 +1426,7 @@ body[data-view-mode="week"] .shift.vacation {
   margin: auto 0;
   display: grid;
   grid-template-columns: repeat(1, 1fr);
-  gap: 20px;
+  gap: 12px;
   background: var(--backgroundColorGrayColor);
 }
 .dashboard.vacation .help-btn:hover::before {
@@ -1413,8 +1435,8 @@ body[data-view-mode="week"] .shift.vacation {
 .dashboard.vacation .help-btn::before {
   content: "휴가 발생부터 잔여일수, 연차촉진까지 간편하게 관리합니다";
   position: absolute;
-  bottom: -26px;
-  left: 0;
+  top: 1px;
+  right: -278px;
   font-size: 11px;
   color: var(--grayColor700);
   white-space: nowrap;
@@ -1423,13 +1445,31 @@ body[data-view-mode="week"] .shift.vacation {
   opacity: 0;
   transition: 0.2s ease-in;
 }
-.vacation-add-btn {
+.vacation-btn-group {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.vacation-add-btn,
+.vacation-rate-btn {
+  display: flex;
+  align-items: center;
+  gap: 4px;
   background: var(--blueColor500);
   color: #fff;
   border-radius: var(--btn-border-radius);
   line-height: var(--btn-line-height);
-  padding: 8px 12px;
+  padding: 8px 10px;
   font-size: 13px;
+}
+.vacation-rate-btn {
+  background: var(--button-bg-color-blue-weak);
+  color: var(--blueColor600);
+}
+.vacation-add-btn img,
+.vacation-rate-btn img {
+  width: 18px;
+  height: 18px;
 }
 .vacation-close-modal {
   width: 22px;
@@ -1728,6 +1768,43 @@ body[data-view-mode="week"] .shift.vacation {
   color: var(--blueColor700);
   font-weight: 500;
 }
+.contract-board-head {
+  display: grid;
+  grid-template-columns: 148px 134px 134px 240px 1fr;
+  align-items: center;
+  border-bottom: 2px solid #f1f1f1;
+  min-height: 50px;
+  padding: 0 16px;
+}
+
+.contract-board-body {
+  display: block;
+  font-size: 13px;
+}
+.contract-board-row {
+  min-height: 50px;
+  display: grid;
+  grid-template-columns: 148px 134px 134px 240px 1fr;
+  padding: 16px 10px;
+  border-bottom: 1px solid var(--grayColor100);
+  transition: background 0.2s;
+}
+.contract-head-txt {
+  font-size: 12px;
+  color: var(--blueColor500);
+  font-weight: 600;
+}
+
+.contract-board-row:hover {
+  background-color: #f9fafb;
+}
+.approval-board-body .approval-content {
+  cursor: pointer;
+}
+.approval-body-txt {
+  color: var(--grayColor500);
+  font-size: 13px;
+}
 
 /* section(7) - notice ============================================ */
 .dashboard.notice .help-btn::before {
@@ -1901,6 +1978,7 @@ body[data-view-mode="week"] .shift.vacation {
 }
 .month-saved-modal-action .edit.disabled {
   opacity: 0.4;
+  cursor: default;
 }
 .month-item-row {
   display: grid;
@@ -1969,7 +2047,7 @@ body[data-view-mode="week"] .shift.vacation {
 .check-ui::after {
   content: "";
   position: absolute;
-  left: 5px;
+  left: 4px;
   top: 2px;
   width: 3px;
   height: 6px;
@@ -1986,6 +2064,111 @@ body[data-view-mode="week"] .shift.vacation {
   transform: rotate(45deg) scale(1);
   opacity: 1;
 }
+.vacation-rate-modal-card {
+  width: 380px;
+}
+.vacation-rate-modal-summary-item {
+  margin-top: 12px;
+}
+.vacation-rate-modal-summary-item .summary-text {
+  display: flex;
+}
+.vacation-rate-modal-summary-item .summary-text .label {
+  background: var(--button-bg-color-blue-weak);
+  padding: 6px 12px;
+  border-radius: 6px;
+  color: var(--button-color-blue);
+}
+.vacation-rate-modal-summary-item .value {
+  color: var(--blueColor500);
+  letter-spacing: 0.4px;
+  font-weight: 500;
+  padding: 6px 8px;
+}
+.vacation-rate-modal-summary-item .small {
+  font-size: 11px;
+  margin-right: 1px;
+}
+.vacation-rate-modal-summary-item .summary-sub {
+  margin-bottom: 6px;
+  font-size: 10px;
+}
+.rate-employee-list {
+  padding: 20px 4px;
+}
+.rate-employee-list .list-title {
+  background: var(--btn-dagner-weak-bg);
+  padding: 4px 12px;
+  border-radius: 6px;
+  color: var(--btn-danger-color);
+  font-size: 12px;
+}
+.rate-employee-list .employee-rate-item:nth-child(2) {
+  margin-top: 10px;
+}
+.rate-employee-list .employee-rate-item:last-child {
+  padding-bottom: 0;
+}
+.employee-rate-item {
+  padding: 10px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 13px;
+}
+.employee-rate-item .emp-info span {
+  color: var(--grayColor700);
+  font-size: 12px;
+}
+.rate-employee-list .employee-rate-item .emp-graph {
+  background: var(--btn-danger-bg);
+  padding: 4px 6px;
+  border-radius: 4px;
+  color: #fff;
+}
+.vacation-rate-request-form {
+  border-top: 2px solid var(--grayColor50);
+}
+.vacation-rate-request-form-wrap {
+  padding: 14px 8px;
+  display: flex;
+  align-items: center;
+  gap: 24px;
+}
+.vacation-rate-request-form-wrap .form-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.vacation-rate-request-form-wrap .form-group select {
+  color: var(--btn-color-base);
+  height: 32px;
+}
+.vacation-rate-request-form-wrap .form-group .employee {
+  padding-right: 64px;
+}
+.vacation-rate-request-btn {
+  display: flex;
+  align-items: center;
+  justify-content: right;
+}
+.vacation-rate-request-btn .promote-btn {
+  padding: 8px 12px;
+  border-radius: 6px;
+  background: var(--blueColor500);
+  color: #fff;
+  font-size: 12px;
+  text-align: center;
+}
+.vacation-rate-modal-action {
+  margin: 16px 0;
+  justify-content: center;
+}
+.vacation-rate-modal-action button {
+  background: var(--btn-bg-base);
+  color: var(--btn-color-base);
+}
+
 .approve-modal-card {
   width: 360px;
 }
@@ -1996,6 +2179,7 @@ body[data-view-mode="week"] .shift.vacation {
   gap: 5px;
 }
 .approve-modal-content input {
+  margin-top: 16px;
   width: 100%;
   border: 1px solid var(--grayColor100);
   border-radius: 4px;
@@ -2106,22 +2290,46 @@ body[data-view-mode="week"] .shift.vacation {
   outline: none;
   appearance: none;
 }
-
+#contract-expire-days {
+  border: 1px solid var(--grayColor100);
+  border-radius: 4px;
+  padding: 10px;
+  font-size: 13px;
+  outline: none;
+  appearance: none;
+  margin-left: 26px;
+}
+.modal-subtitle-text.gray {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--mainTextColor);
+  margin-left: 8px;
+}
+#contract-expire-days::placeholder {
+  font-size: 13px;
+}
 .contract-request-card {
   width: 520px;
   max-width: 550px;
+}
+.contract-request-content {
+  margin-top: 12px;
 }
 .contract-request-modal-row {
   width: 100%;
   display: flex;
   align-items: center;
-  gap: 40px;
+  gap: 26px;
   min-height: 50px;
 }
+.contract-request-modal-row.sign {
+  gap: 0;
+}
+
 .contract-request-modal-col {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 6px;
 }
 .contract-request-modal-col.sign-order {
   flex: 1;
@@ -2132,15 +2340,40 @@ body[data-view-mode="week"] .shift.vacation {
 }
 .contract-request-form {
   width: 100%;
-  margin-top: 30px;
-  line-height: 30px;
-  padding: 20px 10px;
+  margin-top: 14px;
+  line-height: 28px;
+  padding: 8px 0 16px 16px;
   border-radius: 4px;
-  border: 2px solid var(--grayColor100);
+  border: 1px solid var(--grayColor100);
+}
+.contract-request-form h6 {
+  color: var(--grayColor600);
+  font-weight: 500;
+}
+
+.contract-request-form input {
+  appearance: none;
+  outline: 0;
+  border: 1px solid var(--grayColor100);
+  border-radius: 4px;
+  padding: 10px;
+  font-size: 13px;
+  outline: none;
+  appearance: none;
 }
 #contract-request-message {
-  padding: 12px 10px;
+  margin-top: 4px;
+  border: 1px solid var(--grayColor100);
+  border-radius: 4px;
+  padding: 14px 10px;
+  resize: none;
   width: 100%;
+  line-height: 1.4;
+  appearance: none;
+  outline: none;
+  font-family: "Chiron Hei HK", sans-serif;
+  font-size: 13px;
+  color: var(--mainTextColor);
 }
 .contract-request-action .approval {
   background: var(--blueColor500);
@@ -2153,9 +2386,9 @@ body[data-view-mode="week"] .shift.vacation {
 
 .modal-request-checkbox {
   appearance: none;
-  width: 16px;
-  height: 16px;
-  border-radius: 8px;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
   background-color: #fff;
   border: 1px solid var(--grayColor300);
   cursor: pointer;
@@ -2174,8 +2407,8 @@ body[data-view-mode="week"] .shift.vacation {
   position: absolute;
   left: 4px;
   top: 2px;
-  width: 3px;
-  height: 6px;
+  width: 2px;
+  height: 5px;
   border: solid #fff;
   border-width: 0 2px 2px 0;
   transform: rotate(45deg) scale(0);
@@ -2183,6 +2416,8 @@ body[data-view-mode="week"] .shift.vacation {
   transition: all 0.15s ease;
 }
 .modal-request-checkbox-text {
+  display: flex;
+  align-items: center;
   font-size: 13px;
   color: var(--grayColor400);
 }
