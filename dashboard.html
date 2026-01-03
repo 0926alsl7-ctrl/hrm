@@ -91,10 +91,6 @@
                   <img src="images/vacation.svg" alt="date" />
                   <span class="nav-txt">휴가관리</span>
                 </li>
-                <li class="nav-item" data-target="payroll">
-                  <img src="images/chart2.svg" alt="date" />
-                  <span class="nav-txt">근태정산 및 급여관리</span>
-                </li>
                 <li class="nav-item" data-target="approval">
                   <img src="images/approve1.svg" alt="date" />
                   <span class="nav-txt">전자결재</span>
@@ -461,7 +457,6 @@
                   </div>
                 </div>
               </section>
-              <section class="section" data-page="payroll"></section>
               <section class="section" data-page="approval">
                 <div class="dashboard approval">
                   <div class="schedule-top">
@@ -539,7 +534,6 @@
                     </div>
                   </div>
                   <div class="contract-control">
-<<<<<<< HEAD
                     <div class="contract-process-wrap">
                       <div class="contract-process">
                         <button
@@ -608,17 +602,10 @@
                       <button
                         class="contract-filter-btn active"
                         data-item="contract-all"
-=======
-                    <div class="contract-process">
-                      <button
-                        class="contract-process-btn active"
-                        data-process="all"
->>>>>>> origin/main
                       >
                         전체
                       </button>
                       <button
-<<<<<<< HEAD
                         class="contract-filter-btn"
                         data-item="contract-work"
                       >
@@ -627,21 +614,10 @@
                       <button
                         class="contract-filter-btn"
                         data-item="contract-protect"
-=======
-                        class="contract-process-btn"
-                        data-process="pending"
                       >
-                        진행
+                        정보보호 서약서
                       </button>
                       <button
-                        class="contract-process-btn"
-                        data-process="approved"
->>>>>>> origin/main
-                      >
-                        완료
-                      </button>
-                      <button
-<<<<<<< HEAD
                         class="contract-filter-btn"
                         data-item="contract-vacation"
                       >
@@ -670,62 +646,7 @@
                         data-item="contract-personal-info"
                       >
                         근로자 개인정보 수집/활용 동의서
-=======
-                        class="contract-process-btn"
-                        data-process="rejected"
-                      >
-                        반려
->>>>>>> origin/main
                       </button>
-                    </div>
-                    <div class="contract-filters">
-                      <div class="contract-items">
-                        <button
-                          class="contract-item active"
-                          data-item="contract-all"
-                        >
-                          전체
-                        </button>
-                        <button class="contract-item" data-item="contract-work">
-                          근로계약서
-                        </button>
-                        <button
-                          class="contract-item"
-                          data-item="contract-protect"
-                        >
-                          정보보호 서약서
-                        </button>
-                        <button
-                          class="contract-item"
-                          data-item="contract-vacation"
-                        >
-                          연차휴가 사용 촉진서
-                        </button>
-                        <button
-                          class="contract-item"
-                          data-item="contract-vacation-plan"
-                        >
-                          연차 휴가 사용 계획서
-                        </button>
-                        <button
-                          class="contract-item"
-                          data-item="contract-salary"
-                        >
-                          연봉계약서
-                        </button>
-                        <button
-                          class="contract-item"
-                          data-item="contract-internal"
-                        >
-                          사내 업무 협조 요청서
-                        </button>
-                        <button
-                          class="contract-item"
-                          data-item="contract-personal-info"
-                        >
-                          근로자 개인정보 수집/활용 동의서
-                        </button>
-                      </div>
                     </div>
                   </div>
                   <div class="contract-board">
@@ -745,12 +666,9 @@
                       <div class="contract-part">
                         <span class="contract-head-txt">참여자</span>
                       </div>
-<<<<<<< HEAD
                       <div class="contract-manage">
                         <span class="contract-head-txt">관리</span>
                       </div>
-=======
->>>>>>> origin/main
                     </div>
                     <div class="contract-board-body"></div>
                   </div>
@@ -972,7 +890,7 @@
               <div class="approval-detail-row">
                 <label for="">
                   <span class="approval-detail-row-title">승인권자</span>
-                  <select name="approver" id="approver-select">
+                  <select name="approver" id="approver-select" disabled>
                     <option value="">선택</option>
                     <option value="Management">정희석, 하미니</option>
                     <option value="Sales">이유정, 하미니</option>
@@ -984,13 +902,13 @@
                 </label>
               </div>
               <div class="approval-detail-row">
-                <label for="">
+                <label class="approval-detail-col">
                   <span class="approval-detail-row-title">요청사유</span>
-                  <input
-                    type="text"
+                  <textarea
                     id="approval-detail-reason"
-                    placeholder="금일 잔업이 있어 연장근무 요청합니다."
-                  />
+                    spellcheck="false"
+                    disabled
+                  ></textarea>
                 </label>
               </div>
             </div>
@@ -1024,7 +942,58 @@
           </div>
           <div class="approval-detail-action action">
             <button class="approval">확인</button>
-            <button class="cancel">취소</button>
+            <button class="cancel">닫기</button>
+          </div>
+        </div>
+      </div>
+      <div class="contract-detail-modal modal is-hidden">
+        <div class="contract-detail-modal-card modal-card">
+          <div class="contract-detail-card-head modal-head">
+            <h4 class="modal-title-text">전자계약 요청사항 검토</h4>
+            <button class="close">
+              <img src="images/close.svg" alt="close" />
+            </button>
+          </div>
+          <div class="contract-detail-content modal-content">
+            <div class="contract-detail-content-left">
+              <div class="contract-detail-row">
+                <label for="">
+                  <span class="contract-detail-row-title">요청자</span>
+                  <div class="contract-employee-detail">
+                    <span class="contract-employee-name"></span>
+                    <span class="contract-employee-job"></span>
+                  </div>
+                </label>
+              </div>
+              <div class="contract-detail-row">
+                <span class="contract-detail-row-title">계약서명</span>
+                <span class="contract-name"></span>
+                </select>
+              </div>
+              <div class="contract-detail-row">
+                  <span class="contract-detail-row-title">승인 상태</span>
+              </div>
+              <div class="contract-detail-col">
+                 <span class="contract-detail-row-title">서명 참여자</span>
+                  <span class="contract-detail-sign-first"></span>
+                  <span class="contract-detail-sign-second"></span>
+              </div>
+            </div>
+            <div class="contract-detail-content-right">
+              <div class="contract-detail-row">
+                   <form
+                action=""
+                class="contract-request-form"
+                id="dynamic-form-fields"
+              >
+                <h6 class="modal-subtitle-text"></h6>
+              </form>
+              </div>
+            </div>
+          </div>
+          <div class="contract-detail-action action">
+            <button class="approval">확인</button>
+            <button class="cancel">닫기</button>
           </div>
         </div>
       </div>
@@ -1131,6 +1100,13 @@
                 <option value="R&D">R&D</option>
               </select>
             </div>
+            <div class="target-personal-row is-hidden">
+              <h5 class="modal-subtitle-text">상세 대상</h5>
+              <div class="contract-request-modal-detail-select">
+             <select id="target-dept-select" style="flex:1;"><option value="">부서 선택</option></select>
+                 <select id="target-emp-select" style="flex:1;"><option value="">직원 선택</option></select>
+                </div>
+              </div>
             <div class="contract-request-modal-row">
               <h5 class="modal-subtitle-text">직원 서명 차수</h5>
               <div class="contract-request-modal-col sign-order">

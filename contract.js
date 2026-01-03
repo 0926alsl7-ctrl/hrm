@@ -1,239 +1,250 @@
-/* === contract.js 최종 통합본 === */
+/* === 전자계약 & 결재 통합 관리 시스템 === */
 
-// [데이터] 랜덤 생성용 초기 데이터
-const contractTemplates = [
-  "근로계약서",
-  "정보보호 서약서",
-  "연차휴가 사용 촉진서",
-  "연차 휴가 사용 계획서",
-  "연봉계약서",
-  "사내 업무 협조 요청서",
-];
-const contractStatuses = ["진행", "완료", "반려"];
 let contractData = [];
+let selectedId = null;
+let activeMode = "contract";
 
-// [유틸] 1년 뒤 하루 전날 계산 (2026.01.01 -> 2026.12.31)
-function getOneYearMinusOneDay(dateStr) {
-  const start = new Date(dateStr);
-  if (isNaN(start)) return "";
-  const end = new Date(start);
-  end.setFullYear(start.getFullYear() + 1);
-  end.setDate(end.getDate() - 1);
-  return end.toISOString().split("T")[0];
+// --- [공통] 모달 제어 ---
+function openModal(selector) {
+  const modal = document.querySelector(selector);
+  if (modal) {
+    modal.classList.remove("is-hidden");
+    modal.classList.add("is-active");
+  }
 }
 
-// [유틸] 모달 초기화
-function resetContractModal() {
-  const tSelect = document.getElementById("contract-template-select");
-  const targetSelect = document.getElementById("contract-target-select");
-  const msgInput = document.getElementById("contract-request-message");
-  const formContainer = document.getElementById("dynamic-form-fields");
-  const chk1 = document.querySelector(".order-chk-1");
-  const chk2 = document.querySelector(".order-chk-2");
-
-  if (tSelect) tSelect.value = "";
-  if (targetSelect) targetSelect.value = "";
-  if (msgInput) msgInput.value = "";
-  if (formContainer) formContainer.innerHTML = "";
-  if (chk1) chk1.checked = false;
-  if (chk2) chk2.checked = false;
+function closeModal() {
+  document.querySelectorAll(".modal").forEach((m) => {
+    m.classList.add("is-hidden");
+    m.classList.remove("is-active");
+  });
 }
 
-// [기능] 게시판 데이터 랜덤 생성 (팀장 매칭 & 차수 계산 포함)
+// --- [전자계약] 데이터 생성기 (기능 복구) ---
 function generateRandomContracts() {
   const data = [];
   const depts = Object.keys(employeesData || {});
-  if (depts.length === 0) return [];
+  const keys = Object.keys(templateFields);
 
-  for (let i = 0; i < 10; i++) {
+  for (let i = 0; i < 12; i++) {
+    const templateKey = keys[Math.floor(Math.random() * keys.length)];
     const dept = depts[Math.floor(Math.random() * depts.length)];
     const empList = employeesData[dept];
     const empName = empList[Math.floor(Math.random() * empList.length)];
-    const leaderName = empList[0]; // 각 부서 첫 번째 사람을 팀장으로 간주
+    const leaderName = empList[0];
 
-    // 서명 차수 로직: 체크박스 1개(2회차), 2개(3회차)
-    const isBothChecked = Math.random() > 0.5;
-    const turnCount = isBothChecked ? 3 : 2;
+    const statuses = ["반려", "승인 대기", "자동 승인", "승인 완료"];
+    const status = statuses[Math.floor(Math.random() * statuses.length)];
+    const hasSecondStep = empName !== leaderName && Math.random() > 0.5;
 
     data.push({
       id: Date.now() + i,
-      title:
-        contractTemplates[Math.floor(Math.random() * contractTemplates.length)],
-      status:
-        contractStatuses[Math.floor(Math.random() * contractStatuses.length)],
-      turn: turnCount,
+      templateKey: templateKey,
+      title: templateMap[templateKey],
+      status: status,
+      turn: hasSecondStep ? 3 : 2,
       requester: `${empName}(${dept})`,
-      participants: isBothChecked
-        ? `1차: ${empName}, 2차: ${leaderName}`
-        : `1차: ${empName}`,
-      dept: dept,
+      p1: empName,
+      p2: hasSecondStep ? leaderName : null,
     });
   }
   return data;
 }
 
-// [기능] 게시판 렌더링
-function renderContractBoard(filterStatus = "all") {
+// --- [전자계약] 게시판 렌더링 ---
+function renderContractBoard() {
   const boardBody = document.querySelector(".contract-board-body");
   if (!boardBody) return;
 
   boardBody.innerHTML = "";
-  const statusMap = { pending: "진행", approved: "완료", rejected: "반려" };
-
-  const filtered = contractData.filter((item) => {
-    return filterStatus === "all" || item.status === statusMap[filterStatus];
-  });
-
-  filtered.forEach((item) => {
-    const statusClass =
-      item.status === "진행"
-        ? "status-ing"
-        : item.status === "완료"
-        ? "status-done"
-        : "status-cancel";
+  contractData.forEach((item) => {
     const row = document.createElement("div");
     row.className = "contract-board-row";
+    row.onclick = (e) => {
+      if (!e.target.closest("button")) openContractDetail(item.id);
+    };
+
+    const statusCls = {
+      "승인 대기": "contract-status-wait",
+      "승인 완료": "contract-status-approved",
+      "자동 승인": "contract-status-auto",
+      반려: "contract-status-reject",
+    }[item.status];
+
+    let manageHtml = "";
+    if (item.status === "승인 대기") {
+      manageHtml = `
+        <button class="manage-btn-approve" onclick="openAction('approve', ${item.id}, 'contract')">승인</button>
+        <button class="manage-btn-reject" onclick="openAction('reject', ${item.id}, 'contract')">거절</button>`;
+    } else if (item.status === "반려") {
+      manageHtml = `<button class="manage-btn-reason" onclick="alert('반려 사유: 서류 미비')"><img src="images/info.svg" style="width:14px; margin-right:4px;">사유 확인</button>`;
+    } else {
+      manageHtml = `<button class="manage-btn-go" onclick="alert('보관함으로 이동합니다.')"><img src="images/archive.svg" style="width:14px; margin-right:4px;">보관함으로 이동</button>`;
+    }
+
     row.innerHTML = `
       <div class="contract-name"><span>${item.title}</span></div>
-      <div class="contract-status"><span class="badge ${statusClass}">${item.status}</span></div>
-      <div class="contract-turn"><span>${item.turn}회차</span></div>
+      <div class="contract-status"><button class="status-btn ${statusCls}">${
+      item.status
+    }</button></div>
+      <div class="contract-turn"><span>${item.turn}</span></div>
       <div class="contract-request"><span>${item.requester}</span></div>
-      <div class="contract-part"><span>${item.participants}</span></div>
+      <div class="contract-part">
+        <div class="part-item"><span class="part-label">1차</span><span class="part-name">${
+          item.p1
+        }</span></div>
+        ${
+          item.p2
+            ? `<div class="part-item"><span class="part-label">2차</span><span class="part-name">${item.p2}</span></div>`
+            : ""
+        }
+      </div>
+      <div class="contract-manage">${manageHtml}</div>
     `;
     boardBody.appendChild(row);
   });
 }
 
-// [기능] 템플릿 필드 생성 (연차 15일 고정 및 자동 계산 포함)
-function renderTemplateFields(templateId) {
-  const formContainer = document.getElementById("dynamic-form-fields");
-  const msgInput = document.getElementById("contract-request-message");
-  if (!formContainer) return;
+// --- [전자계약] 상세 검토 모달 오픈 ---
+function openContractDetail(id) {
+  const item = contractData.find((d) => d.id === id);
+  if (!item) return;
+  selectedId = id;
 
-  const config = templateFields[templateId];
+  const modal = document.querySelector(".contract-detail-modal");
+  const [name, dept] = item.requester.replace(")", "").split("(");
+
+  modal.querySelector(".contract-employee-name").textContent = name;
+  modal.querySelector(".contract-employee-job").textContent = dept;
+  modal.querySelector(".contract-name").textContent = item.title;
+  modal.querySelector(
+    ".contract-detail-sign-first"
+  ).textContent = `1차: ${item.p1}`;
+  modal.querySelector(".contract-detail-sign-second").textContent = item.p2
+    ? `2차: ${item.p2}`
+    : "-";
+
+  // 상세 모달 우측 폼 렌더링
+  renderTemplateFields(item.templateKey, "#dynamic-form-fields-detail");
+  openModal(".contract-detail-modal");
+}
+
+// --- [기능 복구] 동적 폼 필드 렌더링 (핵심!) ---
+function renderTemplateFields(templateKey, containerSelector) {
+  const container = document.querySelector(containerSelector);
+  if (!container) return;
+
+  const config = templateFields[templateKey];
   if (!config) {
-    formContainer.innerHTML = "";
+    container.innerHTML = "";
     return;
   }
 
-  formContainer.innerHTML =
-    '<h6 class="modal-subtitle-text">문서 내용 연결</h6>';
-  if (msgInput) msgInput.value = config.msg;
+  container.innerHTML = `<h6 class="modal-subtitle-text">${config.msg}</h6>`;
 
   config.fields.forEach((field) => {
-    const fieldWrap = document.createElement("div");
-    fieldWrap.className = "contract-request-modal-row";
+    const wrap = document.createElement("div");
+    wrap.className = "contract-request-modal-row";
     let inputHtml = "";
 
     if (field.type === "emp-select") {
-      inputHtml = `<select name="${field.name}" class="emp-auto-select"><option value="">직원 선택</option>`;
-      Object.keys(employeesData).forEach((dept) => {
-        employeesData[dept].forEach((name) => {
-          inputHtml += `<option value="${name}" data-dept="${dept}">${name} (${dept})</option>`;
+      inputHtml = `<select class="emp-auto-select"><option value="">직원 선택</option>`;
+      Object.keys(employeesData).forEach((d) => {
+        employeesData[d].forEach((name) => {
+          inputHtml += `<option value="${name}" data-dept="${d}">${name} (${d})</option>`;
         });
       });
       inputHtml += `</select>`;
+    } else if (field.type === "select") {
+      inputHtml = `<select>${field.options
+        .map((o) => `<option>${o}</option>`)
+        .join("")}</select>`;
     } else {
-      const isDays = field.name.includes("Days");
-      inputHtml = `<input type="${isDays ? "number" : field.type}" name="${
-        field.name
-      }" value="${field.defaultValue || ""}" ${
-        field.readonly ? "readonly" : ""
-      }>`;
+      inputHtml = `<input type="${field.type}" value="${
+        field.defaultValue || ""
+      }" ${field.readonly ? "readonly" : ""}>`;
     }
 
-    fieldWrap.innerHTML = `<h5 class="modal-subtitle-text">${field.label}</h5>${inputHtml}`;
-    formContainer.appendChild(fieldWrap);
+    wrap.innerHTML = `<h5 class="modal-subtitle-text">${field.label}</h5>${inputHtml}`;
+    container.appendChild(wrap);
   });
+}
 
-  // 연차 계산 로직 연결
-  const vacStart = formContainer.querySelector('input[name="vacStart"]');
-  const totalInput = formContainer.querySelector('input[name="totalDays"]');
-  const usedInput = formContainer.querySelector('input[name="usedDays"]');
-  const remainInput = formContainer.querySelector('input[name="remainDays"]');
+// --- [공통] 승인/반려 액션 ---
+window.openAction = function (type, id, mode) {
+  selectedId = id;
+  activeMode = mode;
+  const modalSelector =
+    type === "approve" ? ".approve-action-modal" : ".reject-action-modal";
 
-  if (vacStart) {
-    vacStart.onchange = () => {
-      formContainer.querySelector('input[name="vacEnd"]').value =
-        getOneYearMinusOneDay(vacStart.value);
-      if (totalInput) totalInput.value = 15; // 15일 고정
-      if (remainInput)
-        remainInput.value = 15 - (parseFloat(usedInput?.value) || 0);
-    };
+  if (type === "approve" && mode === "contract") {
+    const item = contractData.find((d) => d.id === id);
+    const input = document.querySelector(`${modalSelector} input`);
+    if (input) input.value = `${item.title} 내용 확인했습니다.`;
   }
-  if (usedInput) {
-    usedInput.oninput = () => {
-      const total = parseFloat(totalInput?.value) || 15;
-      const used = parseFloat(usedInput.value) || 0;
-      if (remainInput)
-        remainInput.value = (total - used).toFixed(1).replace(/\.0$/, "");
-    };
+  openModal(modalSelector);
+};
+
+function processApproval() {
+  if (activeMode === "contract") {
+    const item = contractData.find((d) => d.id === selectedId);
+    if (item) {
+      item.status = "승인 완료";
+      alert("승인되었습니다. 보관함으로 이동합니다.");
+      renderContractBoard();
+      closeModal();
+    }
   }
 }
 
-// [이벤트] 페이지 초기화
+// --- [이벤트 바인딩] ---
 document.addEventListener("DOMContentLoaded", () => {
   contractData = generateRandomContracts();
   renderContractBoard();
 
+  // 1. 템플릿 선택 이벤트
   const tSelect = document.getElementById("contract-template-select");
+  if (tSelect) {
+    tSelect.onchange = (e) => {
+      renderTemplateFields(e.target.value, "#dynamic-form-fields");
+    };
+  }
+
+  // 2. 대상 선택 (개인 선택 시 row 노출)
   const targetSelect = document.getElementById("contract-target-select");
-  const chk1 = document.querySelector(".order-chk-1");
-  const chk2 = document.querySelector(".order-chk-2");
-
-  // 필터 버튼 클릭
-  document.querySelectorAll(".contract-process-btn").forEach((btn) => {
-    btn.onclick = (e) => {
-      document
-        .querySelectorAll(".contract-process-btn")
-        .forEach((b) => b.classList.remove("active"));
-      btn.classList.add("active");
-      renderContractBoard(btn.dataset.process);
-    };
-  });
-
-  // 요청 모달 열기
-  const reqBtn = document.querySelector(".contract-request-btn");
-  if (reqBtn) {
-    reqBtn.onclick = () =>
-      document
-        .querySelector(".contract-request-modal")
-        ?.classList.remove("is-hidden");
-  }
-
-  if (tSelect) tSelect.onchange = (e) => renderTemplateFields(e.target.value);
-
-  if (targetSelect) {
+  const personalRow = document.getElementById("target-personal-row");
+  if (targetSelect && personalRow) {
     targetSelect.onchange = (e) => {
-      const val = e.target.value;
-      if (chk1) chk1.checked = val === "Personal" || val === "All";
-      if (chk2) chk2.checked = val === "leader";
+      if (e.target.value === "Personal")
+        personalRow.classList.remove("is-hidden");
+      else personalRow.classList.add("is-hidden");
     };
   }
 
-  // 최종 요청 버튼
-  const approvalBtn = document.querySelector(
-    ".contract-request-action .approval"
-  );
-  if (approvalBtn) {
-    approvalBtn.onclick = () => {
-      if (!tSelect.value || !targetSelect.value) {
-        alert("템플릿과 대상을 선택해주세요.");
-        return;
+  // 3. 승인/반려 버튼 바인딩
+  const approveBtn = document.querySelector(".approve-action-modal .approval");
+  if (approveBtn) approveBtn.onclick = processApproval;
+
+  const rejectBtn = document.querySelector(".reject-action-modal .approval");
+  if (rejectBtn) {
+    rejectBtn.onclick = () => {
+      if (activeMode === "contract") {
+        const item = contractData.find((d) => d.id === selectedId);
+        item.status = "반려";
+        renderContractBoard();
+        closeModal();
       }
-      alert("전자계약 요청이 완료되었습니다!");
-      resetContractModal();
-      document
-        .querySelector(".contract-request-modal")
-        .classList.add("is-hidden");
     };
   }
 
+  // 4. 모달 열기/닫기
   document
-    .querySelectorAll(
-      ".contract-request-modal .close, .contract-request-modal .cancel"
-    )
+    .querySelectorAll(".contract-request-btn, .contract-add-btn")
     .forEach((btn) => {
-      btn.onclick = resetContractModal;
+      btn.onclick = () => openModal(".contract-request-modal");
     });
+
+  document.querySelectorAll(".close, .cancel").forEach((btn) => {
+    btn.onclick = closeModal;
+  });
 });

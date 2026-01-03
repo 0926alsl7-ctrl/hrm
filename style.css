@@ -1591,30 +1591,36 @@ body[data-view-mode="week"] .shift.vacation {
   display: flex;
   align-items: center;
 }
-.approval-status button {
+.approval-status button,
+.status-btn {
   cursor: default;
   padding: 6px 12px;
   font-size: 12px;
   border-radius: 8px;
   white-space: nowrap;
 }
-.approval-status-wait {
+.approval-status-wait,
+.contract-status-wait {
   color: var(--grayOpacity500);
   background-color: var(--grayOpacity200);
 }
-.approval-status-approved {
+.approval-status-approved,
+.contract-status-approved {
   color: #fff;
   background-color: #4593fc;
 }
-.approval-status-auto {
+.approval-status-auto,
+.contract-status-auto {
   color: #fff;
   background-color: #15c47e;
 }
-.approval-status-reject {
+.approval-status-reject,
+.contract-status-reject {
   color: #fff;
   background-color: #f66570;
 }
-.approval-board-body .approval-action {
+.approval-board-body .approval-action,
+.contract-manage {
   display: flex;
   align-items: center;
   gap: 6px;
@@ -1789,7 +1795,7 @@ body[data-view-mode="week"] .shift.vacation {
 }
 .contract-board-head {
   display: grid;
-  grid-template-columns: 164px 148px 148px 240px 240px 1fr;
+  grid-template-columns: 214px 94px 94px 214px 240px 1fr;
   align-items: center;
   border-bottom: 2px solid #f1f1f1;
   min-height: 50px;
@@ -1803,11 +1809,13 @@ body[data-view-mode="week"] .shift.vacation {
 .contract-board-row {
   min-height: 50px;
   display: grid;
-  grid-template-columns: 164px 148px 148px 240px 240px 1fr;
+  grid-template-columns: 214px 94px 94px 214px 240px 1fr;
   padding: 16px;
   border-bottom: 1px solid var(--grayColor100);
   transition: background 0.2s;
   cursor: pointer;
+  align-items: center;
+  font-size: 12px;
 }
 .contract-head-txt {
   font-size: 12px;
@@ -1819,50 +1827,60 @@ body[data-view-mode="week"] .shift.vacation {
   background-color: #f9fafb;
 }
 .contract-name {
-  color: var(--grayColor400);
-}
-.approval-body-txt {
   color: var(--grayColor500);
-  font-size: 13px;
 }
-.contract-board-head {
-  display: grid;
-  grid-template-columns: 148px 134px 134px 240px 1fr;
+.contract-board-row .contract-turn {
+  padding-left: 19px;
+}
+.contract-part {
+  display: flex;
   align-items: center;
-  border-bottom: 2px solid #f1f1f1;
-  min-height: 50px;
-  padding: 0 16px;
+  gap: 16px;
 }
-
-.contract-board-body {
-  display: block;
-  font-size: 13px;
+.part-item {
+  display: flex;
+  align-items: center;
+  gap: 4px;
 }
-.contract-board-row {
-  min-height: 50px;
-  display: grid;
-  grid-template-columns: 148px 134px 134px 240px 1fr;
-  padding: 16px 10px;
-  border-bottom: 1px solid var(--grayColor100);
-  transition: background 0.2s;
-}
-.contract-head-txt {
-  font-size: 12px;
+.part-label {
+  padding: 4px 8px;
+  border-radius: 4px;
+  background: var(--button-bg-color-blue-weak);
   color: var(--blueColor500);
-  font-weight: 600;
 }
-
-.contract-board-row:hover {
-  background-color: #f9fafb;
+.manage-btn-go,
+.manage-btn-reason {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 12px;
 }
-.approval-board-body .approval-content {
+.manage-btn-reason {
+  color: var(--grayColor300);
+}
+.manage-btn-go{
+  color: var(--blueColor400);
+}
+.contract-manage button img {
+  width: 20px;
+  height: 20px;
+}
+.manage-btn-approve,
+.manage-btn-reject {
+  border: none;
+  padding: 6px 18px;
+  font-size: 12px;
   cursor: pointer;
+  border-radius: 8px;
+  white-space: nowrap;
+  background: #fff;
 }
-.approval-body-txt {
-  color: var(--grayColor500);
-  font-size: 13px;
+.manage-btn-approve{background: var(--button-bg-color-blue-weak);
+color: var(--blueColor500);}
+.manage-btn-reject{
+  background: var(--btn-dagner-weak-bg);
+  color:var(--btn-danger-color)
 }
-
 /* section(7) - notice ============================================ */
 .dashboard.notice .help-btn::before {
   content: "사내 공지와 맞춤화된 사내 알림을 데이터와 연계하여 발송합니다";
@@ -2233,7 +2251,7 @@ body[data-view-mode="week"] .shift.vacation {
 .approve-modal-head {
   display: flex;
   flex-direction: column;
-  gap: 5px;
+  gap: 6px;
 }
 .approve-modal-content input {
   margin-top: 16px;
@@ -2293,7 +2311,9 @@ body[data-view-mode="week"] .shift.vacation {
   font-size: 12px;
 }
 .approval-detail-modal-card {
-  width: 480px;
+  width: 580px;
+  max-width: 640px;
+  box-sizing: border-box;
 }
 
 .approval-detail-content {
@@ -2305,15 +2325,15 @@ body[data-view-mode="week"] .shift.vacation {
 }
 .approval-detail-request-item button {
   border: none;
-  padding: 8px 12px;
+  padding: 8px 10px;
   border-radius: 8px;
   background: #f2f4f6;
-  font-size: 13px;
+  font-size: 12px;
   color: #4e5968;
-  margin-right: 4px;
+  white-space: nowrap;
 }
 .approval-detail-row {
-  margin-bottom: 16px;
+  padding: 14px 4px;
 }
 .approval-detail-row-title {
   width: 100%;
@@ -2322,22 +2342,69 @@ body[data-view-mode="week"] .shift.vacation {
   color: var(--mainTextColor);
   margin-bottom: 6px;
 }
+#approver-select {
+  border: 0;
+  appearance: none;
+  outline: none;
+  font-size: 12px;
+  padding: 4px 20px 4px 4px;
+  color: var(--grayColor500);
+}
+.approval-detail-col {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
 .approval-employee-detail {
-  margin-top: 4px;
+  margin-top: 6px;
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: 6px;
   font-size: 13px;
-  color: var(--grayColor600);
+  color: var(--mainTextColor);
+}
+
+#approval-detail-reason {
+  font-size: 12px;
+  color: var(--grayColor500);
+  background: #fff;
+  border: 1px solid var(--grayColor100);
+  border-radius: 4px;
+  padding: 10px 0 18px 10px;
+  resize: none;
+  height: auto;
+  line-height: 1.4;
+  appearance: none;
+  outline: none;
+  font-family: "Chiron Hei HK", sans-serif;
+  margin-right: 20px;
+}
+.approval-detail-request-item {
+  margin-top: 6px;
+  display: flex;
+  gap: 8px;
+  align-items: center;
 }
 .approval-employee-job {
   font-size: 11px;
+  padding: 6px 10px;
 }
 .approval-detail-content-left {
-  width: 40%;
+  width: 50%;
 }
 .approval-detail-content-right {
-  width: 60%;
+  width: 50%;
+}
+.approval-detail-action button {
+  padding: 6px 24px;
+}
+.approval-detail-action .approval {
+  background: var(--button-bg-color-blue-weak);
+  color: var(--blueColor500);
+}
+.approval-detail-action .cancel {
+  background: var(--btn-bg-base);
+  color: var(--btn-color-base);
 }
 .contract-request-modal select {
   border: 1px solid var(--grayColor100);
