@@ -1301,47 +1301,29 @@ vCloseBtns.forEach((btn) => {
 if (vPromoteBtn) {
   vPromoteBtn.onclick = () => {
     const selectedName = vEmpSelect?.value;
-    const selectedDept = vDeptSelect?.value;
-
-    if (!selectedName || !selectedDept) {
-      alert("연차 촉진 부서/직원을 선택해주세요.");
-      return;
-    }
+    if (!selectedName) return alert("직원을 선택해주세요.");
 
     resetVacationRateModal();
+    
+    // 전자계약 모달 열기
+    openModal(".contract-request-modal");
 
-    const cModal =
-      document.querySelector(".contract-request-modal") ||
-      document.querySelector(".contract-modal");
-    if (cModal) {
-      cModal.classList.remove("is-hidden");
+    // 템플릿 설정
+    const tSelect = document.getElementById("contract-template-select");
+    tSelect.value = "contract-vacation";
+    
+    // [중요] 폼 렌더링 호출
+    renderTemplateFields("contract-vacation", "#dynamic-form-fields");
 
-      const tSelect = document.getElementById("contract-template-select");
-      if (tSelect) {
-        tSelect.value = "contract-vacation";
-
-        if (typeof renderTemplateFields === "function") {
-          renderTemplateFields("contract-vacation");
-
-          setTimeout(() => {
-            const formFields = document.getElementById("dynamic-form-fields");
-            const nameInput = formFields?.querySelector(
-              'select[name="empName"]'
-            );
-            if (nameInput) {
-              nameInput.value = selectedName;
-              nameInput.dispatchEvent(new Event("change"));
-            }
-          }, 50);
-        }
-      }
-
-      const targetSelect = cModal.querySelectorAll("select")[1];
-      if (targetSelect) targetSelect.value = "Personal";
-      targetSelect.dispatchEvent(new Event("change"));
-    } else {
-      console.warn("전자계약 모달이 없습니다.");
-      alert(`${selectedName}님 촉진 프로세스를 시작합니다.`);
-    }
+    // 값 주입 (약간의 지연 필요)
+    setTimeout(() => {
+        const nameInput = document.querySelector('#dynamic-form-fields select[name="empName"]');
+        if (nameInput) nameInput.value = selectedName;
+        
+        const targetSelect = document.getElementById("contract-target-select");
+        targetSelect.value = "Personal";
+        targetSelect.dispatchEvent(new Event("change"));
+    }, 100);
   };
 }
+

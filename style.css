@@ -1561,6 +1561,7 @@ body[data-view-mode="week"] .shift.vacation {
   padding: 16px 10px;
   border-bottom: 1px solid var(--grayColor100);
   transition: background 0.2s;
+  font-size: 12px;
 }
 .approval-board-body-row:hover {
   background-color: #f9fafb;
@@ -1584,7 +1585,7 @@ body[data-view-mode="week"] .shift.vacation {
 }
 .approval-board-body .approval-item {
   padding-left: 4px;
-  font-size: 14px;
+  color: var(--grayColor500);
 }
 
 .approval-board-body .approval-status {
@@ -1806,7 +1807,7 @@ body[data-view-mode="week"] .shift.vacation {
   display: block;
   font-size: 13px;
 }
-.contract-board-row {
+.contract-board-body-row {
   min-height: 50px;
   display: grid;
   grid-template-columns: 214px 94px 94px 214px 240px 1fr;
