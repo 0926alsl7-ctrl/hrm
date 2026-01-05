@@ -24,7 +24,7 @@
     <script src="contract.js" defer></script>
     <script src="dashboard.js" defer></script>
     <script src="schedule.js" defer></script>
-    <script src="approval.js" defer></script>
+    <script src="notice.js" defer></script>
   </head>
   <body>
     <div class="wrap">
@@ -128,7 +128,7 @@
             <div class="content">
               <section class="section" data-page="home">
                 <div class="dashboard">
-                  <div class="card profile-card">
+                  <div class="card profile-card" data-target="account">
                     <div class="profile-info flex">
                       <div class="profile-img">
                         <img
@@ -372,7 +372,7 @@
                   </div>
                 </div>
               </section>
-              <section class="section is-active" data-page="attendance">
+              <section class="section" data-page="attendance">
                 <div class="dashboard attendance">
                   <div class="schedule-top">
                     <div class="schedule-title">
@@ -429,7 +429,6 @@
                   </div>
                 </div>
               </section>
-
               <section class="section" data-page="vacation">
                 <div class="dashboard vacation">
                   <div class="schedule-top">
@@ -718,8 +717,77 @@
                   </div>
                 </div>
               </section>
-              <section class="section" data-page="notice"></section>
-              <section class="section" data-page="message"></section>
+              <section class="section is-active" data-page="notice">
+                <div class="dashboard notice">
+                  <div class="schedule-top notice">
+                    <div class="schedule-title">
+                      <h1>사내공지</h1>
+                      <button class="help-btn">
+                        <img src="images/help.svg" alt="도움말" />
+                      </button>
+                    </div>
+                    <div class="notice-control">
+                      <button class="notice-edit-btn">
+                        <img
+                          src="images/editnotification.svg"
+                          alt="notice-edit"
+                        />
+                        <span class="notice-edit-txt">공지 수정/삭제하기</span>
+                      </button>
+                      <button class="notice-add-btn">
+                        <img src="images/notice_acc_icon.svg" alt="notiadd" />
+                        <span class="notice-add-txt">공지 추가하기</span>
+                      </button>
+                    </div>
+                  </div>
+                  <div class="notice-list-container">
+                    <table class="notice-main-table">
+                      <thead>
+                        <tr>
+                          <th style="width: 60px">번호</th>
+                          <th>공지 제목</th>
+                          <th style="width: 100px">올린 사람</th>
+                          <th style="width: 120px">날짜</th>
+                          <th style="width: 100px">확인 인원</th>
+                          <th style="width: 80px">상태</th>
+                        </tr>
+                      </thead>
+                      <tbody id="noticeListBody">
+                        <tr>
+                          <td>24</td>
+                          <td class="notice-t-title">
+                            2026년 설 연휴 휴무 및 비상연락망 안내
+                          </td>
+                          <td>김관리자</td>
+                          <td>2026-01-05</td>
+                          <td><span class="read-count">280</span>/308</td>
+                          <td><span class="status-tag active">진행중</span></td>
+                        </tr>
+                        <tr>
+                          <td>23</td>
+                          <td class="notice-t-title">
+                            [필독] 개인정보 보호 교육 이수 안내
+                          </td>
+                          <td>이인사</td>
+                          <td>2025-12-30</td>
+                          <td><span class="read-count">308</span>/308</td>
+                          <td><span class="status-tag complete">완료</span></td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </section>
+              <section class="section" data-page="message">
+                <div class="dashboard notice">
+                  <div class="schedule-title">
+                    <h1>메시지</h1>
+                    <button class="help-btn">
+                      <img src="images/help.svg" alt="도움말" />
+                    </button>
+                  </div>
+                </div>
+              </section>
               <section class="section" data-page="account"></section>
               <section class="section" data-page="desktop"></section>
             </div>
@@ -761,7 +829,6 @@
               <option value="">부서 선택</option>
             </select>
           </div>
-
           <div class="form-group">
             <label id="jobLabel">직무</label>
             <select class="job">
@@ -1200,6 +1267,84 @@
           </div>
           <div class="contract-request-action action">
             <button class="approval">요청하기</button>
+            <button class="cancel">취소</button>
+          </div>
+        </div>
+      </div>
+      <div class="notice-add-modal modal is-hidden">
+        <div class="notice-add-card modal-card">
+          <div class="notice-add-card-head modal-head">
+            <h4 class="modal-title-text">공지사항 추가</h4>
+            <button class="close">
+              <img src="images/close.svg" alt="close" />
+            </button>
+          </div>
+          <div class="notice-add-content modal-content">
+            <div class="notice-add-content-left">
+              <div class="notice-add-modal-row">
+                <h5 class="modal-subtitle-text">공지사항 제목</h5>
+                <input type="text" name="" id="" />
+              </div>
+              <div class="notice-add-modal-row">
+                <h5 class="modal-subtitle-text">템플릿</h5>
+                <select
+                  name="noticeaddTemplate"
+                  id="notice-add-template-select"
+                >
+                  <option value="">선택</option>
+                  <option value="notice-edu">의무교육 이수/신청 안내</option>
+                  <option value="notice-system">시스템 정기 점검 안내</option>
+                  <option value="notice-campaign">권장 캠페인 안내</option>
+                  <option value="notice-park">주차장 이용 수칙 안내</option>
+                  <option value="notice-submit">서류 제출 안내</option>
+                  <option value="notice-vacation">휴무 안내</option>
+                </select>
+              </div>
+              <div class="notice-add-modal-row">
+                <h5 class="modal-subtitle-text">공지 대상</h5>
+                <select id="notice-target-select">
+                  <option value="">선택</option>
+                  <option value="All">전체</option>
+                  <option value="leader">팀장</option>
+                  <option value="Management">Management</option>
+                  <option value="Sales">Sales</option>
+                  <option value="Marketing">Marketing</option>
+                  <option value="Design">Design</option>
+                  <option value="Production">Production</option>
+                  <option value="R&D">R&D</option>
+                </select>
+              </div>
+              <div class="notice-add-modal-row">
+                <h5 class="modal-subtitle-text">알람</h5>
+                <div class="contract-request-modal-col sign-order">
+                  <label for="" class="modal-request-checkbox-text"
+                    ><input
+                      type="checkbox"
+                      name="modal-request-checkbox"
+                      class="order-chk-1 modal-request-checkbox"
+                    />이메일</label
+                  >
+                </div>
+              </div>
+              <div class="notice-add-modal-row">
+                <h5 class="modal-subtitle-text">내용</h5>
+                <textarea
+                  id="notice-content-input"
+                  placeholder="공지 내용을 입력하세요"
+                ></textarea>
+              </div>
+              <div class="notice-add-modal-row">
+                <button class="notice-preview">내용 미리보기</button>
+              </div>
+            </div>
+            <div class="notice-add-content-right">
+              <div class="empty-preview">
+                템플릿을 선택하면 미리보기가 나타납니다.
+              </div>
+            </div>
+          </div>
+          <div class="notice-add-action action">
+            <button class="approval">추가하기</button>
             <button class="cancel">취소</button>
           </div>
         </div>

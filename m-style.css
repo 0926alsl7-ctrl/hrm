@@ -1,8 +1,6 @@
 body {
   font-size: 13px;
 }
-/* ===== Mobile ===== */
-@media (max-width: 833px) {
   .dashboard {
     grid-template-columns: 1fr;
     padding: 16px;
@@ -15,7 +13,7 @@ body {
   .status-item.wide {
     grid-column: span 1;
   }
-}
+/* 
 
 .approval-board-head,
 .contract-board-head {
@@ -58,4 +56,4 @@ body {
   flex-direction: column;
   align-items: flex-start;
   gap: 10px;
-}
+} */ 
