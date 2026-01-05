@@ -372,7 +372,7 @@
                   </div>
                 </div>
               </section>
-              <section class="section" data-page="attendance">
+              <section class="section is-active" data-page="attendance">
                 <div class="dashboard attendance">
                   <div class="schedule-top">
                     <div class="schedule-title">
@@ -382,8 +382,54 @@
                       </button>
                     </div>
                   </div>
+                  <div class="attendance-control">
+                    <div class="date-nav">
+                      <button class="attendance-prev-btn">
+                        <img
+                          src="images/pagemove.svg"
+                          alt="prev"
+                          style="transform: rotate(180deg)"
+                        />
+                      </button>
+                      <button class="attendance-next-btn">
+                        <img src="images/pagemove.svg" alt="next" />
+                      </button>
+                      <button class="today-btn">
+                        <span class="today-btn-txt">오늘</span>
+                      </button>
+                      <span class="attendance-today-txt"></span>
+                    </div>
+                    <div class="attendance-filter">
+                      <img
+                        src="images/filter3.svg"
+                        alt="filter-img"
+                        class="att-select-filter"
+                      />
+                      <select id="attDeptFilter" class="att-select">
+                        <option value="all">전체 부서</option>
+                        <option value="Management">Management</option>
+                        <option value="Sales">Sales</option>
+                        <option value="Marketing">Marketing</option>
+                        <option value="Design">Design</option>
+                        <option value="Production">Production</option>
+                        <option value="R&D">R&D</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <div class="attendance-board">
+                    <div class="attendance-time-header">
+                      <div class="attendance-time-header-employee"></div>
+                      <div
+                        class="attendance-header-days"
+                        id="attHeaderDays"
+                      ></div>
+                    </div>
+                    <div class="attendance-body" id="attBody"></div>
+                  </div>
                 </div>
               </section>
+
               <section class="section" data-page="vacation">
                 <div class="dashboard vacation">
                   <div class="schedule-top">
@@ -523,7 +569,7 @@
                   </div>
                 </div>
               </section>
-              <section class="section is-active" data-page="contract">
+              <section class="section" data-page="contract">
                 <div class="dashboard contract">
                   <div class="schedule-top">
                     <div class="schedule-title">
@@ -587,13 +633,11 @@
                         <div class="contract-edit">
                           <button type="button" class="contract-edit-btn">
                             <img
-                              src="images/contract_delete.svg"
-                              alt=""
-                              class="contract-edit-img"
+                              src="images/save2.svg"
+                              alt="save"
+                              class="contract-save-btn"
                             />
-                            <span class="contract-edit-txt"
-                              >계약서 수정/삭제</span
-                            >
+                            <span class="contract-edit-txt">보관함 이동</span>
                           </button>
                         </div>
                       </div>
@@ -966,28 +1010,31 @@
                 </label>
               </div>
               <div class="contract-detail-row">
-                <span class="contract-detail-row-title">계약서명</span>
-                <span class="contract-name"></span>
-                </select>
+                <div class="contract-detail-col">
+                  <span class="contract-detail-row-title">계약서명</span>
+                  <span class="contract-name"></span>
+                </div>
               </div>
               <div class="contract-detail-row">
-                  <span class="contract-detail-row-title">승인 상태</span>
+                <span class="contract-detail-row-title">승인 상태</span>
               </div>
-              <div class="contract-detail-col">
-                 <span class="contract-detail-row-title">서명 참여자</span>
+              <div class="contract-detail-row">
+                <div class="contract-detail-col">
+                  <span class="contract-detail-row-title">서명 참여자</span>
                   <span class="contract-detail-sign-first"></span>
                   <span class="contract-detail-sign-second"></span>
+                </div>
               </div>
             </div>
             <div class="contract-detail-content-right">
               <div class="contract-detail-row">
-                   <form
-                action=""
-                class="contract-request-form"
-                id="dynamic-form-fields-detail"
-              >
-                <h6 class="modal-subtitle-text"></h6>
-              </form>
+                <form
+                  action=""
+                  class="contract-request-form"
+                  id="dynamic-form-fields-detail"
+                >
+                  <h6 class="modal-subtitle-text"></h6>
+                </form>
               </div>
             </div>
           </div>
@@ -1103,10 +1150,14 @@
             <div class="target-personal-row is-hidden">
               <h5 class="modal-subtitle-text">상세 대상</h5>
               <div class="contract-request-modal-detail-select">
-             <select id="target-dept-select" style="flex:1;"><option value="">부서 선택</option></select>
-                 <select id="target-emp-select" style="flex:1;"><option value="">직원 선택</option></select>
-                </div>
+                <select id="target-dept-select" style="flex: 1">
+                  <option value="">부서 선택</option>
+                </select>
+                <select id="target-emp-select" style="flex: 1">
+                  <option value="">직원 선택</option>
+                </select>
               </div>
+            </div>
             <div class="contract-request-modal-row">
               <h5 class="modal-subtitle-text">직원 서명 차수</h5>
               <div class="contract-request-modal-col sign-order">
@@ -1131,18 +1182,20 @@
               <input type="number" id="contract-expire-days" value="7" />
               <h5 class="modal-subtitle-text gray">일</h5>
             </div>
-            <div class="contract-request-modal-row">
+            <div class="contract-request-modal-col request-form">
+              <h6 class="modal-subtitle-text">문서 내용 연결</h6>
               <form
                 action=""
                 class="contract-request-form"
-                id="dynamic-form-fields-detail"
-              >
-                <h6 class="modal-subtitle-text">문서 내용 연결</h6>
-              </form>
+                id="dynamic-form-fields-request"
+              ></form>
             </div>
             <div class="contract-request-modal-col request-message">
               <h5 class="modal-subtitle-text">전자계약 요청 메시지</h5>
-              <textarea id="contract-request-message"></textarea>
+              <textarea
+                id="contract-request-message"
+                spellcheck="false"
+              ></textarea>
             </div>
           </div>
           <div class="contract-request-action action">

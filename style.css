@@ -751,19 +751,23 @@ body.darkmode {
   width: 18px;
   height: 18px;
 }
-.schedule-control {
+.schedule-control,
+.attendance-control {
   display: flex;
   justify-content: space-between;
   align-items: center;
   gap: 6px;
 }
-.schedule-control .date-nav {
+.schedule-control .date-nav,
+.attendance-control .date-nav {
   display: flex;
   align-items: center;
   gap: 6px;
 }
 .schedule-prev-btn,
 .schedule-next-btn,
+.attendance-prev-btn,
+.attendance-next-btn,
 .today-btn {
   display: flex;
   align-items: center;
@@ -778,16 +782,21 @@ body.darkmode {
   font-weight: bold;
 }
 .schedule-prev-btn,
-.schedule-next-btn {
+.schedule-next-btn,
+.attendance-prev-btn,
+.attendance-next-btn {
   background: var(--backgroundColor);
   padding: 10px 10px;
 }
 .schedule-prev-btn img,
-.schedule-next-btn img {
+.schedule-next-btn img,
+.attendance-prev-btn img,
+.attendance-next-btn img {
   width: 20px;
   height: 20px;
 }
-.date-nav .data-text-today {
+.date-nav .data-text-today,
+.attendance-today-txt {
   margin-left: 8px;
   font-size: 17px;
   color: #000;
@@ -1484,11 +1493,20 @@ body[data-view-mode="week"] .shift.vacation {
 }
 
 /* section(3) - attendance ============================================ */
+.dashboard.attendance {
+  max-width: 1400px;
+  padding: 24px;
+  margin: auto 0;
+  display: grid;
+  grid-template-columns: repeat(1, 1fr);
+  gap: 12px;
+  background: var(--backgroundColorGrayColor);
+}
 .dashboard.attendance .help-btn::before {
   content: "신뢰가는 출퇴근기록과 자동화된 근태관리를 제공합니다";
   position: absolute;
-  bottom: -26px;
-  left: 0;
+  top: 1px;
+  right: -260px;
   font-size: 11px;
   color: var(--grayColor700);
   white-space: nowrap;
@@ -1500,23 +1518,151 @@ body[data-view-mode="week"] .shift.vacation {
 .dashboard.attendance .help-btn:hover::before {
   opacity: 1;
 }
-/* section(4) - payroll ============================================ */
-.dashboard.payroll .help-btn::before {
-  content: "연장, 야간, 휴일근로 등 근태 및 급여에 대한 실시간 정산 데이터를 제공합니다";
-  position: absolute;
-  bottom: -26px;
+
+.attendance-board {
+  border: 1px solid #eee;
+  border-radius: 8px;
+  background: #fff;
+  position: relative;
+  overflow: hidden;
+}
+
+.attendance-time-header {
+  display: flex;
+  background: #fff;
+  border-bottom: 1px solid #eee;
+  z-index: 10;
+}
+
+.attendance-time-header-employee,
+.emp-info-sticky {
+  width: 140px;
+  min-width: 140px;
+  padding: 0 20px;
+  border-right: 1px solid var(--grayColor100);
+  background: #fff;
+  position: sticky;
   left: 0;
-  font-size: 11px;
-  color: var(--grayColor700);
-  white-space: nowrap;
-  background-color: #fff;
+  z-index: 5;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  font-size: 12px;
+}
+
+.attendance-body {
+  scroll-behavior: smooth;
+  overflow-x: auto;
+  max-height: 600px;
+  scrollbar-width: none;
+}
+
+.attendance-header-days,
+.att-records-wrap {
+  display: flex;
+  flex: 1;
+}
+
+.attendance-body-row {
+  display: flex;
+  border-bottom: 1px solid #f5f5f5;
+}
+
+.att-day-col {
+  flex: 1;
+  min-width: 65px;
+  min-height: 60px;
+  text-align: center;
+  border-right: 1px solid #f5f5f5;
+  padding: 8px 0;
+  font-size: 12px;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+.att-record-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  padding-top: 14px;
+}
+.attendance-filter {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.att-select-filter {
+  width: 28px;
+  height: 28px;
+}
+
+.att-day-col.sun {
+  background-color: var(--btn-dagner-weak-bg);
+}
+.att-day-col.sat {
+  background-color: var(--button-bg-color-blue-weak);
+  color: var(--blueColor500);
+}
+.att-day-col.is-today {
+  background: var(--grayColor50);
+  font-weight: bold;
+}
+
+.att-day-col.is-future {
+  background: var(--grayColor50);
+  color: var(--grayColor500) !important;
+}
+.att-tag {
   display: inline-block;
-  opacity: 0;
-  transition: 0.2s ease-in;
+  position: absolute;
+  top: 8px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 10px;
+  font-weight: 600;
+  padding: 2px 6px;
+  border-radius: 4px;
+  color: #fff;
+  white-space: nowrap;
 }
-.dashboard.payroll .help-btn:hover::before {
-  opacity: 1;
+.tag-late {
+  background: var(--redColor500);
 }
+.tag-missing {
+  background: #3fd599;
+}
+.tag-vacation {
+  background: var(--grayColor100);
+  color: var(--grayColor600);
+}
+.att-record-box .t-in {
+  font-weight: 600;
+  font-size: 12px;
+}
+.att-record-box .t-in.late {
+  color: var(--redColor500);
+}
+.att-record-box .t-out {
+  margin-top: 3px;
+  font-size: 11px;
+}
+#attDeptFilter {
+  font-family: "Chiron Hei HK", sans-serif;
+  font-size: 13px;
+  font-weight: 500;
+  border: 0;
+  outline: none;
+  border-radius: 8px;
+  appearance: none;
+  color: var(--blueColor500);
+  background: var(--button-bg-color-blue-weak);
+  padding: 10px 24px 10px 10px;
+}
+
 /* section(5) - approval ============================================ */
 .dashboard.approval {
   grid-template-columns: repeat(1, 1fr);
@@ -1595,7 +1741,7 @@ body[data-view-mode="week"] .shift.vacation {
 .approval-status button,
 .status-btn {
   cursor: default;
-  padding: 6px 12px;
+  padding: 6px 10px;
   font-size: 12px;
   border-radius: 8px;
   white-space: nowrap;
@@ -1624,7 +1770,7 @@ body[data-view-mode="week"] .shift.vacation {
 .contract-manage {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 10px;
   /* justify-content: center; */
 }
 .approval-board-body .approval-action button {
@@ -1636,12 +1782,35 @@ body[data-view-mode="week"] .shift.vacation {
   white-space: nowrap;
   background: #fff;
 }
-.approval-board-body .approval-action .approve-btn {
+.approval-action .help-btn {
+  padding: 0 !important;
+  background: none !important;
+  border: 0 !important;
+  color: var(--grayColor500);
+}
+.contract-manage .approve-btn,
+.contract-manage .reject-btn {
+  border: none;
+  padding: 6px 24px;
+  font-size: 12px;
+  cursor: pointer;
+  border-radius: 8px;
+  white-space: nowrap;
+  background: #fff;
+}
+.contract-manage .status-btn.saved,
+.contract-manage .status-btn.save {
+  padding: 0;
+  color: var(--blueColor500);
+}
+.approval-board-body .approval-action .approve-btn,
+.contract-manage .approve-btn {
   background: var(--button-bg-color-blue-weak);
   color: var(--blueColor500);
 }
 
-.approval-board-body .approval-action .reject-btn {
+.approval-board-body .approval-action .reject-btn,
+.contract-manage .reject-btn {
   background: var(--btn-dagner-weak-bg);
   color: var(--btn-dagnger-weak-color);
 }
@@ -1784,7 +1953,7 @@ body[data-view-mode="week"] .shift.vacation {
 .contract-wrap button {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 4px;
   padding: 6px 8px;
   font-size: 12px;
   cursor: pointer;
@@ -1824,19 +1993,23 @@ body[data-view-mode="week"] .shift.vacation {
   font-weight: 600;
 }
 
-.contract-board-row:hover {
+.contract-board-body-row:hover {
   background-color: #f9fafb;
 }
 .contract-name {
   color: var(--grayColor500);
 }
-.contract-board-row .contract-turn {
-  padding-left: 19px;
+
+.contract-turn span {
+  padding-left: 20px;
+}
+.contract-turn .contract-head-txt {
+  padding-left: 0;
 }
 .contract-part {
   display: flex;
   align-items: center;
-  gap: 16px;
+  gap: 4px;
 }
 .part-item {
   display: flex;
@@ -1849,6 +2022,9 @@ body[data-view-mode="week"] .shift.vacation {
   background: var(--button-bg-color-blue-weak);
   color: var(--blueColor500);
 }
+.contract-part .part-label:nth-child(2n) {
+  margin-left: 10px;
+}
 .manage-btn-go,
 .manage-btn-reason {
   display: flex;
@@ -1859,12 +2035,19 @@ body[data-view-mode="week"] .shift.vacation {
 .manage-btn-reason {
   color: var(--grayColor300);
 }
-.manage-btn-go{
+.manage-btn-go {
   color: var(--blueColor400);
 }
 .contract-manage button img {
   width: 20px;
   height: 20px;
+}
+.contract-manage .help-btn::before {
+  display: none;
+}
+.contract-manage .help-btn {
+  font-size: 12px;
+  color: var(--grayColor500);
 }
 .manage-btn-approve,
 .manage-btn-reject {
@@ -1876,11 +2059,13 @@ body[data-view-mode="week"] .shift.vacation {
   white-space: nowrap;
   background: #fff;
 }
-.manage-btn-approve{background: var(--button-bg-color-blue-weak);
-color: var(--blueColor500);}
-.manage-btn-reject{
+.manage-btn-approve {
+  background: var(--button-bg-color-blue-weak);
+  color: var(--blueColor500);
+}
+.manage-btn-reject {
   background: var(--btn-dagner-weak-bg);
-  color:var(--btn-danger-color)
+  color: var(--btn-danger-color);
 }
 /* section(7) - notice ============================================ */
 .dashboard.notice .help-btn::before {
@@ -1954,7 +2139,7 @@ color: var(--blueColor500);}
 }
 .modal-title-text {
   color: var(--mainTextColor);
-  font-size: 16px;
+  font-size: 14px;
 }
 .modal-text {
   font-size: 11px;
@@ -2311,18 +2496,46 @@ color: var(--blueColor500);}
   color: var(--grayColor500);
   font-size: 12px;
 }
-.approval-detail-modal-card {
+.approval-detail-modal-card,
+.contract-detail-modal-card {
   width: 580px;
   max-width: 640px;
   box-sizing: border-box;
+  cursor: default;
+}
+.contract-detail-modal-card .contract-request-form {
+  margin-top: 0;
+  padding: 22px 14px;
+  font-size: 14px;
+}
+.contract-detail-modal-card .contract-request-modal-row {
+  gap: 20px;
+}
+.contract-request-modal-row .modal-subtitle-text {
+  white-space: nowrap;
+}
+.contract-detail-modal-card .contract-request-form input {
+  font-size: 12px;
+}
+.contract-detail-modal-card .contract-name {
+  font-size: 12px;
 }
 
-.approval-detail-content {
+.approval-detail-content,
+.contract-detail-content {
   display: flex;
   width: 100%;
   /* display: grid;
   grid-template-columns: 120px 1fr;
   gap: 16px; */
+}
+.contract-request-modal-detail-select {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+.contract-request-modal-detail-select select {
+  padding: 10px 80px 10px 8px !important;
 }
 .approval-detail-request-item button {
   border: none;
@@ -2333,10 +2546,12 @@ color: var(--blueColor500);}
   color: #4e5968;
   white-space: nowrap;
 }
-.approval-detail-row {
+.approval-detail-row,
+.contract-detail-row {
   padding: 14px 4px;
 }
-.approval-detail-row-title {
+.approval-detail-row-title,
+.contract-detail-row-title {
   width: 100%;
   font-size: 13px;
   font-weight: 600;
@@ -2349,20 +2564,31 @@ color: var(--blueColor500);}
   outline: none;
   font-size: 12px;
   padding: 4px 20px 4px 4px;
-  color: var(--grayColor500);
+  color: var(--grayColor600);
 }
-.approval-detail-col {
+.approval-detail-col,
+.contract-detail-col {
   display: flex;
   flex-direction: column;
   gap: 4px;
 }
-.approval-employee-detail {
+.approval-employee-detail,
+.contract-employee-detail {
   margin-top: 6px;
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 2px;
   font-size: 13px;
   color: var(--mainTextColor);
+}
+.contract-detail-sign-first,
+.contract-detail-sign-second {
+  font-size: 13px;
+  padding: 10px 0;
+}
+.contract-detail-sign-first .part-label,
+.contract-detail-sign-second .part-label {
+  margin-right: 4px;
 }
 
 #approval-detail-reason {
@@ -2386,24 +2612,36 @@ color: var(--blueColor500);}
   gap: 8px;
   align-items: center;
 }
-.approval-employee-job {
-  font-size: 11px;
-  padding: 6px 10px;
-}
+/* .approval-employee-job {
+  font-size: 14px;
+} */
 .approval-detail-content-left {
   width: 50%;
+}
+.contract-detail-content-left {
+  margin-left: 14px;
+  width: 35%;
 }
 .approval-detail-content-right {
   width: 50%;
 }
-.approval-detail-action button {
+.contract-detail-content-right {
+  width: 65%;
+}
+.contract-detail-modal .contract-detail-row .status-btn {
+  margin-left: 6px;
+}
+.approval-detail-action button,
+.contract-detail-action button {
   padding: 6px 24px;
 }
-.approval-detail-action .approval {
+.approval-detail-action .approval,
+.contract-detail-action .approval {
   background: var(--button-bg-color-blue-weak);
   color: var(--blueColor500);
 }
-.approval-detail-action .cancel {
+.approval-detail-action .cancel,
+.contract-detail-action .cancel {
   background: var(--btn-bg-base);
   color: var(--btn-color-base);
 }
@@ -2415,6 +2653,7 @@ color: var(--blueColor500);}
   outline: none;
   appearance: none;
 }
+
 #contract-expire-days {
   border: 1px solid var(--grayColor100);
   border-radius: 4px;
@@ -2440,12 +2679,16 @@ color: var(--blueColor500);}
 .contract-request-content {
   margin-top: 12px;
 }
-.contract-request-modal-row {
+.contract-request-modal-row,
+.target-personal-row {
   width: 100%;
   display: flex;
   align-items: center;
   gap: 26px;
   min-height: 50px;
+}
+.target-personal-row.is-hidden {
+  display: none;
 }
 .contract-request-modal-row.sign {
   gap: 0;
@@ -2455,6 +2698,15 @@ color: var(--blueColor500);}
   display: flex;
   flex-direction: column;
   gap: 6px;
+}
+.contract-request-modal-col.request-form {
+  gap: 4px;
+  padding: 10px 4px;
+}
+.contract-request-modal-col.request-form h6 {
+  color: var(--grayColor500);
+  margin-left: 6px;
+  font-weight: 500;
 }
 .contract-request-modal-col.sign-order {
   flex: 1;
@@ -2486,11 +2738,12 @@ color: var(--blueColor500);}
   outline: none;
   appearance: none;
 }
-#contract-request-message {
+#contract-request-message,
+.contract-detail-message {
   margin-top: 4px;
   border: 1px solid var(--grayColor100);
   border-radius: 4px;
-  padding: 14px 10px;
+  padding: 10px 14px;
   resize: none;
   width: 100%;
   line-height: 1.4;
@@ -2499,6 +2752,14 @@ color: var(--blueColor500);}
   font-family: "Chiron Hei HK", sans-serif;
   font-size: 13px;
   color: var(--mainTextColor);
+  background: #fff;
+}
+.contract-detail-message {
+  font-size: 12px;
+  padding: 10px;
+  margin-top: 0;
+  color: var(--grayColor500);
+  scrollbar-width: none;
 }
 .contract-request-action .approval {
   background: var(--blueColor500);
@@ -2507,6 +2768,13 @@ color: var(--blueColor500);}
 .contract-request-action .cancel {
   background: var(--btn-bg-base);
   color: var(--btn-color-base);
+}
+#dynamic-form-fields-detail .contract-request-modal-col {
+  gap: 0;
+  padding: 10px 0;
+}
+#dynamic-form-fields-request {
+  margin-top: 0;
 }
 
 .modal-request-checkbox {

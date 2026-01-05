@@ -1298,32 +1298,226 @@ vCloseBtns.forEach((btn) => {
   btn.onclick = resetVacationRateModal;
 });
 
+// vacation.js 내의 if (vPromoteBtn) 블록을 아래로 교체
 if (vPromoteBtn) {
   vPromoteBtn.onclick = () => {
     const selectedName = vEmpSelect?.value;
+    const selectedDept = vDeptSelect?.value;
     if (!selectedName) return alert("직원을 선택해주세요.");
 
     resetVacationRateModal();
-    
-    // 전자계약 모달 열기
     openModal(".contract-request-modal");
 
-    // 템플릿 설정
     const tSelect = document.getElementById("contract-template-select");
     tSelect.value = "contract-vacation";
-    
-    // [중요] 폼 렌더링 호출
-    renderTemplateFields("contract-vacation", "#dynamic-form-fields");
 
-    // 값 주입 (약간의 지연 필요)
-    setTimeout(() => {
-        const nameInput = document.querySelector('#dynamic-form-fields select[name="empName"]');
-        if (nameInput) nameInput.value = selectedName;
-        
-        const targetSelect = document.getElementById("contract-target-select");
-        targetSelect.value = "Personal";
-        targetSelect.dispatchEvent(new Event("change"));
-    }, 100);
+    const vacationOpt = document.querySelector(
+      "#contract-template-select option[value='contract-vacation']"
+    );
+    if (vacationOpt) vacationOpt.disabled = false;
+
+    const targetDept = document.getElementById("target-dept-select");
+    const targetEmp = document.getElementById("target-emp-select");
+
+    if (targetDept && targetEmp) {
+      targetDept.value = selectedDept;
+      targetDept.dispatchEvent(new Event("change"));
+      setTimeout(() => {
+        targetEmp.value = selectedName;
+        renderTemplateFields(
+          "contract-vacation",
+          "#dynamic-form-fields-request",
+          false,
+          {
+            p1: selectedName,
+            dept: selectedDept,
+            phone: getRandomPhone(),
+            address: getRandomAddr(),
+          }
+        );
+      }, 100);
+    }
+
+    const targetType = document.getElementById("contract-target-select");
+    if (targetType) {
+      targetType.value = "Personal";
+      targetType.dispatchEvent(new Event("change"));
+    }
+
+    const msgArea = document.getElementById("contract-request-message");
+    const config = templateFields["contract-vacation"];
+    if (msgArea && config) msgArea.value = config.msg;
   };
 }
+/* ======================================================
+   Attendance (출퇴근기록) 통합 로직
+====================================================== */
 
+let currentAttDept = "all";
+
+function updateAttendanceDateText() {
+  const d = new Date(currentDate);
+  const textEl = document.querySelector(".attendance-today-txt");
+  if (textEl) {
+    textEl.textContent = `${d.getFullYear()}년 ${d.getMonth() + 1}월`;
+  }
+}
+
+function renderAttendanceBoard() {
+  const activeSection = document.querySelector(
+    'section[data-page="attendance"]'
+  );
+  if (!activeSection || activeSection.classList.contains("is-hidden")) return;
+
+  const body = document.getElementById("attBody");
+  const header = document.getElementById("attHeaderDays");
+  if (!body || !header) return;
+
+  const d = new Date(currentDate);
+  const year = d.getFullYear();
+  const month = d.getMonth();
+  const lastDate = new Date(year, month + 1, 0).getDate();
+  const dayNames = ["일", "월", "화", "수", "목", "금", "토"];
+
+  const now = new Date();
+  const tYear = now.getFullYear();
+  const tMonth = now.getMonth();
+  const tDate = now.getDate();
+
+  // 1. 헤더 렌더링
+  let headerHtml = "";
+  for (let i = 1; i <= lastDate; i++) {
+    const targetDate = new Date(year, month, i);
+    const dayIdx = targetDate.getDay();
+    const isToday = year === tYear && month === tMonth && i === tDate;
+    const weekendClass = dayIdx === 0 ? "sun" : dayIdx === 6 ? "sat" : "";
+    const todayClass = isToday ? "is-today" : "";
+
+    headerHtml += `
+      <div class="att-day-col ${weekendClass} ${todayClass}">
+        <div style="font-weight: bold;">${i}</div>
+        <div style="font-size: 10px;">${dayNames[dayIdx]}</div>
+      </div>`;
+  }
+  header.innerHTML = headerHtml;
+
+  // 2. 바디 렌더링 (부서 필터 포함)
+  let bodyHtml = "";
+  const deptsToRender =
+    currentAttDept === "all" ? Object.keys(employeesData) : [currentAttDept];
+
+  deptsToRender.forEach((dept) => {
+    if (!employeesData[dept]) return;
+    employeesData[dept].forEach((name) => {
+      bodyHtml += `
+        <div class="attendance-body-row">
+          <div class="emp-info-sticky">
+            <div style="font-weight:800; font-size:12px; color:#222;">${name}</div>
+            <div style="font-size:10px; color:var(--grayColor500);">${dept}</div>
+          </div>
+          <div class="att-records-wrap">
+            ${Array.from({ length: lastDate }, (_, i) => {
+              const dayNum = i + 1;
+              const targetDate = new Date(year, month, dayNum);
+              const isFuture =
+                targetDate.setHours(0, 0, 0, 0) > now.setHours(0, 0, 0, 0);
+
+              let timeIn = "-",
+                timeOut = "-",
+                tag = "",
+                cls = "";
+
+              if (!isFuture) {
+                const isWeekend =
+                  targetDate.getDay() === 0 || targetDate.getDay() === 6;
+                if (!isWeekend) {
+                  const rand = Math.random();
+                  const inMin = Math.floor(Math.random() * 20) - 10;
+                  timeIn =
+                    inMin > 5
+                      ? `09:${String(inMin).padStart(2, "0")}`
+                      : `08:${String(60 + inMin).slice(-2)}`;
+                  timeOut = `18:${String(
+                    Math.floor(Math.random() * 30)
+                  ).padStart(2, "0")}`;
+
+                  if (inMin > 5) {
+                    tag = "지각";
+                    cls = "tag-late";
+                  } else if (rand > 0.92) {
+                    tag = "미체크";
+                    timeOut = "--:--";
+                    cls = "tag-missing";
+                  } else if (rand > 0.88) {
+                    tag = "휴가";
+                    timeIn = "-";
+                    timeOut = "-";
+                    cls = "tag-vacation";
+                  }
+                }
+              }
+
+              return `
+                <div class="att-day-col ${isFuture ? "is-future" : ""}">
+                  <div class="att-record-box">
+                    ${tag ? `<span class="att-tag ${cls}">${tag}</span>` : ""}
+                    <div class="t-in ${
+                      tag === "지각" ? "late" : ""
+                    }">${timeIn}</div>
+                    <div class="t-out">${timeOut}</div>
+                  </div>
+                </div>`;
+            }).join("")}
+          </div>
+        </div>`;
+    });
+  });
+  body.innerHTML = bodyHtml;
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+  const prevBtn = document.querySelector(".attendance-prev-btn");
+  const nextBtn = document.querySelector(".attendance-next-btn");
+  const attTodayBtn = document.querySelector(
+    'section[data-page="attendance"] .today-btn'
+  );
+
+  if (prevBtn) {
+    prevBtn.onclick = () => {
+      const d = new Date(currentDate);
+      d.setMonth(d.getMonth() - 1);
+      currentDate = d.toISOString().slice(0, 10);
+      updateAttendanceDateText();
+      renderAttendanceBoard();
+    };
+  }
+
+  if (nextBtn) {
+    nextBtn.onclick = () => {
+      const d = new Date(currentDate);
+      d.setMonth(d.getMonth() + 1);
+      currentDate = d.toISOString().slice(0, 10);
+      updateAttendanceDateText();
+      renderAttendanceBoard();
+    };
+  }
+
+  if (attTodayBtn) {
+    attTodayBtn.onclick = () => {
+      currentDate = new Date().toISOString().slice(0, 10);
+      updateAttendanceDateText();
+      renderAttendanceBoard();
+    };
+  }
+
+  const deptFilter = document.getElementById("attDeptFilter");
+  if (deptFilter) {
+    deptFilter.onchange = (e) => {
+      currentAttDept = e.target.value;
+      renderAttendanceBoard();
+    };
+  }
+
+  updateAttendanceDateText();
+  renderAttendanceBoard();
+});

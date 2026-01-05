@@ -18,18 +18,39 @@ const employeesData = {
   "R&D": ["김민이", "심진우", "진예진", "강민서", "최소윤", "장재영"],
 };
 
+// 직원 상세 정보
 const getRandomPhone = () =>
   `010-${Math.floor(1000 + Math.random() * 9000)}-${Math.floor(
     1000 + Math.random() * 9000
   )}`;
 const getRandomAddr = () => {
-  const gu = ["강남구", "서초구", "송파구", "마포구", "성동구", "영등포구"];
-  return `서울특별시 ${gu[Math.floor(Math.random() * gu.length)]} 어느길 ${
-    Math.floor(Math.random() * 100) + 1
-  }`;
+  const addrs = [
+    "서울시 강남구 테헤란로",
+    "서울시 영등포구 여의도동",
+    "경기도 성남시 분당구",
+    "서울시 서초구 서초동",
+  ];
+  return (
+    addrs[Math.floor(Math.random() * addrs.length)] +
+    " " +
+    (Math.floor(Math.random() * 100) + 1) +
+    "번지"
+  );
 };
 
-// 7번 템플릿용 긴 문구 모음
+// (3) 계약서
+const templateMap = {
+  "contract-work": "근로계약서",
+  "contract-protect": "정보보호 서약서",
+  "contract-vacation": "연차휴가 사용 촉진서",
+  "contract-salary": "연봉계약서",
+  "contract-internal": "사내 업무 협조 요청서",
+  "contract-personal-info": "근로자 개인정보 수집/활용 동의서",
+  "contract-vacation-plan1": "연차 휴가 사용 계획서 1차",
+  "contract-vacation-plan2": "연차 휴가 사용 계획서 2차",
+};
+
+// 계약서 내용
 const internalMsgs = {
   "확인 요청":
     "안녕하세요 {dept} 팀 {name} 입니다.\n다름이 아니라, 내일 오전 공유 일정이 있기 때문에 결재 관련 보고서 관련해서 확인 부탁드립니다.\n\n확인 요청 자료 : A, B\n\n자료는 오늘 오후 5시까지 전달 부탁드리며...",

@@ -17,47 +17,45 @@ body {
   }
 }
 
-  .approval-board-head,
-  .contract-board-head {
-    display: none !important;
-  }
+.approval-board-head,
+.contract-board-head {
+  display: none !important;
+}
 
-  .approval-board-body-row,
-  .contract-board-body-row {
-    display: flex !important;
-    flex-direction: column;
-    align-items: flex-start !important;
-    padding: 16px !important;
-    gap: 8px;
-    border: 1px solid #f2f4f6;
-    border-radius: 12px;
-    margin-bottom: 12px;
-  }
+.approval-board-body-row,
+.contract-board-body-row {
+  display: flex !important;
+  flex-direction: column;
+  align-items: flex-start !important;
+  padding: 16px !important;
+  gap: 8px;
+  border: 1px solid #f2f4f6;
+  border-radius: 12px;
+  margin-bottom: 12px;
+}
 
+.approval-body-txt,
+.contract-body-txt {
+  font-size: 14px !important;
+}
 
-  .approval-body-txt,
-  .contract-body-txt {
-    font-size: 14px !important;
-  }
+.approval-status,
+.approval-action,
+.contract-status,
+.contract-part {
+  width: 100%;
+  justify-content: flex-start;
+}
 
-  .approval-status,
-  .approval-action,
-  .contract-status,
-  .contract-part {
-    width: 100%;
-    justify-content: flex-start;
-  }
+.modal-card {
+  width: 95% !important;
+  margin: 10px;
+  max-height: 90vh;
+  overflow-y: auto;
+}
 
-  .modal-card {
-    width: 95% !important;
-    margin: 10px;
-    max-height: 90vh;
-    overflow-y: auto;
-  }
-
-  .contract-request-modal-row {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 10px;
-  }
-
+.contract-request-modal-row {
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 10px;
+}
