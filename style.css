@@ -2219,6 +2219,9 @@ body[data-view-mode="week"] .shift.vacation {
 .avatar-RD {
   background: #ffbd51;
 }
+.avatar-All {
+  background: #58c7c7;
+}
 
 .chat-avatar {
   width: 32px;
@@ -2248,6 +2251,16 @@ body[data-view-mode="week"] .shift.vacation {
   color: var(--grayColor500);
   font-weight: 400;
 }
+.chat-room-list {
+  margin-top: 8px;
+}
+#chatRoomList {
+  margin-top: 6px;
+  height: 100%;
+  overflow-y: auto;
+  scrollbar-width: none;
+  scroll-behavior: smooth;
+}
 
 .recent-list {
   display: flex;
@@ -2265,6 +2278,7 @@ body[data-view-mode="week"] .shift.vacation {
   cursor: pointer;
 }
 .recent-user-item span {
+  margin-top: 6px;
   font-size: 10px;
   color: var(--mainTextColor);
 }
@@ -2272,15 +2286,34 @@ body[data-view-mode="week"] .shift.vacation {
   flex-direction: row;
   gap: 10px;
   padding: 10px;
+  border: 1px solid var(--grayColor50);
+}
+.room-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.room-top {
+  display: flex;
+  gap: 5px;
+  align-items: baseline;
 }
 .room-name {
-  font-size: 13px;
+  font-size: 12px;
   font-weight: 500;
 }
 .room-dept {
   margin-top: 2px;
+  font-size: 10px;
+  color: var(--grayColor400);
+}
+.room-last-msg {
   font-size: 11px;
-  color: #888;
+  color: var(--grayColor600);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 150px;
 }
 /* center */
 .msg-center {
@@ -2336,7 +2369,7 @@ body[data-view-mode="week"] .shift.vacation {
 }
 .header-info {
   display: flex;
-  align-items: center;
+  align-items: baseline;
   gap: 4px;
 }
 .header-info h3 {
@@ -2345,7 +2378,7 @@ body[data-view-mode="week"] .shift.vacation {
   font-weight: 600;
 }
 .header-info span {
-  font-size: 11px;
+  font-size: 10px;
   color: var(--grayColor500);
 }
 .fav-star-btn {
@@ -2361,7 +2394,17 @@ body[data-view-mode="week"] .shift.vacation {
 .fav-star-btn.fill {
   background-image: url(images/star-fill.svg);
 }
-
+.date-divider {
+  text-align: center;
+  margin: 20px 0;
+}
+.date-divider span {
+  background: rgba(0, 0, 0, 0.3);
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 11px;
+  color: #fff;
+}
 .highlight {
   background: #ffdd78;
   font-weight: bold;
@@ -2376,10 +2419,9 @@ body[data-view-mode="week"] .shift.vacation {
   color: var(--grayColor300);
 }
 .chat-display-area {
-  border-radius: 10px;
   background: var(--grayColor50);
   flex: 1;
-  padding: 20px;
+  padding: 10px 20px;
   overflow-y: auto;
   display: flex;
   flex-direction: column;
@@ -2404,7 +2446,7 @@ body[data-view-mode="week"] .shift.vacation {
   align-self: flex-start;
   background: #fff;
   color: var(--btn--color-base);
-  border-bottom-right-radius: 2px;
+  border-bottom-left-radius: 2px;
 }
 .msg-time {
   font-size: 10px;
@@ -2421,8 +2463,6 @@ body[data-view-mode="week"] .shift.vacation {
   display: flex;
 }
 #msgInput {
-  caret-color: var(--blueColor500);
-  margin-top: 4px;
   border: 0;
   border-radius: 4px;
   padding: 10px 14px;
@@ -2432,7 +2472,7 @@ body[data-view-mode="week"] .shift.vacation {
   appearance: none;
   outline: none;
   font-family: "Chiron Hei HK", sans-serif;
-  font-size: 13px;
+  font-size: 12px;
   color: var(--mainTextColor);
   background: #fff;
 }
@@ -2441,9 +2481,9 @@ body[data-view-mode="week"] .shift.vacation {
 }
 #msgSendBtn {
   color: #fff;
-  font-size: 14px;
+  font-size: 12px;
   background: var(--blueColor500);
-  width: 16%;
+  width: 14%;
   border-radius: 8px;
 }
 
@@ -2488,7 +2528,8 @@ body[data-view-mode="week"] .shift.vacation {
   max-height: 500px;
 }
 
-.dept-group-title:hover {
+.dept-group-title:hover,
+.dept-group-title.is-open {
   background: var(--button-bg-color-blue-weak);
   color: var(--blueColor500);
 }
@@ -2509,7 +2550,13 @@ body[data-view-mode="week"] .shift.vacation {
   display: flex;
   align-items: center;
   gap: 10px;
-  font-size: 12px;
+  font-size: 11px;
+  background: var(--grayColor50);
+  color: var(--grayColor700);
+}
+.staff-item:hover {
+  color: var(--blueColor500);
+  font-weight: bold;
 }
 
 .staff-search-area {

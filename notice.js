@@ -333,35 +333,13 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 // message section =================================================
 /* ======================================================
-   메시지 섹션 최종 통합 완성본 (기존 기능 + 신규 5종 기능)
+   메시지 섹션 최종 통합본 (중복 버그 수정 및 HTML 구조 유지)
 ====================================================== */
 
 let activeChatTarget = null;
-let favorites = []; // 즐겨찾기 명단 저장용
+let favorites = JSON.parse(localStorage.getItem("msg_favorites")) || [];
 
-// (2) 과거 대화 데이터 (하미니와 정희석의 대화 데이터 예시 포함)
-let messagesData = [
-  {
-    from: "정희석",
-    to: "하미니(나)",
-    text: "하민씨, 오늘 회의록 정리됐나요?",
-    time: "오전 10:30",
-  },
-  {
-    from: "하미니(나)",
-    to: "정희석",
-    text: "네! 방금 메일로 공유드렸습니다.",
-    time: "오전 10:35",
-  },
-  {
-    from: "이유정",
-    to: "하미니(나)",
-    text: "안녕하세요! 영업팀 이유정입니다.",
-    time: "오후 02:00",
-  },
-];
-
-// 1. 부서 키 변환 (CSS 클래스용)
+// 1. 부서 키 변환
 function getDeptClass(dept) {
   const mapping = {
     Management: "Management",
@@ -374,7 +352,7 @@ function getDeptClass(dept) {
   return mapping[dept] || "Management";
 }
 
-// 2. 채팅 내역 그리기 (하이라이트 기능 포함)
+// 2. 메시지 렌더링 (날짜 구분선)
 function renderMessages(keyword = "") {
   const display = document.getElementById("chatDisplay");
   if (!display || !activeChatTarget) return;
@@ -382,16 +360,25 @@ function renderMessages(keyword = "") {
   const currentMsgs = messagesData.filter(
     (m) =>
       (m.from === "하미니(나)" && m.to === activeChatTarget.name) ||
-      (m.from === activeChatTarget.name && m.to === "하미니(나)")
+      (m.from === activeChatTarget.name && m.to === "하미니(나)") ||
+      (activeChatTarget.isGroup && m.to === activeChatTarget.name)
   );
 
   if (currentMsgs.length === 0) {
     display.innerHTML = `<div class="msg-empty-state">${activeChatTarget.name}님과 대화를 시작해보세요.</div>`;
   } else {
+    let lastDate = "";
     display.innerHTML = currentMsgs
+      .sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp))
       .map((m) => {
+        let html = "";
+        const currentDate = new Date(m.timestamp).toLocaleDateString();
+        if (lastDate !== currentDate) {
+          html += `<div class="date-divider"><span>${currentDate}</span></div>`;
+          lastDate = currentDate;
+        }
+
         let textContent = m.text;
-        // (4) 대화 검색 하이라이트 처리
         if (keyword) {
           const regex = new RegExp(`(${keyword})`, "gi");
           textContent = textContent.replace(
@@ -399,160 +386,228 @@ function renderMessages(keyword = "") {
             `<span class="highlight">$1</span>`
           );
         }
-        return `
+
+        html += `
           <div class="bubble ${m.from === "하미니(나)" ? "mine" : "yours"}">
+            ${
+              activeChatTarget.isGroup && m.from !== "하미니(나)"
+                ? `<div class="group-sender">${m.from}</div>`
+                : ""
+            }
             <div class="msg-text">${textContent}</div>
             <div class="msg-time">${m.time}</div>
-          </div>
-        `;
+          </div>`;
+        return html;
       })
       .join("");
   }
   display.scrollTop = display.scrollHeight;
 }
 
-// (1) 즐겨찾기 토글 함수
+// 3. 즐겨찾기 로직 (HTML 타이틀 건드리지 않음)
 function toggleFavorite(name, dept) {
   const index = favorites.findIndex((f) => f.name === name);
-  if (index > -1) {
-    favorites.splice(index, 1);
-  } else {
-    favorites.push({ name, dept });
-  }
+  if (index > -1) favorites.splice(index, 1);
+  else favorites.push({ name, dept });
+
+  localStorage.setItem("msg_favorites", JSON.stringify(favorites));
   updateChatHeader(name, dept);
-  renderRecentTrack(); // 왼쪽 즐겨찾기 목록 갱신
+  renderRecentTrack();
 }
 
-// (1) 즐겨찾기 전용 렌더링 (최근 대화 트랙 활용)
 function renderRecentTrack() {
   const recentList = document.getElementById("recentUserList");
   if (!recentList) return;
 
+  // HTML 내부의 list만 비우고 새로 그림
+  recentList.innerHTML = "";
+
   favorites.forEach((fav) => {
-    const deptClass = getDeptClass(fav.dept);
+    const isGroup = fav.name.includes("방");
+    const deptClass = isGroup ? "All" : getDeptClass(fav.dept);
     const favItem = document.createElement("div");
     favItem.className = "recent-user-item";
     favItem.onclick = () => startChat(fav.name, fav.dept);
     favItem.innerHTML = `
-      <div class="chat-avatar avatar-${deptClass}">${fav.name[0]}</div>
-      <span>${fav.name}</span>
-    `;
+      <div class="chat-avatar avatar-${deptClass}">${
+      isGroup ? "G" : fav.name[0]
+    }</div>
+      <span>${fav.name}</span>`;
     recentList.appendChild(favItem);
   });
 }
 
-// 3. 상단 헤더 업데이트 (별 버튼 클래스 토글 추가)
+// 4. 대화 목록 로직 (HTML 타이틀 유지, 중복 완전 제거)
+function renderChatRoomList() {
+  const chatRoomList = document.getElementById("chatRoomList");
+  if (!chatRoomList) return;
+
+  chatRoomList.innerHTML = ""; // 내부 내용만 싹 비움
+
+  const chatPartners = [
+    ...new Set(
+      messagesData.map((m) => (m.from === "하미니(나)" ? m.to : m.from))
+    ),
+  ];
+
+  const roomData = chatPartners
+    .map((partner) => {
+      const lastMsg = messagesData
+        .filter((m) => m.from === partner || m.to === partner)
+        .sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp))[0];
+      return { name: partner, lastMsg };
+    })
+    .sort(
+      (a, b) => new Date(b.lastMsg.timestamp) - new Date(a.lastMsg.timestamp)
+    );
+
+  roomData.forEach((room) => {
+    const isGroup = room.name.includes("방");
+    let foundDept = "부서";
+    if (!isGroup) {
+      for (const [dept, staffs] of Object.entries(employeesData)) {
+        if (staffs.includes(room.name)) {
+          foundDept = dept;
+          break;
+        }
+      }
+    }
+    const avatarClass = isGroup
+      ? "avatar-All"
+      : `avatar-${getDeptClass(foundDept)}`;
+
+    const newRoom = document.createElement("div");
+    newRoom.className = "chat-room-item";
+    newRoom.onclick = () => startChat(room.name, isGroup ? "Group" : foundDept);
+    newRoom.innerHTML = `
+      <div class="chat-avatar ${avatarClass}">${
+      isGroup ? "G" : room.name[0]
+    }</div>
+      <div class="room-info">
+        <div class="room-top">
+          <span class="room-name">${room.name}</span>
+          <span class="room-dept">${isGroup ? "단체" : foundDept}</span>
+        </div>
+        <div class="room-last-msg">${room.lastMsg.text}</div>
+      </div>`;
+    chatRoomList.appendChild(newRoom);
+  });
+}
+
+// 5. 헤더 업데이트
 function updateChatHeader(name, dept) {
   const header = document.getElementById("chatHeader");
   if (!header) return;
-  const deptClass = getDeptClass(dept);
-  const isFav = favorites.some((f) => f.name === name); // 현재 즐겨찾기 여부
+  const isFav = favorites.some((f) => f.name === name);
+  const isGroup = name.includes("방");
+  const avatarClass = isGroup ? "avatar-All" : `avatar-${getDeptClass(dept)}`;
 
   header.innerHTML = `
     <div class="header-left">
-      <div class="chat-avatar avatar-${deptClass}">${name[0]}</div>
+      <div class="chat-avatar ${avatarClass}">${isGroup ? "G" : name[0]}</div>
       <div class="header-info">
         <h3>${name}</h3>
-        <span>${dept}</span>
+        <span>${isGroup ? "단체방" : dept}</span>
       </div>
     </div>
     <div class="header-right">
       <div class="fav-star-btn ${
         isFav ? "fill" : ""
       }" onclick="toggleFavorite('${name}', '${dept}')"></div>
-    </div>
-  `;
-}
-
-// 4. 왼쪽 대화 목록 업데이트
-function updateChatRoomList(name, dept) {
-  const chatRoomList = document.getElementById("chatRoomList");
-  if (!chatRoomList) return;
-
-  const existingRoom = chatRoomList.querySelector(`[data-name="${name}"]`);
-  if (existingRoom) existingRoom.remove();
-
-  const deptClass = getDeptClass(dept);
-  const newRoom = document.createElement("div");
-  newRoom.className = "chat-room-item";
-  newRoom.setAttribute("data-name", name);
-  newRoom.onclick = () => startChat(name, dept);
-  newRoom.innerHTML = `
-    <div class="chat-avatar avatar-${deptClass}">${name[0]}</div>
-    <div class="room-info" style="display:flex; flex-direction:column; align-items:flex-start;">
-      <span class="room-name">${name}</span>
-      <span class="room-dept">${dept}</span>
     </div>`;
-  chatRoomList.prepend(newRoom);
 }
 
-// 5. 채팅 시작
 function startChat(name, dept) {
-  activeChatTarget = { name, dept };
+  activeChatTarget = { name, dept, isGroup: name.includes("방") };
   updateChatHeader(name, dept);
   renderMessages();
-  updateChatRoomList(name, dept);
 }
 
-// (3) 조직도 렌더링 (아코디언 애니메이션 대응)
+// 6. 조직도 (하나만 열리게)
 function renderStaffDirectory() {
   const container = document.getElementById("deptStaffList");
   if (!container) return;
   container.innerHTML = "";
-
   for (const [dept, staffs] of Object.entries(employeesData)) {
     const deptDiv = document.createElement("div");
     deptDiv.className = "dept-group-wrapper";
     deptDiv.innerHTML = `
-      <div class="dept-group-title" onclick="this.classList.toggle('is-open')">${dept}</div>
-      <div class="dept-items">
-        ${staffs
-          .map(
-            (s) => `
-          <div class="staff-item" onclick="startChat('${s}', '${dept}')">
-            <span class="status-dot"></span> ${s}
-          </div>
-        `
-          )
-          .join("")}
-      </div>`;
+      <div class="dept-group-title" onclick="
+        const isOpen = this.classList.contains('is-open');
+        document.querySelectorAll('.dept-group-title').forEach(t => t.classList.remove('is-open'));
+        if(!isOpen) this.classList.add('is-open');
+      ">${dept}</div>
+      <div class="dept-items">${staffs
+        .map(
+          (s) => `
+        <div class="staff-item" onclick="startChat('${s}', '${dept}')">
+          <span class="status-dot"></span>${s}
+        </div>`
+        )
+        .join("")}</div>`;
     container.appendChild(deptDiv);
   }
 }
 
-// 7. 메시지 전송
+// 7. 메시지 전송 및 자동 응답
 function sendChatMessage() {
   const input = document.getElementById("msgInput");
   if (!activeChatTarget || !input.value.trim()) return;
-
+  const now = new Date();
   messagesData.push({
     from: "하미니(나)",
     to: activeChatTarget.name,
     text: input.value,
-    time: new Date().toLocaleTimeString([], {
-      hour: "2-digit",
-      minute: "2-digit",
-    }),
+    time: now.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" }),
+    timestamp: now.toISOString(),
   });
-
   renderMessages();
+  renderChatRoomList();
   input.value = "";
+
+  if (!activeChatTarget.isGroup) {
+    setTimeout(() => {
+      const replyTime = new Date();
+      messagesData.push({
+        from: activeChatTarget.name,
+        to: "하미니(나)",
+        text: "확인했습니다! 잠시만 기다려주세요. 🙂",
+        time: replyTime.toLocaleTimeString([], {
+          hour: "2-digit",
+          minute: "2-digit",
+        }),
+        timestamp: replyTime.toISOString(),
+      });
+      renderMessages();
+      renderChatRoomList();
+    }, 1000);
+  }
 }
 
-// 8. 초기화 로직
+// 8. 초기화
 document.addEventListener("DOMContentLoaded", () => {
   renderStaffDirectory();
+  renderRecentTrack();
+  renderChatRoomList();
 
-  // (자동 로드) 첫 번째 사원과 자동 채팅 시작
-  const firstDept = Object.keys(employeesData)[0];
-  const firstName = employeesData[firstDept][0];
-  startChat(firstName, firstDept);
+  if (messagesData.length > 0) {
+    const latest = [...messagesData].sort(
+      (a, b) => new Date(b.timestamp) - new Date(a.timestamp)
+    )[0];
+    const targetName = latest.from === "하미니(나)" ? latest.to : latest.from;
+    let targetDept = "직원";
+    for (const [dept, staffs] of Object.entries(employeesData)) {
+      if (staffs.includes(targetName)) {
+        targetDept = dept;
+        break;
+      }
+    }
+    startChat(targetName, targetDept);
+  }
 
-  // 전송 버튼 이벤트
   const sendBtn = document.getElementById("msgSendBtn");
   if (sendBtn) sendBtn.onclick = sendChatMessage;
 
-  // 엔터키 전송
   const msgInput = document.getElementById("msgInput");
   if (msgInput) {
     msgInput.onkeypress = (e) => {
@@ -562,8 +617,6 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     };
   }
-
-  // 조직도 직원 검색
   const staffSearch = document.getElementById("staffSearchInput");
   if (staffSearch) {
     staffSearch.oninput = (e) => {
@@ -576,12 +629,8 @@ document.addEventListener("DOMContentLoaded", () => {
     };
   }
 
-  // (4) 대화 내용 검색 (채팅방 내부 단어 검색)
   const chatSearch = document.getElementById("chatSearchInput");
   if (chatSearch) {
-    chatSearch.oninput = (e) => {
-      const keyword = e.target.value.trim();
-      renderMessages(keyword); // 키워드를 넘겨서 렌더링
-    };
+    chatSearch.oninput = (e) => renderMessages(e.target.value.trim());
   }
 });
