@@ -717,7 +717,7 @@
                   </div>
                 </div>
               </section>
-              <section class="section is-active" data-page="notice">
+              <section class="section" data-page="notice">
                 <div class="dashboard notice">
                   <div class="schedule-top notice">
                     <div class="schedule-title">
@@ -727,12 +727,16 @@
                       </button>
                     </div>
                     <div class="notice-control">
+                      <button class="notice-del-btn">
+                        <img src="images/notice-del2.svg" alt="notice-del" />
+                        <span class="notice-del-txt">공지 삭제하기</span>
+                      </button>
                       <button class="notice-edit-btn">
                         <img
                           src="images/editnotification.svg"
                           alt="notice-edit"
                         />
-                        <span class="notice-edit-txt">공지 수정/삭제하기</span>
+                        <span class="notice-edit-txt">공지 수정하기</span>
                       </button>
                       <button class="notice-add-btn">
                         <img src="images/notice_acc_icon.svg" alt="notiadd" />
@@ -749,45 +753,79 @@
                           <th style="width: 100px">올린 사람</th>
                           <th style="width: 120px">날짜</th>
                           <th style="width: 100px">확인 인원</th>
-                          <th style="width: 80px">상태</th>
+                          <th class="noti-chk-all">
+                            <span class="noti-chk-all-txt">전체</span>
+                          </th>
                         </tr>
                       </thead>
                       <tbody id="noticeListBody">
                         <tr>
-                          <td>24</td>
-                          <td class="notice-t-title">
-                            2026년 설 연휴 휴무 및 비상연락망 안내
+                          <td></td>
+                          <td class="notice-t-title"></td>
+                          <td></td>
+                          <td></td>
+                          <td><span class="read-count"></span></td>
+                          <td>
+                            <input
+                              type="checkbox"
+                              name="notice-del-edit-chk"
+                              class="notice-del-edit-chk modal-request-checkbox"
+                            />
                           </td>
-                          <td>김관리자</td>
-                          <td>2026-01-05</td>
-                          <td><span class="read-count">280</span>/308</td>
-                          <td><span class="status-tag active">진행중</span></td>
-                        </tr>
-                        <tr>
-                          <td>23</td>
-                          <td class="notice-t-title">
-                            [필독] 개인정보 보호 교육 이수 안내
-                          </td>
-                          <td>이인사</td>
-                          <td>2025-12-30</td>
-                          <td><span class="read-count">308</span>/308</td>
-                          <td><span class="status-tag complete">완료</span></td>
                         </tr>
                       </tbody>
                     </table>
                   </div>
                 </div>
               </section>
-              <section class="section" data-page="message">
-                <div class="dashboard notice">
-                  <div class="schedule-title">
-                    <h1>메시지</h1>
-                    <button class="help-btn">
-                      <img src="images/help.svg" alt="도움말" />
-                    </button>
+              <section class="section is-active" data-page="message">
+                <div class="message-main-container">
+                  <div class="msg-side-left">
+                    <div class="recent-users-track">
+                      <h5 class="list-subtitle">즐겨찾기</h5>
+                      <div class="recent-list" id="recentUserList"></div>
+                    </div>
+                    <div class="chat-room-list">
+                      <h5 class="list-subtitle">대화 목록</h5>
+                      <div id="chatRoomList"></div>
+                    </div>
+                  </div>
+                  <div class="msg-center">
+                    <div class="chat-search-area">
+                      <input
+                        type="text"
+                        id="chatSearchInput"
+                        placeholder="대화 검색"
+                      />
+                    </div>
+                    <div class="chat-active-header" id="chatHeader"></div>
+                    <div class="chat-display-area" id="chatDisplay"></div>
+                    <div class="chat-input-box">
+                      <textarea
+                        id="msgInput"
+                        placeholder="메시지를 입력하세요"
+                        rows="1"
+                        spellcheck="false"
+                      ></textarea>
+                      <button id="msgSendBtn">전송</button>
+                    </div>
+                  </div>
+
+                  <div class="msg-side-right">
+                    <div class="staff-search-area">
+                      <input
+                        type="text"
+                        id="staffSearchInput"
+                        placeholder="직원 이름 검색"
+                      />
+                    </div>
+                    <div class="staff-directory">
+                      <div id="deptStaffList" class="dept-accordion"></div>
+                    </div>
                   </div>
                 </div>
               </section>
+
               <section class="section" data-page="account"></section>
               <section class="section" data-page="desktop"></section>
             </div>
@@ -1292,12 +1330,15 @@
                   id="notice-add-template-select"
                 >
                   <option value="">선택</option>
-                  <option value="notice-edu">의무교육 이수/신청 안내</option>
+                  <option value="notice-edu">교육 이수 안내</option>
                   <option value="notice-system">시스템 정기 점검 안내</option>
-                  <option value="notice-campaign">권장 캠페인 안내</option>
-                  <option value="notice-park">주차장 이용 수칙 안내</option>
-                  <option value="notice-submit">서류 제출 안내</option>
+                  <option value="notice-request">신청 안내</option>
+                  <option value="notice-submit">제출 안내</option>
                   <option value="notice-vacation">휴무 안내</option>
+                  <option value="notice-schedule">일정 공지</option>
+                  <option value="notice-update">업데이트 공지</option>
+                  <option value="notice-campaign">참여 안내</option>
+                  <option value="notice-etc">기타</option>
                 </select>
               </div>
               <div class="notice-add-modal-row">
@@ -1316,25 +1357,37 @@
               </div>
               <div class="notice-add-modal-row">
                 <h5 class="modal-subtitle-text">알람</h5>
-                <div class="contract-request-modal-col sign-order">
+                <div class="notice-add-modal-sns notice-chk">
                   <label for="" class="modal-request-checkbox-text"
                     ><input
                       type="checkbox"
-                      name="modal-request-checkbox"
-                      class="order-chk-1 modal-request-checkbox"
-                    />이메일</label
+                      name="modal-notice-checkbox"
+                      class="notice-chk-1 modal-request-checkbox"
+                    />
+                    <span class="notice-add-modal-chk">이메일</span>
+                  </label>
+                  <label for="" class="modal-request-checkbox-text"
+                    ><input
+                      type="checkbox"
+                      name="modal-notice-checkbox"
+                      class="notice-chk-2 modal-request-checkbox"
+                    /><span class="notice-add-modal-chk">문자</span></label
                   >
                 </div>
+              </div>
+              <div class="notice-add-modal-row">
+                <h5 class="modal-subtitle-text">선택</h5>
+                <select name="noticeaddDetail" id="notice-add-detail-select">
+                  <option value="">선택</option>
+                </select>
               </div>
               <div class="notice-add-modal-row">
                 <h5 class="modal-subtitle-text">내용</h5>
                 <textarea
                   id="notice-content-input"
                   placeholder="공지 내용을 입력하세요"
+                  spellcheck="false"
                 ></textarea>
-              </div>
-              <div class="notice-add-modal-row">
-                <button class="notice-preview">내용 미리보기</button>
               </div>
             </div>
             <div class="notice-add-content-right">
@@ -1344,8 +1397,13 @@
             </div>
           </div>
           <div class="notice-add-action action">
-            <button class="approval">추가하기</button>
-            <button class="cancel">취소</button>
+            <div class="notice-add-modal-row">
+              <button class="notice-preview">내용 미리보기</button>
+            </div>
+            <div class="notice-add-action-wrap">
+              <button class="approval">추가하기</button>
+              <button class="cancel">취소</button>
+            </div>
           </div>
         </div>
       </div>
