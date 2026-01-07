@@ -507,7 +507,7 @@ function renderShift(item, isVacation, dimmed = false) {
     pos = calcPosition(item.start, item.end);
   } else if (viewMode === "week") {
     const itemDate = new Date(item.date);
-    const dayIndex = itemDate.getDay(); // 0~6
+    const dayIndex = itemDate.getDay(); 
 
     pos = {
       left: (dayIndex / 7) * 100 + 0.6,
@@ -537,16 +537,13 @@ function renderShift(item, isVacation, dimmed = false) {
   }">
     ${
       viewMode === "week"
-        ? `<small>${item.jobText || ""}</small><span class = "mobile-tag">${
-            item.name
-          }</span>`
+        ? `<small>${item.jobText || ""}</small>`
         : `${item.start} - ${item.end}<small>${item.jobText || ""}</small>`
     }
     </div>
   `;
 }
 
-// 1. 월 모드 렌더링 수정 (휴가 페이지 여부 판단 강화)
 function renderMonth(target, isVacationPage) {
   if (!target) return;
   target.innerHTML = `

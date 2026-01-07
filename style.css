@@ -180,7 +180,7 @@ body.dark-mode {
   height: 66px;
   background: var(--header-bg);
   box-shadow: var(--shdow-s);
-  z-index: 100;
+  z-index: 997;
 }
 
 .header-inner {
@@ -1266,7 +1266,7 @@ body[data-view-mode="week"] .timeline small {
   opacity: 0.8;
 }
 .fake-input span {
-  color: #374151;
+  color: var(--grayColor500);
 }
 .confirm-add {
   width: 100%;
@@ -2834,7 +2834,7 @@ body[data-view-mode="week"] .shift.vacation {
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 999;
+  z-index: 9999;
 }
 .is-hidden {
   display: none;
