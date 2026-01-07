@@ -537,7 +537,9 @@ function renderShift(item, isVacation, dimmed = false) {
   }">
     ${
       viewMode === "week"
-        ? `<small>${item.jobText || ""}</small>`
+        ? `<small>${item.jobText || ""}</small><span class = "mobile-tag">${
+            item.name
+          }</span>`
         : `${item.start} - ${item.end}<small>${item.jobText || ""}</small>`
     }
     </div>
@@ -604,7 +606,7 @@ function renderMonth(target, isVacationPage) {
       const text =
         item.type === "vacation"
           ? `${item.name}(${item.jobText})`
-          : `${item.name}(${item.start}~${item.end})`;
+          : `${item.name}<span class="m-time">(${item.start}~${item.end})</span>`;
       const dotClass = item.type === "vacation" ? "gray" : item.job;
       el.innerHTML = `<span class="dot ${dotClass}"></span><span class="text">${text}</span>`;
 
@@ -1412,7 +1414,7 @@ function renderAttendanceBoard() {
       bodyHtml += `
         <div class="attendance-body-row">
           <div class="emp-info-sticky">
-            <div style="font-weight:800; font-size:12px; color:#222;">${name}</div>
+            <div class="emp-info-sticky-strong">${name}</div>
             <div style="font-size:10px; color:var(--grayColor500);">${dept}</div>
           </div>
           <div class="att-records-wrap">

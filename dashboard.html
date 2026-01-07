@@ -117,17 +117,13 @@
                   <img src="images/account.svg" alt="date" />
                   <span class="nav-txt">계정</span>
                 </li>
-                <li class="nav-item" data-target="desktop">
-                  <img src="images/desktop.svg" alt="date" />
-                  <span class="nav-txt">데스크탑</span>
-                </li>
               </ul>
             </div>
           </div>
           <div class="main">
             <div class="content">
               <section class="section" data-page="home">
-                <div class="dashboard">
+                <div class="dashboard home">
                   <div class="card profile-card" data-target="account">
                     <div class="profile-info flex">
                       <div class="profile-img">
@@ -249,7 +245,7 @@
                         <img src="images/addnoti.svg" alt="공지추가" />
                         <span>공지 추가</span>
                       </button>
-                      <button class="notice-btn">
+                      <button class="notice-btn edit">
                         <img src="images/editnotification.svg" alt="공지수정" />
                         <span>공지 수정</span>
                       </button>
@@ -297,7 +293,7 @@
                   </div>
                 </div>
               </section>
-              <section class="section" data-page="schedule">
+              <section class="section is-active" data-page="schedule">
                 <div class="dashboard schedule">
                   <div class="schedule-top">
                     <div class="schedule-title">
@@ -321,7 +317,7 @@
                       <img
                         src="images/scedule-add-btn.svg"
                         alt="schedule-add"
-                      />근무일정 추가하기
+                      />근무일정 추가
                     </button>
                   </div>
                   <div class="schedule-control">
@@ -825,8 +821,63 @@
                   </div>
                 </div>
               </section>
-              <section class="section is-active" data-page="account"></section>
-              <section class="section" data-page="desktop"></section>
+              <section class="section" data-page="account">
+                <div class="account-container">
+                  <div class="account-card profile-main">
+                    <div class="profile-header">
+                      <div class="avatar-large">하</div>
+                      <div class="profile-titles">
+                        <h2>하미니</h2>
+                        <p>HR Manager · MBC Company</p>
+                        <span class="badge-admin">ADMIN</span>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="account-grid">
+                    <div class="account-card">
+                      <h3>기본 정보</h3>
+                      <div class="info-list">
+                        <div class="info-item">
+                          <label>대표 이메일</label>
+                          <span id="displayEmail">0926alsl7@naver.com</span>
+                        </div>
+                        <div class="info-item">
+                          <label>생년월일</label>
+                          <span id="displayPhone">2002.09.26</span>
+                        </div>
+                        <div class="info-item">
+                          <label>전화번호</label>
+                          <span id="displayPhone">010-8214-9422</span>
+                        </div>
+                        <div class="info-item">
+                          <label>아이디</label>
+                          <span id="displayId">admin</span>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="account-card">
+                      <h3>계정 설정</h3>
+                      <div class="action-list">
+                        <button
+                          class="action-btn"
+                          onclick="openAccountModal('id')"
+                        >
+                          아이디 변경
+                        </button>
+                        <button
+                          class="action-btn"
+                          onclick="openAccountModal('pw')"
+                        >
+                          비밀번호 변경
+                        </button>
+                        <button class="action-btn logout" id="btnLogout">
+                          로그아웃
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </section>
             </div>
           </div>
         </div>
@@ -1402,6 +1453,63 @@
             <div class="notice-add-action-wrap">
               <button class="approval">추가하기</button>
               <button class="cancel">취소</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div id="accountModal" class="account-modal modal is-hidden">
+        <div class="account-modal-card modal-card">
+          <div class="account-modal-card-head modal-head">
+            <h4 id="modalTitleText" class="modal-title-text">아이디 변경</h4>
+            <button class="close" onclick="closeAccountModal()">
+              <img src="images/close.svg" alt="close" />
+            </button>
+          </div>
+          <div class="account-modal-content modal-content">
+            <div class="account-modal-row">
+              <h5 id="currentValTitle" class="modal-subtitle-text">
+                현재 아이디
+              </h5>
+              <div class="input-with-msg">
+                <input
+                  type="text"
+                  id="currentValInput"
+                  placeholder="입력"
+                  class="account-modal-enter"
+                />
+                <p id="currentErrorMsg" class="modal-error-msg"></p>
+              </div>
+              <button id="btnVerify" class="id-confirm">인증</button>
+            </div>
+
+            <div class="account-modal-row">
+              <h5 id="newValTitle" class="modal-subtitle-text">
+                변경하실 아이디
+              </h5>
+              <input
+                type="text"
+                id="newValInput"
+                placeholder="인증 후 입력가능합니다"
+                class="account-modal-enter"
+                disabled
+              />
+            </div>
+
+            <div class="account-modal-row center">
+              <button
+                class="noidpassword"
+                onclick="alert('인증번호가 발송되었습니다.')"
+              >
+                <span id="forgetText" class="noidpassword-txt">아이디</span>를
+                몰라요
+              </button>
+            </div>
+
+            <div class="account-modal-action action">
+              <button id="btnSaveChange" class="confirm" disabled>
+                변경하기
+              </button>
+              <button class="cancel" onclick="closeAccountModal()">취소</button>
             </div>
           </div>
         </div>

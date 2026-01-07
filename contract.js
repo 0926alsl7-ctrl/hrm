@@ -7,53 +7,6 @@ let selectedId = null,
 let approvalData = [],
   contractData = [];
 
-const requestPool = {
-  "휴가 신청": [
-    "오전 반차 (09:00-13:00)",
-    "오후 반차 (13:00-18:00)",
-    "연차 휴가",
-    "병가 신청",
-    "경조 휴가",
-  ],
-  "근무일정 변경": ["근무 시간 변경", "근무 일자 변경", "유연 근무제 신청"],
-  "출장 신청": [
-    "가맹점 현장 점검",
-    "신규 점주 교육 지원",
-    "지역 거점 오피스 출장",
-    "본사 교육 연수",
-    "지방 출장",
-    "해외 출장",
-  ],
-  "연장근무 신청": [
-    "평일 연장근무 (18:00-21:00)",
-    "주말/휴일 연장근무",
-    "긴급 시스템 점검 (21:00-23:00)",
-  ],
-  기타: [
-    "비품 구매 요청",
-    "출장비 정산 결재",
-    "경비 정산 결재",
-    "부서 이동 신청",
-    "명함 제작 요청",
-    "사원증 제작 요청",
-    "수입결의서 제출",
-    "지출결의서 제출",
-    "업무 기안서 제출",
-  ],
-};
-
-const detailedReasons = [
-  "본사 교육 참여를 위한 출장 신청입니다.",
-  "업무 과다로 인한 연장 근무 협조 부탁드립니다.",
-  "긴급 시스템 점검 요청입니다. 승인 부탁드립니다",
-  "현장 점검 및 파트너사 미팅 일정입니다.",
-  "가족 행사로 인한 급한 연차 신청입니다.",
-  "개인사정으로 인한 근무 일정 변경 요청입니다.",
-  "인원 부족으로 현장 지원 요청 받았습니다. 승인 부탁드립니다",
-  "요청하신 결재 서류 입니다. 승인 부탁드립니다.",
-];
-
-// [2] 데이터 초기화
 function initHRData() {
   const depts = Object.keys(employeesData);
   approvalData = Array.from({ length: 20 }, (_, i) => {
@@ -113,7 +66,6 @@ function initHRData() {
   });
 }
 
-// [3] 보드 렌더링
 function renderApprovalBoard() {
   const body = document.querySelector(".approval-board-body");
   if (!body) return;
@@ -219,7 +171,6 @@ function renderContractBoard() {
     });
 }
 
-// [4] 템플릿 필드 렌더링 (요청 부서 자동 채우기 보강)
 window.renderTemplateFields = function (
   templateKey,
   containerSelector,
@@ -251,20 +202,15 @@ window.renderTemplateFields = function (
   config.fields.forEach((f) => {
     let val = f.defaultValue || "";
     if (itemData) {
-      // 1. 이름/성명/요청자 자동 매칭 (단어 포함 여부로 체크해서 100% 꽂히게)
       if (
         f.label.includes("성명") ||
         f.label.includes("이름") ||
         f.label.includes("요청자")
       ) {
         val = itemData.p1 || "";
-      }
-      // 2. 부서/소속 자동 매칭
-      else if (f.label.includes("부서") || f.label.includes("소속")) {
+      } else if (f.label.includes("부서") || f.label.includes("소속")) {
         val = itemData.dept || "";
-      }
-      // 3. 기타 정보들
-      else if (f.label.includes("전화")) {
+      } else if (f.label.includes("전화")) {
         val = itemData.phone || "";
       } else if (f.label.includes("주소")) {
         val = itemData.address || "";
@@ -370,7 +316,6 @@ window.renderTemplateFields = function (
   }
 };
 
-// [5] 액션 처리
 window.openAction = (type, id, mode) => {
   selectedId = id;
   selectedMode = mode;
@@ -415,7 +360,6 @@ window.handleFinalAction = (type) => {
   renderContractBoard();
 };
 
-// [6] 모달 상세
 window.openApprovalDetail = (id) => {
   const item = approvalData.find((d) => d.id === id);
   const m = document.querySelector(".approval-detail-modal");
@@ -454,7 +398,6 @@ window.closeModal = () =>
     .querySelectorAll(".modal")
     .forEach((m) => m.classList.add("is-hidden"));
 
-// [7] 이벤트 리스너 통합 (DOMContentLoaded)
 document.addEventListener("DOMContentLoaded", () => {
   initHRData();
   renderApprovalBoard();
@@ -469,36 +412,50 @@ document.addEventListener("DOMContentLoaded", () => {
     )
       closeModal();
   });
-
-  document.querySelector(".approve-action-modal .approval").onclick = () =>
-    handleFinalAction("approve");
-  document.querySelector(".reject-action-modal .approval").onclick = () =>
-    handleFinalAction("reject");
-
+  const updateActiveState = (targetBtn, selector) => {
+    const parent = targetBtn.parentElement;
+    document
+      .querySelectorAll(selector)
+      .forEach((btn) => btn.classList.remove("active"));
+    targetBtn.classList.add("active");
+  };
   document.querySelectorAll(".process-btn, .filter-btn").forEach((b) => {
     b.onclick = () => {
+      const selector = b.classList.contains("process-btn")
+        ? ".process-btn"
+        : ".filter-btn";
+      updateActiveState(b, selector);
+
       if (b.dataset.process) currentAppProcess = b.dataset.process;
       if (b.dataset.filter) currentAppFilter = b.dataset.filter;
       renderApprovalBoard();
     };
   });
+
   document
     .querySelectorAll(".contract-process-btn, .contract-filter-btn")
     .forEach((b) => {
       b.onclick = () => {
+        const selector = b.classList.contains("contract-process-btn")
+          ? ".contract-process-btn"
+          : ".contract-filter-btn";
+        updateActiveState(b, selector);
+
         const deptSel = document.getElementById("target-dept-select");
         const empSel = document.getElementById("target-emp-select");
         const msgArea = document.getElementById("contract-request-message");
 
-        if (deptSel) deptSel.selectedIndex = 0; // '부서 선택'으로
-        if (empSel) empSel.innerHTML = '<option value="">직원 선택</option>'; // 이름 비우기
-
-        // 2. 전자계약 요청 메시지 초기화
+        if (deptSel) deptSel.selectedIndex = 0;
+        if (empSel) empSel.innerHTML = '<option value="">직원 선택</option>';
         if (msgArea) msgArea.value = "";
-        document
-          .querySelector(".target-personal-row")
-          .classList.add("is-hidden");
-        document.getElementById("dynamic-form-fields-request").innerHTML = "";
+
+        const row = document.querySelector(".target-personal-row");
+        if (row) row.classList.add("is-hidden");
+
+        const dynamicFields = document.getElementById(
+          "dynamic-form-fields-request"
+        );
+        if (dynamicFields) dynamicFields.innerHTML = "";
 
         if (b.dataset.process) currentConProcess = b.dataset.process;
         if (b.dataset.item) currentConFilter = b.dataset.item;
@@ -506,13 +463,11 @@ document.addEventListener("DOMContentLoaded", () => {
       };
     });
 
-  // 계약 요청 핵심 로직
   const targetSel = document.getElementById("contract-target-select");
   const deptSel = document.getElementById("target-dept-select");
   const empSel = document.getElementById("target-emp-select");
   const templateSel = document.getElementById("contract-template-select");
 
-  // 이 위치 (templateSel 선언 바로 아래)
   if (deptSel) {
     deptSel.innerHTML = '<option value="">부서 선택</option>';
     Object.keys(employeesData).forEach((dept) => {
@@ -526,7 +481,6 @@ document.addEventListener("DOMContentLoaded", () => {
   targetSel.onchange = (e) => {
     const val = e.target.value;
     const personalRow = document.querySelector(".target-personal-row");
-    // [지적사항] Personal 선택 시 부서/이름 선택창 확실히 노출
     if (personalRow) {
       if (val === "Personal") {
         personalRow.classList.remove("is-hidden");
@@ -563,11 +517,10 @@ document.addEventListener("DOMContentLoaded", () => {
   };
 
   empSel.onchange = () => {
-    const selectedName = empSel.value; // "정희석" 같은 값이 담김
+    const selectedName = empSel.value;
     const selectedDept = deptSel.value;
 
     if (selectedName && templateSel.value) {
-      // 1. 폼을 먼저 렌더링 (itemData 전달)
       renderTemplateFields(
         templateSel.value,
         "#dynamic-form-fields-request",
@@ -580,12 +533,10 @@ document.addEventListener("DOMContentLoaded", () => {
         }
       );
 
-      // 2. [핵심] 렌더링된 폼 안에서 'dynamic-emp-select' 클래스를 가진 select를 찾아 value를 꽂아줌
       const formEmpSelect = document.querySelector(
         "#dynamic-form-fields-request .dynamic-emp-select"
       );
       if (formEmpSelect) {
-        // 기존 옵션이 없으면 새로 만들어주고 선택시킴
         formEmpSelect.innerHTML = `<option value="${selectedName}" selected>${selectedName}</option>`;
         formEmpSelect.value = selectedName;
       }
@@ -614,7 +565,6 @@ document.addEventListener("DOMContentLoaded", () => {
         const m = document.querySelector(".contract-request-modal");
         const submitBtn = m.querySelector(".approval");
 
-        // UI 초기화
         templateSel.value = "";
         targetSel.value = "";
         deptSel.value = "";
@@ -637,7 +587,6 @@ document.addEventListener("DOMContentLoaded", () => {
           : "전자계약 요청";
         submitBtn.textContent = isAdd ? "추가하기" : "요청하기";
 
-        // [지적사항] 요청하기/추가하기 버튼 클릭 시 데이터 검증 및 Alert 로직 복구
         submitBtn.onclick = () => {
           const dynamicFields = document
             .getElementById("dynamic-form-fields-request")
