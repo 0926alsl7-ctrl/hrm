@@ -1221,6 +1221,7 @@ body[data-view-mode="week"] .timeline small {
   color: var(--mainTextColor-lightmode);
 }
 .form-group select {
+  outline: none;
   height: 40px;
   padding: 0 12px;
   border-radius: 8px;
@@ -1229,9 +1230,10 @@ body[data-view-mode="week"] .timeline small {
   font-size: 13px;
   cursor: pointer;
   appearance: none;
+  color: var(--grayColor500);
 }
+
 .form-group select:focus {
-  outline: none;
   border-color: var(--grayColor400);
 }
 .fakeDate {

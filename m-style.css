@@ -1,5 +1,6 @@
+html,
 body {
-  font-size: 12px !important;
+  font-size: 12px;
 }
 
 /* header */
@@ -164,6 +165,9 @@ body {
   padding: 10px;
   gap: 0;
 }
+.schedule-top {
+  margin-top: 6px;
+}
 .schedule-top .schedule-title h1 {
   font-size: 18px;
 }
@@ -173,8 +177,7 @@ body {
 }
 
 .schedule-add-btn {
-  padding: 6px 8px;
-  font-size: 11px;
+  font-size: 12px;
 }
 .schedule-add-btn img {
   width: 16px;
@@ -204,36 +207,26 @@ body {
 .attendance-today-txt {
   font-size: 14px;
 }
-body[data-view-mode="day"] .schedule-mode {
+.schedule-mode {
   width: 100%;
   display: flex;
   gap: 4px;
 }
 
-body[data-view-mode="day"] .schedule-mode .schedule-save {
+.schedule-mode .schedule-save {
   order: 4;
   margin-left: auto;
+  margin-right: 6px;
   font-size: 12px;
   font-weight: 500;
 }
-body[data-view-mode="day"] .schedule-mode .view-mode {
-  font-size: 12px;
-}
-body[data-view-mode="day"] .view-mode.day {
-  order: 1;
-}
-body[data-view-mode="day"] .view-mode.week {
-  order: 2;
-}
-body[data-view-mode="day"] .view-mode.month {
-  order: 3;
-}
+
 .time-header {
   margin-top: 6px;
 }
 
 .schedule-board {
-  margin-top: 14px;
+  margin-top: 6px;
   padding: 0;
   border-radius: 8px;
 }
@@ -266,6 +259,7 @@ body:not(.show-vacation) .work-hours {
 }
 .week-title {
   font-size: 12px;
+  display: none;
 }
 body[data-view-mode="day"] .shift {
   left: 0 !important;
@@ -302,7 +296,6 @@ body[data-view-mode="week"] .timeline .mobile-tag {
 .week-days span {
   font-size: 10px;
 }
-/* 6. 월간(Month) 보기일 때 그리드 조정 */
 body[data-view-mode="month"] .month-grid,
 body[data-view-mode="month"] .month-header {
   gap: 4px;
@@ -313,7 +306,9 @@ body[data-view-mode="month"] .month-item .m-time {
 body[data-view-mode="month"] .schedule-board {
   padding: 10px 4px;
 }
-
+.month-item .text {
+  font-size: 10px;
+}
 .month-day {
   min-height: 80px;
   padding: 4px;
@@ -326,7 +321,6 @@ body[data-view-mode="month"] .schedule-board {
 .count-dot {
   width: 14px;
   height: 14px;
-  font-size: 7px;
   right: 2px;
   top: 2px;
 }
@@ -410,4 +404,43 @@ body[data-view-mode="month"] .schedule-board {
 .action-btn.logout {
   width: 100%;
   position: relative;
+}
+/* modal */
+.modal-card {
+  background: #fff;
+  border-radius: 8px;
+  padding: 20px 18px 8px;
+  max-width: 420px;
+  box-shadow: var(--shdow-m);
+  position: relative;
+}
+.schedule-add-modal-content {
+  max-width: 340px;
+}
+.m-col {
+  display: flex;
+  flex-direction: column;
+}
+.m-col .m-none {
+  display: none;
+}
+.form-group label {
+  font-size: 12px;
+}
+.form-group select {
+  font-size: 12px;
+}
+.confirm-add {
+  height: 54px;
+  margin-top: 0;
+}
+.setToday {
+  font-size: 12px;
+  padding: 8px 20px;
+}
+.fake-input {
+  height: 34px;
+}
+.fake-input span {
+  font-size: 12px;
 }
