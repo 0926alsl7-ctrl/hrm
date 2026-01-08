@@ -1,6 +1,7 @@
 html,
 body {
   font-size: 12px;
+  overflow: auto;
 }
 
 /* header */
@@ -161,12 +162,14 @@ body {
   grid-column: span 1;
 }
 /* section (2) schedule ====================================================================  */
-.dashboard.schedule {
+.dashboard.schedule,
+.dashboard.vacation {
   padding: 10px;
   gap: 0;
 }
 .schedule-top {
   margin-top: 6px;
+  margin-bottom: 6px;
 }
 .schedule-top .schedule-title h1 {
   font-size: 18px;
@@ -177,11 +180,25 @@ body {
 }
 
 .schedule-add-btn {
-  font-size: 12px;
+  font-size: 11px;
+  font-weight: 500;
+  padding: 6px 10px;
 }
-.schedule-add-btn img {
+.schedule-add-btn img,
+.vacation-add-btn img,
+.vacation-rate-btn img {
   width: 16px;
   height: 16px;
+}
+.vacation-add-btn,
+.vacation-rate-btn {
+  font-size: 10px;
+  padding: 6px;
+}
+.approval-status button,
+.status-btn {
+  font-size: 11px;
+  font-weight: 500;
 }
 .schedule-prev-btn,
 .schedule-next-btn,
@@ -226,6 +243,7 @@ body {
 }
 
 .schedule-board {
+  overflow-y: scroll;
   margin-top: 6px;
   padding: 0;
   border-radius: 8px;
@@ -360,7 +378,8 @@ body[data-view-mode="week"] .shift small {
 /* section (3) attendance ====================================================================  */
 .dashboard.attendance {
   display: block;
-  padding: 12px;
+  padding: 10px;
+  gap: 0;
 }
 #attDeptFilter {
   font-size: 11px;
@@ -471,26 +490,111 @@ body[data-view-mode="week"] .shift small {
   height: 4px;
 }
 
-/* section (3) home ====================================================================  */
-/* section (4) home ====================================================================  */
-/* section (5) home ====================================================================  */
-/* section (6) home ====================================================================  */
-/* section (1) home ====================================================================  */
-/* section (1) home ====================================================================  */
+/* section (5,6,7) 전자계약 / 전자결재 / 사내공지 ====================================================================  */
+.dashboard.approval,
+.dashboard.contract,
+.dashboard.notice {
+  overflow-x: auto !important;
+  overflow-y: auto !important;
+  max-width: 100%;
+  display: block;
+  gap: 0;
+  padding: 10px;
+}
+.approval-control {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+.schedule-top.notice {
+  display: block;
+}
+.notice-control {
+  margin-top: 10px;
+  box-sizing: border-box;
+  width: 100%;
+  justify-content: flex-start;
+  gap: 4px;
+}
+.notice-main-table {
+  font-size: 10px !important;
+}
+.notice-main-table th {
+  padding: 8px;
+  text-align: center;
+  width: auto !important;
+}
+.notice-main-table td {
+  padding: 8px;
+  text-align: center;
+}
+.noti-chk-all {
+  padding-left: 0 !important;
+}
+.m-th,
+.m-td {
+  display: none;
+}
 
-/* 
+.notice-edit-btn,
+.notice-add-btn,
+.notice-del-btn {
+  padding: 8px;
+}
+.notice-edit-txt,
+.notice-add-txt,
+.notice-del-txt {
+  font-size: 11px;
+}
+.approval-filters,
+.contract-filters {
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 10px;
+  margin-left: 4px;
+  font-size: 11px;
+}
+.contract-filters {
+  font-size: 10px;
+  gap: 4px;
+}
 
+.approval-filters .filter-btn,
+.contract-filter-btn,
+.contract-wrap button {
+  padding: 8px;
+  font-size: 11px;
+}
+.contract-control {
+  gap: 0;
+}
+.approval-board,
+.contract-board {
+  margin-top: 10px;
+  display: block;
+}
+.approval-board-body,
+.contract-board-body {
+  width: 90%;
+  display: block;
+}
 .approval-board-head,
 .contract-board-head {
   display: none !important;
 }
-
+.contract-process-wrap {
+  display: block;
+}
+.contract-wrap,
+.contract-turn {
+  display: none;
+}
 .approval-board-body-row,
 .contract-board-body-row {
-  display: flex !important;
+  display: flex;
   flex-direction: column;
-  align-items: flex-start !important;
-  padding: 16px !important;
+  align-items: flex-start;
+  padding: 16px;
   gap: 8px;
   border: 1px solid #f2f4f6;
   border-radius: 12px;
@@ -499,7 +603,7 @@ body[data-view-mode="week"] .shift small {
 
 .approval-body-txt,
 .contract-body-txt {
-  font-size: 14px !important;
+  font-size: 13px;
 }
 
 .approval-status,
@@ -510,18 +614,8 @@ body[data-view-mode="week"] .shift small {
   justify-content: flex-start;
 }
 
-.modal-card {
-  width: 95% !important;
-  margin: 10px;
-  max-height: 90vh;
-  overflow-y: auto;
-}
-
-.contract-request-modal-row {
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 10px;
-} */
+/* section (8) 메시지 ====================================================================  */
+/* section (9) account ====================================================================  */
 
 [data-page="account"] {
   padding: 14px;
@@ -547,12 +641,14 @@ body[data-view-mode="week"] .shift small {
   width: 100%;
   position: relative;
 }
-/* modal */
+
+/* modal ====================================================================  */
 .modal-card {
+  max-height: 90vh !important;
   max-width: 340px !important;
   background: #fff;
   border-radius: 8px;
-  padding: 20px 18px 8px;
+  padding: 14px 16px 8px;
   box-shadow: var(--shdow-m);
   position: relative;
 }
@@ -601,4 +697,62 @@ body[data-view-mode="week"] .shift small {
   grid-template-columns: 20px 1fr auto auto;
   padding: 10px 8px;
   gap: 4px;
+}
+.modal-head {
+  padding-bottom: 8px;
+}
+.modal-title-text {
+  font-size: 15px;
+}
+.contract-request-modal-row,
+.target-personal-row {
+  min-height: 44px;
+}
+.contract-request-modal select,
+#contract-expire-days,
+.contract-request-form input {
+  font-family: "Chiron Hei HK", sans-serif;
+  padding: 8px;
+  font-size: 11px;
+  color: #8b95a1;
+}
+.contract-request-modal-col.request-message {
+  margin-top: 8px;
+}
+.contract-request-modal-detail-select {
+  flex-direction: column !important;
+  align-items: flex-start;
+  gap: 4px;
+}
+.contract-request-modal-detail-select select {
+  height: 32px;
+}
+.modal-request-checkbox-text,
+.modal-subtitle-text.gray {
+  font-size: 11px;
+}
+#contract-request-message,
+.contract-detail-message {
+  font-size: 11px;
+}
+.modal-request-checkbox {
+  width: 12px;
+  height: 12px;
+}
+.modal-request-checkbox::after {
+  left: 3px;
+  top: 1px;
+  width: 2px;
+  height: 4px;
+}
+.contract-request-modal-col.sign-order,
+.contract-request-content {
+  margin-top: 4px;
+}
+.contract-request-form {
+  padding: 2px 0 8px 14px;
+}
+.approval-detail-modal-card,
+.contract-detail-modal-card {
+  width: 300px;
 }

@@ -40,7 +40,7 @@ function renderNoticeList() {
         <td class="notice-t-title">${n.title}</td>
         <td>${n.author}</td>
         <td>${n.date}</td>
-        <td><span class="read-count">${n.read}</span>/${n.total}</td>
+        <td class="m-td"><span class="read-count">${n.read}</span>/${n.total}</td>
         <td style="text-align:center;">
           <input type="checkbox" class="notice-del-edit-chk modal-request-checkbox" value="${idx}">
         </td>

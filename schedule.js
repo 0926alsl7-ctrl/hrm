@@ -172,12 +172,26 @@ function calcPosition(start, end) {
 }
 
 function calcPositonWeek(item) {
-  const itemDate = new Date(item.date); // item 자체가 가진 날짜를 써야 함
-  const dayIndex = itemDate.getDay(); // 0(일) ~ 6(토)
+  const itemDate = new Date(item.date);
+  const dayIndex = itemDate.getDay();
 
   const left = (dayIndex / 7) * 100;
-  const width = (1 / 7) * 100; // 한 칸의 너비는 무조건 1/7
+  const width = (1 / 7) * 100;
   return { left, width };
+}
+function resetViewMode(page) {
+  if (page === "schedule" || page === "vacation") {
+    viewMode = "day";
+    document.body.dataset.viewMode = "day";
+
+    document.querySelectorAll(".view-mode").forEach((btn) => {
+      btn.classList.toggle("active", btn.classList.contains("day"));
+    });
+
+    updateDateText();
+    renderTimeHeader();
+    render();
+  }
 }
 
 function resetForm() {
@@ -442,11 +456,9 @@ function renderRow(items, target = body) {
   const isDraft = drafts[rowDate]?.some((d) => d.id === base.id);
   const statusClass = isDraft ? "draft" : "saved";
 
-  // [에러 해결] 변수 선언 추가
   const workHours = calcNetWorkHours(items);
   const hasWork = items.some((v) => v.type === "work");
 
-  // 주 모드에서는 체크박스/버튼 숨기기
   const hideControls = viewMode === "week";
 
   target.insertAdjacentHTML(
@@ -580,7 +592,6 @@ function renderMonth(target, isVacationPage) {
 
     const items = saved[dateStr] || [];
 
-    // [수정] 필터링 로직: 휴가 페이지면 무조건 휴가만, 아니면 토글 상태에 따라
     const filtered = items.filter((item) => {
       if (isVacationPage) return item.type === "vacation";
       return mixToggle.checked
@@ -1149,6 +1160,7 @@ document.querySelectorAll(".schedule .view-mode").forEach((btn) => {
 
     document.body.dataset.viewMode = viewMode;
 
+    resetViewMode();
     updateDateText();
     renderTimeHeader();
     render();
@@ -1170,6 +1182,7 @@ document.querySelectorAll(".vacation .view-mode").forEach((btn) => {
 
     document.body.dataset.viewMode = viewMode;
 
+    resetViewMode();
     updateDateText();
     renderTimeHeader();
     render();
@@ -1192,7 +1205,6 @@ renderTimeHeader();
 render();
 
 // section - vacation
-// 요소 선택
 const vRateBtn = document.querySelector(".vacation-rate-btn");
 const vRateModal = document.querySelector(".vacation-rate-modal");
 const vCloseBtns = document.querySelectorAll(
@@ -1297,7 +1309,6 @@ vCloseBtns.forEach((btn) => {
   btn.onclick = resetVacationRateModal;
 });
 
-// vacation.js 내의 if (vPromoteBtn) 블록을 아래로 교체
 if (vPromoteBtn) {
   vPromoteBtn.onclick = () => {
     const selectedName = vEmpSelect?.value;
