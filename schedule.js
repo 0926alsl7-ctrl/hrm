@@ -507,7 +507,7 @@ function renderShift(item, isVacation, dimmed = false) {
     pos = calcPosition(item.start, item.end);
   } else if (viewMode === "week") {
     const itemDate = new Date(item.date);
-    const dayIndex = itemDate.getDay(); 
+    const dayIndex = itemDate.getDay();
 
     pos = {
       left: (dayIndex / 7) * 100 + 0.6,
@@ -1349,7 +1349,7 @@ if (vPromoteBtn) {
   };
 }
 /* ======================================================
-   Attendance (출퇴근기록) 통합 로직
+   Attendance 
 ====================================================== */
 
 let currentAttDept = "all";
@@ -1383,7 +1383,6 @@ function renderAttendanceBoard() {
   const tMonth = now.getMonth();
   const tDate = now.getDate();
 
-  // 1. 헤더 렌더링
   let headerHtml = "";
   for (let i = 1; i <= lastDate; i++) {
     const targetDate = new Date(year, month, i);
@@ -1400,7 +1399,6 @@ function renderAttendanceBoard() {
   }
   header.innerHTML = headerHtml;
 
-  // 2. 바디 렌더링 (부서 필터 포함)
   let bodyHtml = "";
   const deptsToRender =
     currentAttDept === "all" ? Object.keys(employeesData) : [currentAttDept];
@@ -1458,6 +1456,7 @@ function renderAttendanceBoard() {
 
               return `
                 <div class="att-day-col ${isFuture ? "is-future" : ""}">
+                  <span class="m-date-only">${dayNum}일</span>
                   <div class="att-record-box">
                     ${tag ? `<span class="att-tag ${cls}">${tag}</span>` : ""}
                     <div class="t-in ${

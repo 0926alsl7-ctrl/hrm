@@ -265,12 +265,7 @@ body[data-view-mode="day"] .shift {
   left: 0 !important;
   width: 100% !important;
 }
-body[data-view-mode="week"] .shift {
-  padding: 10px 12px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
+
 body[data-view-mode="week"] .time-header,
 body[data-view-mode="week"] .schedule-row {
   grid-template-columns: 1fr;
@@ -288,7 +283,7 @@ body[data-view-mode="week"] .timeline small {
 body[data-view-mode="week"] .timeline .mobile-tag {
   font-size: 11px;
   font-weight: 500;
-  display: block !important;
+  display: block;
 }
 .week-dates span,
 .week-days span {
@@ -324,135 +319,162 @@ body[data-view-mode="month"] .schedule-board {
 }
 
 .count-dot {
-  width: 14px;
-  height: 14px;
+  width: 12px;
+  height: 12px;
   right: 2px;
-  top: 2px;
+  top: 4px;
 }
 .schedule-top .schedule-title .help-btn {
   display: none;
 }
+.month-dept-filter {
+  flex-wrap: wrap;
+}
 
-/* section (2) attendance ====================================================================  */
+body[data-view-mode="week"] .shift {
+  border: none;
+  display: flex;
+  align-items: center;
+  overflow: visible;
+  width: 20px;
+}
+
+body[data-view-mode="week"] .shift::before {
+  content: "";
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: inherit;
+  margin-bottom: 4px;
+}
+
+body[data-view-mode="week"] .shift small {
+  display: block !important;
+  font-size: 9px !important;
+  color: var(--main-text);
+  white-space: nowrap;
+  position: absolute;
+  top: 12px;
+}
+
+/* section (3) attendance ====================================================================  */
 .dashboard.attendance {
   display: block;
   padding: 12px;
 }
-
+#attDeptFilter {
+  font-size: 11px;
+}
+.att-select-filter {
+  width: 20px;
+  height: 20px;
+}
 .attendance-control {
   display: flex;
   flex-direction: column;
-  gap: 12px !important;
-  margin-bottom: 16px !important;
+  gap: 12px;
+  margin-bottom: 16px;
 }
 .attendance-control .date-nav {
   width: 100%;
 }
 .attendance-filter {
-  width: 100% !important;
+  width: 100%;
 }
 
 .attendance-board {
-  border: none !important;
-  background: transparent !important;
-  overflow: visible !important;
+  border: none;
+  background: transparent;
 }
 .attendance-time-header {
   display: none !important;
 }
 
 .attendance-body {
-  display: flex !important;
-  flex-direction: column !important;
-  gap: 16px !important;
-  max-height: none !important; /* 스크롤 해제 */
-  overflow: visible !important;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  max-height: none;
+  overflow: visible;
 }
 
 .attendance-body-row {
-  display: block !important;
-  background: var(--card-bg) !important;
-  border: 1px solid var(--border-color) !important;
-  border-radius: 16px !important;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05) !important;
-  overflow: hidden !important;
+  display: block;
+  border-radius: 12px;
+  border: 0;
+  overflow: hidden;
 }
-
 .emp-info-sticky {
-  width: 100% !important;
-  min-width: 100% !important;
-  position: static !important; /* PC용 고정 해제 */
-  background: var(--darkmode-bg-gray-strong) !important;
-  padding: 12px 16px !important;
-  border-right: none !important;
-  border-bottom: 1px solid var(--border-color) !important;
-  display: block !important;
+  width: 100%;
+  position: static;
+  background: var(--darkmode-bg-gray-strong);
+  padding: 10px 15px;
+  border-radius: 8px;
 }
 
 .emp-info-sticky-strong {
-  font-size: 15px !important;
-  font-weight: 800 !important;
-  color: var(--main-text) !important;
+  font-size: 13px;
+  color: var(--mainTextColor);
 }
 
 .att-records-wrap {
   display: flex;
   overflow-x: auto;
-  background: var(--card-bg);
-  scrollbar-width: none;
+  padding: 10px;
+  gap: 8px;
+}
+
+.m-date-only {
+  display: block !important;
+  font-size: 11px;
+  font-weight: 800;
+  color: var(--mainTextColor);
+  margin-bottom: 2px;
+  padding-bottom: 2px;
+  width: 100%;
+  text-align: center;
 }
 
 .att-day-col {
-  flex: 0 0 65px ;
-  min-width: 65px ;
-  min-height: 80px !important;
-  border-radius: 12px ;
-  border: 1px solid var(--border-color);
-  padding: 8px 4px ;
-  display: flex ;
-  flex-direction: column !important;
-  justify-content: center !important;
-  align-items: center !important;
+  border: 0;
+  border-radius: 8px;
+  flex: 0 0 65px;
+  min-width: 65px;
+  min-height: 90px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  padding: 10px 4px;
 }
-
-.att-day-col span:first-child {
-  font-size: 10px !important;
-  margin-bottom: 4px !important;
-  color: var(--sub-text) !important;
-}
-
 .att-record-box {
-  padding-top: 0 !important;
+  padding-top: 4px;
 }
+
 .att-record-box .t-in {
-  font-size: 11px !important;
-  font-weight: 700 !important;
-  color: var(--main-text) !important;
+  font-size: 11px;
 }
 .att-record-box .t-out {
-  font-size: 10px !important;
-  color: var(--sub-text) !important;
-  margin-top: 2px !important;
+  font-size: 10px;
 }
 
 .att-tag {
-  position: static !important;
-  transform: none !important;
-  font-size: 9px !important;
-  margin-bottom: 4px !important;
-  padding: 2px 6px !important;
+  position: static;
+  transform: none;
+  font-size: 9px;
+  margin-bottom: 4px;
+  padding: 2px 6px;
 }
 
 .att-day-col.is-today::after {
-  top: 5px !important;
-  width: 4px !important;
-  height: 4px !important;
+  top: 5px;
+  width: 4px;
+  height: 4px;
 }
 
-/* section (1) home ====================================================================  */
-/* section (1) home ====================================================================  */
-/* section (1) home ====================================================================  */
-/* section (1) home ====================================================================  */
+/* section (3) home ====================================================================  */
+/* section (4) home ====================================================================  */
+/* section (5) home ====================================================================  */
+/* section (6) home ====================================================================  */
 /* section (1) home ====================================================================  */
 /* section (1) home ====================================================================  */
 
@@ -527,10 +549,10 @@ body[data-view-mode="month"] .schedule-board {
 }
 /* modal */
 .modal-card {
+  max-width: 340px !important;
   background: #fff;
   border-radius: 8px;
   padding: 20px 18px 8px;
-  max-width: 420px;
   box-shadow: var(--shdow-m);
   position: relative;
 }
@@ -565,4 +587,18 @@ body[data-view-mode="month"] .schedule-board {
 }
 .fake-input span {
   font-size: 12px;
+}
+.month-saved-modal-content {
+  font-size: 12px;
+}
+.month-saved-modal-content .name {
+  font-size: 12px;
+}
+.month-saved-modal-content .dept {
+  font-size: 9px;
+}
+.month-item-row {
+  grid-template-columns: 20px 1fr auto auto;
+  padding: 10px 8px;
+  gap: 4px;
 }

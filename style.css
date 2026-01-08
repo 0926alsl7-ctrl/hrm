@@ -52,8 +52,11 @@ img {
   overflow: hidden;
   display: inline-block;
 }
-/* button */
+/* mobile */
 .mobile-tag {
+  display: none !important;
+}
+.m-date-only {
   display: none !important;
 }
 /* utility */
@@ -173,14 +176,14 @@ body.dark-mode {
 
 /* header */
 .header {
-  position: fixed;
+  position: fixed !important;
   top: 0;
   left: 0;
   right: 0;
   height: 66px;
   background: var(--header-bg);
   box-shadow: var(--shdow-s);
-  z-index: 997;
+  z-index: 9997 !important;
 }
 
 .header-inner {
@@ -1334,7 +1337,8 @@ body[data-view-mode="week"] .timeline small {
   background: #d1d6db;
 }
 .shift.teal,
-.job.teal {
+.job.teal,
+.month-item .dot.teal {
   background: #58c7c7;
 }
 .shift.dimmed {
