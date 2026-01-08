@@ -538,6 +538,13 @@ function renderShift(item, isVacation, dimmed = false) {
     };
   }
 
+  const displayName =
+    viewMode === "week"
+      ? `<small>${item.jobText || ""}</small>
+  <span class="mobile-name">
+  ${item.name}</span>`
+      : "";
+
   return `
   <div class="shift ${isVacation ? "vacation" : item.job} ${
     dimmed ? "dimmed" : ""
@@ -549,7 +556,7 @@ function renderShift(item, isVacation, dimmed = false) {
   }">
     ${
       viewMode === "week"
-        ? `<small>${item.jobText || ""}</small>`
+        ? displayName
         : `${item.start} - ${item.end}<small>${item.jobText || ""}</small>`
     }
     </div>

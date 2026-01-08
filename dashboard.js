@@ -53,6 +53,7 @@ navItems.forEach((item) => {
     sections.forEach((section) => {
       section.classList.toggle("is-active", section.dataset.page === target);
     });
+    resetViewMode(target);
   });
 });
 
