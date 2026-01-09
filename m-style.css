@@ -4,10 +4,12 @@ body {
   overflow: auto;
 }
 :root {
+  --darkmode-bg3: #fff;
   --darkmode-border: 1px solid #eee;
   --darkmode-border2: 2px solid #eee;
 }
 body.dark-mode {
+  --darkmode-bg3: #23232b;
   --darkmode-border: 1px solid rgba(88, 88, 88, 0.308);
   --darkmode-border2: 2px solid rgba(88, 88, 88, 0.308);
 }
@@ -322,7 +324,8 @@ body[data-view-mode="month"] .month-grid,
 body[data-view-mode="month"] .month-header {
   gap: 4px;
 }
-body[data-view-mode="month"] .month-item .m-time {
+body[data-view-mode="month"] .month-item .m-time,
+body[data-view-mode="month"] .month-item .m-none {
   display: none !important;
 }
 body[data-view-mode="month"] .schedule-board {
@@ -356,6 +359,9 @@ body[data-view-mode="month"] .schedule-board {
 .month-dept-filter {
   flex-wrap: wrap;
 }
+body[data-view-mode="week"] .timeline {
+  height: auto;
+}
 
 body[data-view-mode="week"] .shift {
   justify-content: space-between;
@@ -368,6 +374,7 @@ body[data-view-mode="week"] .shift {
   overflow: visible !important;
   border: none !important;
   position: relative;
+  margin-bottom: 2px;
 }
 
 body[data-view-mode="week"] .shift small {
@@ -636,6 +643,85 @@ body[data-view-mode="week"] .shift .mobile-name {
 }
 
 /* section (8) 메시지 ====================================================================  */
+.message-main-container {
+  position: relative;
+  height: 90vh;
+}
+.mobile-menu-btn {
+  display: block !important;
+}
+.mobile-menu-btn > img {
+  width: 28px;
+  height: 28px;
+}
+.chat-search-area {
+  width: 100%;
+  height: 46px;
+  justify-content: space-between;
+}
+#chatSearchInput {
+  width: 210px;
+  height: 30px;
+  padding: 14px;
+  font-size: 11px;
+}
+#chatSearchInput::placeholder {
+  font-size: 11px;
+}
+.chat-search-area::before {
+  display: none;
+}
+.mobile-menu-btn.left {
+  margin-left: 12px;
+}
+.mobile-menu-btn.right {
+  margin-right: 12px;
+}
+
+.msg-side-left,
+.msg-side-right {
+  position: fixed;
+  top: 54px;
+  bottom: 0;
+  background: var(--aside-bg);
+  z-index: 200;
+  transition: transform 0.3s ease;
+}
+
+/* 왼쪽: 대화 목록 */
+.msg-side-left {
+  left: 0;
+  width: 80%;
+  max-width: 300px;
+  transform: translateX(-100%);
+}
+
+/* 오른쪽: 직원 목록 */
+.msg-side-right {
+  margin: 0;
+  right: 0;
+  width: 80%;
+  max-width: 230px;
+  transform: translateX(100%);
+  padding: 40px 0 0 0;
+}
+
+.msg-side-left.is-open {
+  background: var(--darkmode-bg3);
+  z-index: 999;
+  transform: translateX(0);
+}
+.msg-side-right.is-open {
+  background: var(--darkmode-bg3);
+  z-index: 999;
+  transform: translateX(0);
+}
+
+/* 가운데 채팅은 풀화면 */
+.msg-center {
+  flex: 1;
+  width: 100%;
+}
 /* section (9) account ====================================================================  */
 
 [data-page="account"] {
@@ -666,6 +752,17 @@ body[data-view-mode="week"] .shift .mobile-name {
   width: 100%;
   position: relative;
 }
+.fake-input {
+  padding: 0;
+  min-width: 130px;
+}
+.contract-request-modal-col.request-form {
+  padding: 2px 4px;
+}
+#target-dept-select,
+#target-dept-select option {
+  white-space: nowrap;
+}
 
 /* modal ====================================================================  */
 .modal-card {
@@ -694,22 +791,16 @@ body[data-view-mode="week"] .shift .mobile-name {
   font-size: 12px;
 }
 .confirm-add {
-  height: 50px;
+  height: 48px;
   margin-top: 0;
 }
 .setToday {
   font-size: 12px;
   padding: 8px 20px;
 }
-.fake-input {
-  pointer-events: auto !important;
-  height: 34px;
-}
-.fake-input > input {
-  pointer-events: auto !important;
-}
+
 .fake-input span {
-  font-size: 12px;
+  font-size: 11px;
 }
 .month-saved-modal-content {
   font-size: 12px;
@@ -754,6 +845,7 @@ body[data-view-mode="week"] .shift .mobile-name {
 }
 .contract-request-modal-detail-select select {
   height: 32px;
+  padding: 8px !important;
 }
 .modal-request-checkbox-text,
 .modal-subtitle-text.gray {

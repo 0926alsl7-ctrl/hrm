@@ -634,3 +634,20 @@ document.addEventListener("DOMContentLoaded", () => {
     chatSearch.oninput = (e) => renderMessages(e.target.value.trim());
   }
 });
+document.querySelectorAll(".mobile-menu-btn").forEach((btn) => {
+  btn.addEventListener("click", () => {
+    const target = btn.dataset.target;
+
+    document
+      .querySelector(".msg-side-left")
+      .classList.toggle("is-open", target === "left");
+
+    document
+      .querySelector(".msg-side-right")
+      .classList.toggle("is-open", target === "right");
+  });
+});
+document.querySelector(".chat-display-area").addEventListener("click", () => {
+  document.querySelector(".msg-side-left").classList.remove("is-open");
+  document.querySelector(".msg-side-right").classList.remove("is-open");
+});

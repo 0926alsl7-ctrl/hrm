@@ -170,7 +170,6 @@ function renderContractBoard() {
       body.appendChild(row);
     });
 }
-
 window.renderTemplateFields = function (
   templateKey,
   containerSelector,
@@ -202,24 +201,24 @@ window.renderTemplateFields = function (
   config.fields.forEach((f) => {
     let val = f.defaultValue || "";
     if (itemData) {
-      if (
-        f.label.includes("성명") ||
-        f.label.includes("이름") ||
-        f.label.includes("요청자")
-      ) {
+      if (f.label.includes("성명") || f.label.includes("이름"))
         val = itemData.p1 || "";
-      } else if (f.label.includes("부서") || f.label.includes("소속")) {
+      else if (f.label.includes("부서") || f.label.includes("소속"))
         val = itemData.dept || "";
-      } else if (f.label.includes("전화")) {
-        val = itemData.phone || "";
-      } else if (f.label.includes("주소")) {
-        val = itemData.address || "";
-      } else if (f.label.includes("연차")) {
-        val = itemData.usedDays || "";
-      }
+      else if (f.label.includes("전화")) val = itemData.phone || "";
+      else if (f.label.includes("주소")) val = itemData.address || "";
     }
 
     if (f.label === "발생일수") val = 15;
+    if (f.label === "연봉계약기간") val = "2026.01.01 - 2026.12.31";
+    if (f.label === "임금 지급일") val = "익월 19일";
+
+    if (
+      isDetail &&
+      (f.label.includes("계약기간") || f.label.includes("신청기간"))
+    ) {
+      val = "2026.01.01 - 2026.12.31";
+    }
 
     if (isDetail) {
       if (
@@ -228,11 +227,11 @@ window.renderTemplateFields = function (
         f.label.includes("일")
       ) {
         const d = new Date();
-        d.setDate(d.getDate() - Math.floor(Math.random() * 30));
+        d.setDate(d.getDate() - 10);
         val = d.toISOString().split("T")[0];
       }
       if (f.label === "근무장소")
-        val = ["본사 1층 대회의실", "서울 지사 A동", "가맹점 현장 본부"][
+        val = ["본사", "여의도 지사", "강남 지사"][
           Math.floor(Math.random() * 3)
         ];
       if (f.label === "요청 제목")
@@ -245,26 +244,55 @@ window.renderTemplateFields = function (
         const allEmps = Object.values(employeesData).flat();
         val = allEmps[Math.floor(Math.random() * allEmps.length)];
       }
-      if (f.name === "salPeriod" && !val) val = "2026.01.01 - 2026.12.31";
-      if (f.name === "payDay" && !val) val = "매월 10일";
     }
 
     let inputHtml = "";
     if (isDetail) {
       inputHtml = `<input type="text" value="${val}" disabled>`;
     } else {
-      const isReadonly =
-        (f.label === "성명" ||
-          f.label.includes("부서") ||
-          f.label.includes("소속") ||
-          f.readonly) &&
-        f.name !== "vacEnd";
-      const isDisabled = isReadonly ? "disabled" : "";
+      let isForcedDisabled = false;
+
+      if (f.label.includes("성명") || f.label.includes("이름"))
+        isForcedDisabled = true;
+      if (f.label.includes("부서") || f.label.includes("소속"))
+        isForcedDisabled = true;
+
+      if (templateKey === "contract-vacation") {
+        if (f.label === "발생일수" || f.label === "잔여일수")
+          isForcedDisabled = true;
+      }
+      if (templateKey === "contract-salary") {
+        if (f.label === "연봉계약기간" || f.label === "임금 지급일")
+          isForcedDisabled = true;
+      }
+      if (templateKey === "contract-security") {
+        if (f.label === "전화" || f.label === "주소") isForcedDisabled = true;
+      }
+      if (templateKey === "contract-collaboration") {
+        if (targetVal !== "Personal") isForcedDisabled = true;
+      }
+      if (templateKey === "contract-privacy") {
+        if (f.label === "주소" || f.label === "전화") isForcedDisabled = true;
+      }
+
+      const disabledAttr = isForcedDisabled
+        ? "disabled style='background:#f2f2f2; color:#888;'"
+        : "";
+
+      let inputType = f.type || "text";
+      if (
+        f.label.includes("기간") ||
+        f.label.includes("날짜") ||
+        f.label.includes("일시")
+      ) {
+        inputType = "date";
+      }
+      if (f.label === "사용한 연차") inputType = "number";
 
       if (f.type === "select" && f.options) {
         inputHtml = `<select name="${
           f.name
-        }" ${isDisabled}><option value="">선택</option>${f.options
+        }" ${disabledAttr}><option value="">선택</option>${f.options
           .map(
             (opt) =>
               `<option value="${opt}" ${
@@ -275,28 +303,25 @@ window.renderTemplateFields = function (
       } else if (f.type === "emp-select") {
         inputHtml = `<select name="${
           f.name
-        }" ${isDisabled} class="dynamic-emp-select">
-          <option value="${val}">${val || "직원 선택"}</option>
-        </select>`;
+        }" ${disabledAttr} class="dynamic-emp-select"><option value="${val}">${
+          val || "직원 선택"
+        }</option></select>`;
       } else {
-        let type =
-          f.type === "date" ? "date" : f.type === "number" ? "number" : "text";
-        inputHtml = `<input type="${type}" name="${f.name}" value="${val}" ${isDisabled} placeholder="${f.label} 입력">`;
+        const step =
+          f.label === "사용한 연차" ? "step='0.5' min='0' max='15'" : "";
+        inputHtml = `<input type="${inputType}" name="${f.name}" value="${val}" ${disabledAttr} ${step} placeholder="${f.label} 입력">`;
       }
     }
     fieldHtml += `<div class="contract-request-modal-row"><h5 class="modal-subtitle-text">${f.label}</h5>${inputHtml}</div>`;
   });
 
-  if (isDetail) {
-    container.innerHTML =
-      fieldHtml +
-      `<div class="contract-request-modal-col"><h5 class="modal-subtitle-text">전자계약 요청 메시지</h5><textarea disabled class="contract-detail-message">${config.msg}</textarea></div>`;
-  } else {
-    container.innerHTML = fieldHtml;
+  container.innerHTML = fieldHtml;
+
+  if (!isDetail) {
     const msgArea = document.getElementById("contract-request-message");
     if (msgArea) msgArea.value = config.msg;
-    const empSelects = container.querySelectorAll(".dynamic-emp-select");
-    empSelects.forEach((sel) => {
+
+    container.querySelectorAll(".dynamic-emp-select").forEach((sel) => {
       const currentVal = sel.value;
       sel.innerHTML = '<option value="">선택</option>';
       Object.keys(employeesData).forEach((dept) => {
@@ -306,13 +331,34 @@ window.renderTemplateFields = function (
           const opt = document.createElement("option");
           opt.value = name;
           opt.textContent = name;
-          if (currentVal && name === currentVal) opt.selected = true;
+          if (currentVal === name) opt.selected = true;
           group.appendChild(opt);
         });
         sel.appendChild(group);
       });
-      if (currentVal) sel.vaoue = currentVal;
     });
+
+    const tIn = container.querySelector('input[name="totalDays"]');
+    const uIn = container.querySelector('input[name="usedDays"]');
+    const rIn = container.querySelector('input[name="remainDays"]');
+
+    if (uIn && rIn) {
+      uIn.addEventListener("input", (e) => {
+        let used = parseFloat(e.target.value) || 0;
+        if (used > 15) {
+          alert("연차 사용은 15일을 넘길 수 없습니다.");
+          e.target.value = 15;
+          used = 15;
+        }
+        if (used < 0) {
+          e.target.value = 0;
+          used = 0;
+        }
+
+        const total = 15; // 발생일수 고정
+        rIn.value = (total - used).toFixed(1);
+      });
+    }
   }
 };
 
@@ -524,12 +570,14 @@ document.addEventListener("DOMContentLoaded", () => {
         empSel.appendChild(opt);
       });
     }
-    if (templateSel.value)
+    if (templateSel.value) {
       renderTemplateFields(
         templateSel.value,
         "#dynamic-form-fields-request",
-        false
+        false,
+        { dept: dept }
       );
+    }
   };
 
   empSel.onchange = () => {
@@ -560,17 +608,17 @@ document.addEventListener("DOMContentLoaded", () => {
   };
 
   templateSel.onchange = (e) => {
-    const key = e.target.value;
-    let itemData =
-      targetSel.value === "Personal" && empSel.value
-        ? {
-            p1: empSel.value,
-            dept: deptSel.value,
-            phone: getRandomPhone(),
-            address: getRandomAddr(),
-          }
-        : null;
-    renderTemplateFields(key, "#dynamic-form-fields-request", false, itemData);
+    renderTemplateFields(
+      e.target.value,
+      "#dynamic-form-fields-request",
+      false,
+      {
+        p1: empSel.value,
+        dept: deptSel.value,
+        phone: getRandomPhone(),
+        address: getRandomAddr(),
+      }
+    );
   };
 
   document
@@ -615,8 +663,12 @@ document.addEventListener("DOMContentLoaded", () => {
           }
 
           dynamicFields.forEach((f) => {
-            if (!f.disabled && !f.value && f.type !== "checkbox")
+            if (!f.disabled && !f.value.trim() && f.type !== "checkbox") {
               allFilled = false;
+              f.style.border = "1px solid #64a8ff";
+            } else {
+              f.style.border = "";
+            }
           });
 
           if (!allFilled) {
@@ -624,6 +676,7 @@ document.addEventListener("DOMContentLoaded", () => {
           } else {
             alert(isAdd ? "추가 완료 되었습니다." : "요청 완료 되었습니다.");
             closeModal();
+            renderContractBoard();
           }
         };
         openModal(".contract-request-modal");

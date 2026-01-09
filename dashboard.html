@@ -425,7 +425,7 @@
                   </div>
                 </div>
               </section>
-              <section class="section is-active" data-page="vacation">
+              <section class="section" data-page="vacation">
                 <div class="dashboard vacation">
                   <div class="schedule-top">
                     <div class="schedule-title">
@@ -778,7 +778,7 @@
                   </div>
                 </div>
               </section>
-              <section class="section" data-page="message">
+              <section class="section is-active" data-page="message">
                 <div class="message-main-container">
                   <div class="msg-side-left">
                     <div class="recent-users-track">
@@ -792,11 +792,17 @@
                   </div>
                   <div class="msg-center">
                     <div class="chat-search-area">
+                      <button class="mobile-menu-btn left" data-target="left">
+                        <img src="images/chatpast.svg" alt="open" />
+                      </button>
                       <input
                         type="text"
                         id="chatSearchInput"
                         placeholder="대화 검색"
                       />
+                      <button class="mobile-menu-btn right" data-target="right">
+                        <img src="images/personfill.svg" alt="open" />
+                      </button>
                     </div>
                     <div class="chat-active-header" id="chatHeader"></div>
                     <div class="chat-display-area" id="chatDisplay"></div>
@@ -934,7 +940,6 @@
               <option value="teal">출장</option>
             </select>
           </div>
-
           <div class="form-group inline">
             <label>근무날짜</label>
             <div class="fake-input fakeDate">
@@ -950,13 +955,12 @@
             <div class="m-col">
               <div class="fake-input fakeStart">
                 <img src="images/timecheck.svg" alt="icon" />
-                <span class="fakeStartText">시작 시간</span>
+                <span class="fakeStartText"></span>
                 <input type="time" class="startTime" step="600" />
               </div>
-              <span class="m-none">~</span>
               <div class="fake-input fakeEnd">
                 <img src="images/timecheck.svg" alt="icon" />
-                <span class="fakeEndText">종료 시간</span>
+                <span class="fakeEndText"></span>
                 <input type="time" class="endTime" step="600" />
               </div>
             </div>
@@ -1274,7 +1278,11 @@
           <div class="contract-request-content modal-content">
             <div class="contract-request-modal-row">
               <h5 class="modal-subtitle-text">템플릿</h5>
-              <select name="contractTemplate" id="contract-template-select">
+              <select
+                name="contractTemplate"
+                id="contract-template-select"
+                class="contract-template-select"
+              >
                 <option value="">선택</option>
                 <option value="contract-work">근로계약서</option>
                 <option value="contract-protect">정보보호 서약서</option>
@@ -1358,7 +1366,7 @@
               ></textarea>
             </div>
           </div>
-          <div class="contract-request-action action">
+          <div class="contract-request-action action" id="vacation-approval">
             <button class="approval">요청하기</button>
             <button class="cancel">취소</button>
           </div>

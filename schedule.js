@@ -281,13 +281,6 @@ setToday.onclick = () => {
   workDate.dispatchEvent(new Event("change"));
 };
 
-workDate.onchange = () => {
-  const d = new Date(workDate.value);
-  fakeDateText.textContent = `${d.getMonth() + 1}월 ${d.getDate()}일`;
-};
-startTime.onchange = () => (fakeStartText.textContent = startTime.value);
-endTime.onchange = () => (fakeEndText.textContent = endTime.value);
-
 confirmBtn.onclick = () => {
   if (
     !workDate.value ||
@@ -302,19 +295,6 @@ confirmBtn.onclick = () => {
 
   let start = startTime.value;
   let end = endTime.value;
-
-  if (manageMode === "vacation") {
-    if (job.value === "half-am") {
-      start = "09:00";
-      end = "13:00";
-    } else if (job.value === "half-pm") {
-      start = "13:00";
-      end = "18:00";
-    } else {
-      start = "09:00";
-      end = "18:00";
-    }
-  }
 
   const item = {
     id: editingId || crypto.randomUUID(),
@@ -609,7 +589,7 @@ function renderMonth(target, isVacationPage) {
       el.className = "month-item";
       const text =
         item.type === "vacation"
-          ? `${item.name}(${item.jobText})`
+          ? `${item.name}<span class="m-none">(${item.jobText})</span>`
           : `${item.name}<span class="m-time">(${item.start}~${item.end})</span>`;
       const dotClass = item.type === "vacation" ? "gray" : item.job;
       el.innerHTML = `<span class="dot ${dotClass}"></span><span class="text">${text}</span>`;
@@ -1080,16 +1060,6 @@ document.querySelectorAll(".check-all").forEach((checkAll) => {
   };
 });
 
-job.onchange = () => {
-  if (manageMode === "vacation") {
-    startTime.disabled = true;
-    endTime.disabled = true;
-  } else {
-    startTime.disabled = false;
-    endTime.disabled = false;
-  }
-};
-
 if (mixToggle) {
   mixToggle.onchange = (e) => {
     manageMode = e.target.checked ? "vacation" : "work";
@@ -1101,14 +1071,52 @@ if (mixToggle) {
   };
 }
 
-function applyForm() {
+workDate.onchange = () => {
+  if (!workDate.value) return;
+  const d = new Date(workDate.value);
+  fakeDateText.textContent = `${d.getMonth() + 1}월 ${d.getDate()}일`;
+};
+
+startTime.onchange = () =>
+  (fakeStartText.textContent = startTime.value || "시작 시간");
+endTime.onchange = () =>
+  (fakeEndText.textContent = endTime.value || "종료 시간");
+
+job.onchange = () => {
   if (manageMode === "vacation") {
+    startTime.disabled = true;
+    endTime.disabled = true;
+
+    let start = "09:00";
+    let end = "18:00";
+
+    if (job.value === "half-am") {
+      start = "09:00";
+      end = "13:00";
+    } else if (job.value === "half-pm") {
+      start = "13:00";
+      end = "18:00";
+    }
+
+    startTime.value = start;
+    endTime.value = end;
+
+    fakeStartText.textContent = start;
+    fakeEndText.textContent = end;
+  } else {
+    startTime.disabled = false;
+    endTime.disabled = false;
+  }
+};
+
+function applyForm() {
+  const isVacation = manageMode === "vacation";
+
+  if (isVacation) {
     modalTitle.textContent = "휴가일정 추가";
     dateLabel.textContent = "휴가날짜";
     timeLabel.textContent = "휴가시간";
-    confirmBtn.textContent = "일정 추가";
     jobLabel.textContent = "휴가";
-
     job.innerHTML = `
       <option value="">선택</option>
       <option value="full">연차</option>
@@ -1117,13 +1125,13 @@ function applyForm() {
       <option value="sick">병가</option>
       <option value="vacation">휴가</option>
     `;
+    fakeStartText.textContent = "09:00";
+    fakeEndText.textContent = "18:00";
   } else {
     modalTitle.textContent = "근무일정 추가";
     dateLabel.textContent = "근무날짜";
     timeLabel.textContent = "근무시간";
-    confirmBtn.textContent = editingId ? "근무일정 수정" : "일정 추가";
     jobLabel.textContent = "직무";
-
     job.innerHTML = `
       <option value="">선택</option>
       <option value="red">Management</option>
@@ -1134,10 +1142,15 @@ function applyForm() {
       <option value="orange">R&D</option>
       <option value="teal">출장</option>
     `;
+    fakeStartText.textContent = "시작 시간";
+    fakeEndText.textContent = "종료 시간";
   }
 
-  startTime.disabled = manageMode === "vacation";
-  endTime.disabled = manageMode === "vacation";
+  startTime.disabled = isVacation;
+  endTime.disabled = isVacation;
+
+  startTime.closest(".fake-input").classList.toggle("is-disabled", isVacation);
+  endTime.closest(".fake-input").classList.toggle("is-disabled", isVacation);
 }
 
 document.querySelectorAll(".schedule .view-mode").forEach((btn) => {
@@ -1200,7 +1213,7 @@ updateDateText();
 renderTimeHeader();
 render();
 
-// section - vacation
+// section - vacation ====================================================================
 const vRateBtn = document.querySelector(".vacation-rate-btn");
 const vRateModal = document.querySelector(".vacation-rate-modal");
 const vCloseBtns = document.querySelectorAll(
@@ -1314,23 +1327,31 @@ if (vPromoteBtn) {
     resetVacationRateModal();
     openModal(".contract-request-modal");
 
+    const targetType = document.getElementById("contract-target-select");
+    if (targetType) {
+      targetType.value = "Personal";
+      targetType.dispatchEvent(new Event("change"));
+    }
+
     const tSelect = document.getElementById("contract-template-select");
-    tSelect.value = "contract-vacation";
+    if (tSelect) {
+      tSelect.value = "contract-vacation";
+      tSelect.dispatchEvent(new Event("change"));
+    }
 
-    const vacationOpt = document.querySelector(
-      "#contract-template-select option[value='contract-vacation']"
-    );
-    if (vacationOpt) vacationOpt.disabled = false;
+    setTimeout(() => {
+      const targetDept = document.getElementById("target-dept-select");
+      const targetEmp = document.getElementById("target-emp-select");
 
-    const targetDept = document.getElementById("target-dept-select");
-    const targetEmp = document.getElementById("target-emp-select");
+      if (targetDept) {
+        targetDept.value = selectedDept;
+        targetDept.dispatchEvent(new Event("change"));
+      }
 
-    if (targetDept && targetEmp) {
-      targetDept.value = selectedDept;
-      targetDept.dispatchEvent(new Event("change"));
       setTimeout(() => {
-        targetEmp.value = selectedName;
-        renderTemplateFields(
+        if (targetEmp) targetEmp.value = selectedName;
+
+        window.renderTemplateFields(
           "contract-vacation",
           "#dynamic-form-fields-request",
           false,
@@ -1341,20 +1362,11 @@ if (vPromoteBtn) {
             address: getRandomAddr(),
           }
         );
-      }, 100);
-    }
-
-    const targetType = document.getElementById("contract-target-select");
-    if (targetType) {
-      targetType.value = "Personal";
-      targetType.dispatchEvent(new Event("change"));
-    }
-
-    const msgArea = document.getElementById("contract-request-message");
-    const config = templateFields["contract-vacation"];
-    if (msgArea && config) msgArea.value = config.msg;
+      }, 50);
+    }, 100);
   };
 }
+
 /* ======================================================
    Attendance 
 ====================================================== */
