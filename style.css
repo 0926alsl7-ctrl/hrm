@@ -3571,6 +3571,7 @@ body[data-view-mode="week"] .shift.vacation {
 }
 #contract-request-message,
 .contract-detail-message {
+  scrollbar-width: none;
   margin-top: 4px;
   border: 1px solid var(--grayColor100);
   border-radius: 4px;

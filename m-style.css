@@ -374,7 +374,7 @@ body[data-view-mode="week"] .shift {
   overflow: visible !important;
   border: none !important;
   position: relative;
-  margin-bottom: 2px;
+  margin-bottom: 4px;
 }
 
 body[data-view-mode="week"] .shift small {
@@ -504,6 +504,7 @@ body[data-view-mode="week"] .shift .mobile-name {
 }
 .employee-rate-item {
   font-size: 12px;
+  padding: 8px;
 }
 .rate-employee-list .employee-rate-item .emp-graph {
   font-size: 11px;
@@ -781,9 +782,7 @@ body[data-view-mode="week"] .shift .mobile-name {
   padding: 0;
   min-width: 130px;
 }
-.contract-request-modal-col.request-form {
-  padding: 2px 4px;
-}
+
 #target-dept-select,
 #target-dept-select option {
   white-space: nowrap;
@@ -830,11 +829,16 @@ body[data-view-mode="week"] .shift .mobile-name {
 .month-saved-modal-content {
   font-size: 12px;
 }
-.month-saved-modal-content .name {
-  font-size: 12px;
+.month-saved-modal-content .name, 
+.month-saved-modal-content .job, 
+.month-saved-modal-content .time,
+.dept-filter-btn {
+  font-size: 11px;
 }
 .month-saved-modal-content .dept {
   font-size: 9px;
+  padding: 4px;
+  margin-left: 2px;
 }
 .month-item-row {
   grid-template-columns: 20px 1fr auto auto;
@@ -847,11 +851,15 @@ body[data-view-mode="week"] .shift .mobile-name {
 .modal-title-text {
   font-size: 13px;
 }
+.view-mode{
+  font-size: 12px;
+}
 
 .contract-request-modal-row,
 .target-personal-row {
-  min-height: 44px;
+  min-height: 42px;
 }
+
 .contract-request-modal select,
 #contract-expire-days,
 .contract-request-form input {
@@ -863,10 +871,38 @@ body[data-view-mode="week"] .shift .mobile-name {
 .contract-request-modal-col.request-message {
   margin-top: 8px;
 }
+.contract-request-modal-col.sign-order{
+  flex-direction: row;
+  gap: 10px;
+}
 .contract-request-modal-detail-select {
-  flex-direction: column !important;
-  align-items: flex-start;
   gap: 4px;
+}
+.contract-request-modal-col.request-form{
+  padding: 2px 4px;
+  overflow-y: auto;
+  height: 100%;
+  scrollbar-width: none;
+  scroll-behavior: contain;
+}
+
+.contract-request-form > * {
+  flex-shrink: 0;
+}
+.contract-request-card-head{
+  padding-bottom: 4px;
+  flex-shrink: 0;
+}
+.contract-request-action{
+  flex-shrink: 0;
+}
+.contract-request-content{
+  flex: 1;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+.contract-request-form input[name="usedDays"]{
+  min-width: 153px;
 }
 .contract-request-modal-detail-select select {
   height: 32px;
@@ -884,6 +920,7 @@ body[data-view-mode="week"] .shift .mobile-name {
 .modal-request-checkbox {
   width: 12px;
   height: 12px;
+  margin-right: 4px;
 }
 .modal-request-checkbox::after {
   left: 3px;
@@ -1075,5 +1112,8 @@ body[data-view-mode="week"] .shift .mobile-name {
   padding: 10px 16px;
 }
 .contract-request-card {
-  width: 340px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
 }
