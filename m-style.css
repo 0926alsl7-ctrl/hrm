@@ -11,7 +11,7 @@ body.dark-mode {
   --darkmode-border: 1px solid rgba(88, 88, 88, 0.308);
   --darkmode-border2: 2px solid rgba(88, 88, 88, 0.308);
 }
-.content{
+.content {
   padding: 0 12px;
 }
 /* header */
@@ -442,6 +442,7 @@ body[data-view-mode="week"] .shift .mobile-name {
 }
 
 .att-records-wrap {
+  scrollbar-width: none;
   display: flex;
   overflow-x: auto;
   padding: 10px;
@@ -494,6 +495,12 @@ body[data-view-mode="week"] .shift .mobile-name {
   width: 4px;
   height: 4px;
 }
+.employee-rate-item {
+  font-size: 12px;
+}
+.rate-employee-list .employee-rate-item .emp-graph {
+  font-size: 11px;
+}
 
 /* section (5,6,7) 전자계약 / 전자결재 / 사내공지 ====================================================================  */
 .dashboard.approval,
@@ -523,8 +530,8 @@ body[data-view-mode="week"] .shift .mobile-name {
 }
 .notice-del-edit-chk {
   padding-right: 1px;
-  width: 10px !important;
-  height: 10px !important;
+  width: 12px !important;
+  height: 12px !important;
 }
 .notice-main-table {
   font-size: 9px !important;
@@ -638,9 +645,13 @@ body[data-view-mode="week"] .shift .mobile-name {
 .account-card.profile-main {
   margin-top: 10px;
   border-radius: 18px;
+  padding: 50px 44px;
+}
+.account-grid {
+  margin-top: 12px;
 }
 .account-card h3 {
-  padding: 24px 14px 12px;
+  padding: 18px 14px 12px;
   font-size: 12px;
 }
 
@@ -672,7 +683,6 @@ body[data-view-mode="week"] .shift .mobile-name {
 }
 .m-col {
   display: flex;
-  flex-direction: column;
 }
 .m-col .m-none {
   display: none;
@@ -719,8 +729,9 @@ body[data-view-mode="week"] .shift .mobile-name {
   padding-bottom: 8px;
 }
 .modal-title-text {
-  font-size: 15px;
+  font-size: 13px;
 }
+
 .contract-request-modal-row,
 .target-personal-row {
   min-height: 44px;
@@ -840,15 +851,15 @@ body[data-view-mode="week"] .shift .mobile-name {
   margin-top: 12px;
   font-size: 12px;
 }
-.noti-preview{
+.noti-preview {
   min-width: auto;
 }
-.notice-add-content{
+.notice-add-content {
   padding: 0;
 }
-.noti-preview-title{
+.noti-preview-title {
   font-size: 13px;
 }
-.noti-preview-content{
+.noti-preview-content {
   font-size: 12px;
 }

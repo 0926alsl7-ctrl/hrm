@@ -148,7 +148,7 @@ function renderContractBoard() {
       const cls = statusMap[item.status];
       let actionHtml =
         item.status === "승인 대기"
-          ? `<button class="approve-btn" onclick="event.stopPropagation(); openAction('approve', ${item.id}, 'contract')">승인</button><button class="reject-btn" onclick="event.stopPropagation(); openAction('reject', ${item.id}, 'contract')">거절</button>`
+          ? `<button class="approve-btn" onclick="event.stopPropagation(); window.openAction('approve', ${item.id}, 'contract')">승인</button><button class="reject-btn" onclick="event.stopPropagation(); openAction('reject', ${item.id}, 'contract')">거절</button>`
           : item.status === "반려"
           ? `<button class="help-btn" onclick="event.stopPropagation(); alert('반려 사유: ${
               item.rejectReason || "서류 미비"
@@ -335,26 +335,42 @@ window.openAction = (type, id, mode) => {
 };
 
 window.handleFinalAction = (type) => {
+  if (!selectedId || !selectedMode) return;
+
   const list = selectedMode === "approval" ? approvalData : contractData;
   const item = list.find((d) => d.id === selectedId);
+
+  if (!item) return;
+
   if (type === "approve") {
-    if (selectedMode === "contract")
-      item.saveBtnType = confirm("승인하시겠습니까? (확인 시 보관함 이동)")
+    if (selectedMode === "contract") {
+      item.saveBtnType = confirm(
+        "해당 요청을 승인하시겠습니까?\n(확인 시 보관함으로 이동합니다.)"
+      )
         ? "보관함 이동"
         : "보관하기";
+    }
     item.status = selectedMode === "approval" ? "approved" : "승인 완료";
     alert("승인 처리 되었습니다.");
   } else {
     const rSel = document.getElementById("reject-modal-reason");
-    const fullReason = document.getElementById("reject-modal-reason-etc").value
-      ? `${rSel.options[rSel.selectedIndex].text} ( ${
-          document.getElementById("reject-modal-reason-etc").value
-        } )`
+    const etcInput = document.getElementById("reject-modal-reason-etc");
+    const etcVal = etcInput ? etcInput.value.trim() : "";
+
+    if (rSel.selectedIndex === 0 && !etcVal) {
+      alert("반려 사유를 입력해주세요.");
+      return;
+    }
+
+    const fullReason = etcVal
+      ? `${rSel.options[rSel.selectedIndex].text} ( ${etcVal} )`
       : rSel.options[rSel.selectedIndex].text;
+
     item.status = selectedMode === "approval" ? "rejected" : "반려";
     item.rejectReason = fullReason;
     alert(`반려 사유 : ${fullReason}\n반려 처리 되었습니다.`);
   }
+
   closeModal();
   renderApprovalBoard();
   renderContractBoard();

@@ -276,17 +276,6 @@ dept.onchange = () => {
   });
 };
 
-fakeDate.onclick = () => workDate.showPicker?.() || workDate.click();
-fakeStart.onclick = () => {
-  if (startTime.disabled) return;
-  startTime.showPicker?.() || startTime.click();
-};
-
-fakeEnd.onclick = () => {
-  if (endTime.disabled) return;
-  endTime.showPicker?.() || endTime.click();
-};
-
 setToday.onclick = () => {
   workDate.value = new Date().toISOString().slice(0, 10);
   workDate.dispatchEvent(new Event("change"));

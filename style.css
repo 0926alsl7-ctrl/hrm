@@ -318,7 +318,7 @@ body.dark-mode {
   padding-top: 66px;
   width: 100%;
 }
-.main-wrap{
+.main-wrap {
   width: 100%;
   height: 100vh;
 }
@@ -1251,6 +1251,45 @@ body[data-view-mode="week"] .timeline small {
 .fakeDate {
   flex: 1;
 }
+.form-group.inline .m-col,
+.form-group.inline .input-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+.form-group.inline .m-col {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.workDate,
+.startTime,
+.endTime {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100% !important;
+  height: 100% !important;
+  opacity: 0;
+  z-index: 10;
+  cursor: pointer;
+  display: block !important;
+}
+
+.fake-input {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: 40px;
+  padding: 0 12px;
+  border-radius: 8px;
+  font-size: 13px;
+  cursor: pointer;
+  min-width: 130px;
+  overflow: hidden;
+}
 
 .setToday {
   flex-shrink: 0;
@@ -1259,19 +1298,6 @@ body[data-view-mode="week"] .timeline small {
   padding: 10px 20px;
   border-radius: 8px;
   cursor: pointer;
-}
-.fake-input {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  height: 40px;
-  padding: 0 12px;
-  border-radius: 8px;
-  border: none;
-  font-size: 13px;
-  background: transparent;
-  cursor: pointer;
-  min-width: 160px;
 }
 .fake-input img {
   width: 16px;
@@ -3173,10 +3199,11 @@ body[data-view-mode="week"] .shift.vacation {
   width: 360px;
 }
 
-.approve-modal-head {
+.approve-modal-head,
+.reject-modal-head {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 4px;
 }
 .approve-modal-content input {
   margin-top: 16px;
@@ -3345,6 +3372,7 @@ body[data-view-mode="week"] .shift.vacation {
   outline: none;
   font-family: "Chiron Hei HK", sans-serif;
   margin-right: 20px;
+  scrollbar-width: none;
 }
 .approval-detail-request-item {
   margin-top: 6px;
@@ -3701,7 +3729,7 @@ body[data-view-mode="week"] .shift.vacation {
   text-align: center;
   cursor: pointer;
 }
-.notice-del-edit-chk{
+.notice-del-edit-chk {
   margin-left: 5px;
 }
 .noti-chk-all.is-active {
