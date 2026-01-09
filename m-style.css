@@ -574,8 +574,7 @@ body[data-view-mode="week"] .shift .mobile-name {
 .mob-none {
   display: none !important;
 }
-.approval-filters,
-.contract-filters {
+.approval-filters {
   flex-wrap: wrap;
   gap: 6px;
   margin-top: 10px;
@@ -583,8 +582,7 @@ body[data-view-mode="week"] .shift .mobile-name {
   font-size: 11px;
 }
 .contract-filters {
-  font-size: 10px;
-  gap: 4px;
+  display: none;
 }
 
 .approval-filters .filter-btn,
@@ -613,7 +611,16 @@ body[data-view-mode="week"] .shift .mobile-name {
 .contract-process-wrap {
   display: block;
 }
-.contract-wrap,
+.contract-wrap {
+  margin-top: 12px;
+  margin-bottom: 4px;
+  width: 100%;
+  display: flex;
+}
+.contract-edit {
+  display: none;
+}
+
 .contract-turn {
   display: none;
 }
@@ -934,9 +941,11 @@ body[data-view-mode="week"] .shift .mobile-name {
 .contract-detail-row {
   padding: 10px 0;
 }
-.contract-deatil-row.mob-col {
+.mob-col {
+  display: flex;
   flex-direction: column;
 }
+
 .contract-detail-modal-card .contract-request-form {
   padding: 10px;
   font-size: 12px;
@@ -946,9 +955,12 @@ body[data-view-mode="week"] .shift .mobile-name {
   align-items: flex-start;
 }
 .contract-detail-modal .contract-detail-row .status-btn {
-  margin-left: 0;
+  margin-right: 16px;
   font-size: 10px;
+  margin-left: 0;
   margin-top: 6px;
+  width: auto;
+  padding: 8px 10px;
 }
 .approval-detail-request-item button {
   padding: 6px 10px;
@@ -996,7 +1008,6 @@ body[data-view-mode="week"] .shift .mobile-name {
   text-decoration-thickness: 2px;
 }
 
-
 .mobile-notice-tabs {
   display: flex;
 }
@@ -1035,11 +1046,34 @@ body[data-view-mode="week"] .shift .mobile-name {
 .m-noti-title {
   font-size: 12px;
 }
-
+.mob-col {
+  flex-direction: column;
+}
 .notice-add-content-left #notice-content-input {
   margin-top: 10px;
   width: 90%;
   min-height: 132px;
   font-size: 11px;
 }
-.notice-add-content-left select{min-width: 100px;}
+.notice-add-content-left select {
+  min-width: 100px;
+}
+
+.account-modal-card {
+  width: auto;
+}
+.account-modal-enter {
+  width: 140px;
+}
+#newValInput {
+  width: 174px;
+}
+.account-modal-row {
+  min-height: 60px;
+}
+.id-confirm {
+  padding: 10px 16px;
+}
+.contract-request-card {
+  width: 340px;
+}
