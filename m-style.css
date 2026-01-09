@@ -829,8 +829,8 @@ body[data-view-mode="week"] .shift .mobile-name {
 .month-saved-modal-content {
   font-size: 12px;
 }
-.month-saved-modal-content .name, 
-.month-saved-modal-content .job, 
+.month-saved-modal-content .name,
+.month-saved-modal-content .job,
 .month-saved-modal-content .time,
 .dept-filter-btn {
   font-size: 11px;
@@ -851,7 +851,7 @@ body[data-view-mode="week"] .shift .mobile-name {
 .modal-title-text {
   font-size: 13px;
 }
-.view-mode{
+.view-mode {
   font-size: 12px;
 }
 
@@ -871,14 +871,14 @@ body[data-view-mode="week"] .shift .mobile-name {
 .contract-request-modal-col.request-message {
   margin-top: 8px;
 }
-.contract-request-modal-col.sign-order{
+.contract-request-modal-col.sign-order {
   flex-direction: row;
   gap: 10px;
 }
 .contract-request-modal-detail-select {
   gap: 4px;
 }
-.contract-request-modal-col.request-form{
+.contract-request-modal-col.request-form {
   padding: 2px 4px;
   overflow-y: auto;
   height: 100%;
@@ -889,19 +889,19 @@ body[data-view-mode="week"] .shift .mobile-name {
 .contract-request-form > * {
   flex-shrink: 0;
 }
-.contract-request-card-head{
+.contract-request-card-head {
   padding-bottom: 4px;
   flex-shrink: 0;
 }
-.contract-request-action{
+.contract-request-action {
   flex-shrink: 0;
 }
-.contract-request-content{
+.contract-request-content {
   flex: 1;
   overflow-y: auto;
   overscroll-behavior: contain;
 }
-.contract-request-form input[name="usedDays"]{
+.contract-request-form input[name="usedDays"] {
   min-width: 153px;
 }
 .contract-request-modal-detail-select select {
@@ -1026,7 +1026,7 @@ body[data-view-mode="week"] .shift .mobile-name {
 .mobile-notice-tabs {
   display: none;
   gap: 10px;
-  padding: 8px 0;
+  padding: 4px 0;
 }
 
 .tab-btn {
@@ -1064,7 +1064,7 @@ body[data-view-mode="week"] .shift .mobile-name {
   display: none;
   min-width: 300px;
   min-height: 300px;
-  padding: 8px;
+  padding: 8px !important;
 }
 
 .notice-add-modal[data-mode="detail"] .notice-add-content-right {
@@ -1092,8 +1092,9 @@ body[data-view-mode="week"] .shift .mobile-name {
   min-height: 132px;
   font-size: 11px;
 }
-.notice-add-content-left select {
-  min-width: 100px;
+.notice-add-content-left select,
+.dynamic-date {
+  min-width: 140px;
 }
 
 .account-modal-card {
