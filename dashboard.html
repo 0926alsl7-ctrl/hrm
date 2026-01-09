@@ -35,15 +35,20 @@
           </div>
           <div class="header-wrap flex">
             <div class="logo flex">
-              <img src="images/favicon-32x32.png" alt="logo" />
-              <h1 class="logo-txt">HRMS</h1>
+              <a href="" class="flex" style="align-items: center">
+                <img src="images/favicon-32x32.png" alt="logo" />
+                <h1 class="logo-txt">HRMS</h1>
+              </a>
             </div>
+
             <div class="header-bar">
               <ul class="header-bar-list flex">
                 <li class="header-bar-list-item">
-                  <button class="icon-btn new">
-                    <img src="images/refresh.svg" alt="change" />
-                  </button>
+                  <a href="">
+                    <button class="icon-btn new">
+                      <img src="images/refresh.svg" alt="change" />
+                    </button>
+                  </a>
                 </li>
                 <li class="header-bar-list-item">
                   <button class="icon-btn" id="darkmode">
@@ -711,7 +716,7 @@
                   </div>
                 </div>
               </section>
-              <section class="section" data-page="notice">
+              <section class="section is-active" data-page="notice">
                 <div class="dashboard notice">
                   <div class="schedule-top notice">
                     <div class="schedule-title">
@@ -778,7 +783,7 @@
                   </div>
                 </div>
               </section>
-              <section class="section is-active" data-page="message">
+              <section class="section" data-page="message">
                 <div class="message-main-container">
                   <div class="msg-side-left">
                     <div class="recent-users-track">
@@ -792,17 +797,31 @@
                   </div>
                   <div class="msg-center">
                     <div class="chat-search-area">
-                      <button class="mobile-menu-btn left" data-target="left">
-                        <img src="images/chatpast.svg" alt="open" />
-                      </button>
                       <input
                         type="text"
                         id="chatSearchInput"
-                        placeholder="대화 검색"
+                        placeholder="대화내용 검색"
                       />
-                      <button class="mobile-menu-btn right" data-target="right">
-                        <img src="images/personfill.svg" alt="open" />
+                      <button class="chat-search-cancel" id="chatSearchCancel">
+                        취소
                       </button>
+                      <div class="msg-mobile-btn-wrap">
+                        <button
+                          class="mobile-menu-btn search"
+                          data-target="search"
+                        >
+                          <img src="images/search_blue.svg" alt="open" />
+                        </button>
+                        <button class="mobile-menu-btn left" data-target="left">
+                          <img src="images/mobile_chat.svg" alt="open" />
+                        </button>
+                        <button
+                          class="mobile-menu-btn right"
+                          data-target="right"
+                        >
+                          <img src="images/personfill.svg" alt="open" />
+                        </button>
+                      </div>
                     </div>
                     <div class="chat-active-header" id="chatHeader"></div>
                     <div class="chat-display-area" id="chatDisplay"></div>
@@ -1381,10 +1400,18 @@
             </button>
           </div>
           <div class="notice-add-content modal-content">
+            <div class="mobile-notice-tabs">
+              <button type="button" class="tab-btn active" data-tab="left">
+                공지 작성
+              </button>
+              <button type="button" class="tab-btn" data-tab="right">
+                미리보기
+              </button>
+            </div>
             <div class="notice-add-content-left">
               <div class="notice-add-modal-row">
                 <h5 class="modal-subtitle-text">공지사항 제목</h5>
-                <input type="text" name="" id="" />
+                <input type="text" name="" id="" class="m-noti-title" />
               </div>
               <div class="notice-add-modal-row">
                 <h5 class="modal-subtitle-text">템플릿</h5>

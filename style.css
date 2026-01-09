@@ -8,7 +8,7 @@
 html {
   word-break: keep-all;
   overflow-wrap: break-word;
-  scrollbar-width: thin;
+  scrollbar-width: none;
   scrollbar-color: rgba(0, 29, 58, 0.18) transparent;
   -webkit-text-size-adjust: 100%;
 }
@@ -54,6 +54,9 @@ img {
   display: inline-block;
 }
 /* mobile */
+.mobile-notice-tabs {
+  display: none;
+}
 .mobile-tag {
   display: none !important;
 }
@@ -63,7 +66,11 @@ img {
 .mobile-name {
   display: none !important;
 }
-.mobile-menu-btn {
+.mobile-menu-btn,
+.msg-mobile-btn-wrap {
+  display: none !important;
+}
+.chat-search-cancel {
   display: none !important;
 }
 /* utility */
@@ -249,9 +256,7 @@ body.dark-mode {
   align-items: center;
   justify-content: space-between;
 }
-.header-wrap .logo {
-  align-items: center;
-}
+
 .logo img {
   width: 32px;
   height: 32px;
@@ -319,20 +324,20 @@ body.dark-mode {
 #layout {
   display: flex;
   padding-top: 66px;
-  width: 100%;
+  min-height: calc(100vh - 66px);
 }
 .main-wrap {
   width: 100%;
-  height: 100vh;
+  min-height: calc(100vh - 66px);
 }
 
 /* aside ================================================================= */
 .aside {
   width: 72px;
-  height: 100%;
-  overflow-y: auto !important;
+
   background: var(--aside-bg);
   transition: width 0.3s ease;
+  position: relative;
 }
 .aside-inner {
   padding-top: 16px;
@@ -387,7 +392,8 @@ body.dark-mode {
 .main {
   flex: 1;
   width: 100%;
-  height: 100%;
+  overflow-x: hidden;
+  overflow-y: auto;
   background: var(--dashboard-bg);
 }
 .section {
@@ -2378,6 +2384,7 @@ body[data-view-mode="week"] .shift.vacation {
   width: 270px;
   display: flex;
   flex-direction: column;
+  height: 100%;
 }
 .recent-users-track {
   height: 96px;
@@ -2389,6 +2396,8 @@ body[data-view-mode="week"] .shift.vacation {
 }
 .chat-room-list {
   margin-top: 8px;
+  flex: 1;
+  overflow: hidden;
 }
 #chatRoomList {
   border: var(--darkmode-border);
@@ -2396,8 +2405,8 @@ body[data-view-mode="week"] .shift.vacation {
   margin-top: 6px;
   height: 100%;
   overflow-y: auto;
+  overscroll-behavior: contain;
   scrollbar-width: none;
-  scroll-behavior: smooth;
 }
 
 .recent-list {
@@ -2567,6 +2576,7 @@ body[data-view-mode="week"] .shift.vacation {
   flex-direction: column;
   gap: 10px;
   border-radius: 12px;
+  scrollbar-width: none;
 }
 .bubble {
   max-width: 70%;
@@ -2672,7 +2682,7 @@ body[data-view-mode="week"] .shift.vacation {
 
 .dept-group-title:hover,
 .dept-group-title.is-open {
-  background: var(--button-bg-color-blue-weak);
+  background: var(--darkmode-btn-gray-strong);
   color: var(--blueColor500);
 }
 .dept-group-title:hover::after {
@@ -2696,9 +2706,9 @@ body[data-view-mode="week"] .shift.vacation {
   background: var(--darkmode-bg-gray-strong);
   color: var(--mainTextColor);
 }
-.staff-item:hover {
+.staff-item:hover,
+.staff-item.is-match {
   color: var(--blueColor500);
-  font-weight: bold;
 }
 
 .staff-search-area {
@@ -2886,6 +2896,7 @@ body[data-view-mode="week"] .shift.vacation {
   margin-top: 54px;
   border-radius: 8px;
   border: var(--darkmode-border);
+  margin-bottom: 24px;
 }
 
 .action-btn.logout::after {

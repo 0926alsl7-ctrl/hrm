@@ -71,6 +71,11 @@ function initNoticeSystem() {
   const contentArea = document.getElementById("notice-content-input");
   const previewArea = document.querySelector(".notice-add-content-right");
   const submitBtn = modal.querySelector(".approval");
+  const cancelBtn = modal.querySelector(".cancel");
+
+  const tabBtns = modal.querySelectorAll(".tab-btn");
+  const leftSide = modal.querySelector(".notice-add-content-left");
+  const rightSide = modal.querySelector(".notice-add-content-right");
 
   let currentEditIdx = null;
 
@@ -89,6 +94,7 @@ function initNoticeSystem() {
     submitBtn.innerText = "추가하기";
 
     modal.querySelector(".notice-add-content-left").style.display = "block";
+    modal.querySelector(".notice-add-content-right").style.display = "block";
     modal.querySelector(".notice-preview").style.display = "block";
     modal.querySelector(".notice-add-content-right").style.padding = "16px";
     modal.querySelector(".notice-add-content-right").style.background =
@@ -229,11 +235,34 @@ function initNoticeSystem() {
     updateControlButtons();
   };
 
+  tabBtns.forEach((btn) => {
+    btn.onclick = () => {
+      if(window.innerWidth <= 768){
+      tabBtns.forEach((b) => b.classList.remove("active"));
+      btn.classList.add("active");
+      
+
+      if (btn.dataset.tab === "left") {
+        leftSide.style.display = "block";
+        rightSide.style.display = "none";
+      } else {
+        leftSide.style.display = "none";
+        rightSide.style.display = "block";
+        updatePreview(); // 탭 바꿀 때 미리보기 최신화
+      }
+      }
+    };
+  });
+
   document.addEventListener("click", (e) => {
     if (e.target.classList.contains("notice-t-title")) {
       const tr = e.target.closest("tr");
       const idx = tr.querySelector(".notice-del-edit-chk").value;
       const target = notices[idx];
+      const mTabs = modal.querySelector(".mobile-notice-tabs");
+
+      if (mTabs) mTabs.style.display = "none";
+      rightSide.style.display = "block";
 
       modal.querySelector(".modal-title-text").innerText = "공지사항 상세";
       modal.querySelector(".notice-add-content-left").style.display = "none";
@@ -244,6 +273,7 @@ function initNoticeSystem() {
       modal.querySelector(".notice-add-content-right").style.justifyContent =
         "flex-start";
       submitBtn.style.display = "none";
+      cancelBtn.innerText = "확인";
 
       titleInput.value = target.title;
       contentArea.value = target.content;
@@ -317,8 +347,12 @@ function initNoticeSystem() {
 
   document.querySelector(".notice-add-btn").onclick = () => {
     resetModalUI();
+    const mTabs = modal.querySelector(".mobile-notice-tabs");
+    if (mTabs) mTabs.style.display = "flex";
     modal.classList.remove("is-hidden");
     modal.style.display = "flex";
+    // 초기 탭 설정
+    tabBtns[0].click();
   };
 
   document.addEventListener("change", (e) => {
@@ -332,14 +366,9 @@ document.addEventListener("DOMContentLoaded", () => {
   initNoticeSystem();
 });
 // message section =================================================
-/* ======================================================
-   메시지 섹션 최종 통합본 (중복 버그 수정 및 HTML 구조 유지)
-====================================================== */
-
 let activeChatTarget = null;
 let favorites = JSON.parse(localStorage.getItem("msg_favorites")) || [];
 
-// 1. 부서 키 변환
 function getDeptClass(dept) {
   const mapping = {
     Management: "Management",
@@ -352,7 +381,6 @@ function getDeptClass(dept) {
   return mapping[dept] || "Management";
 }
 
-// 2. 메시지 렌더링 (날짜 구분선)
 function renderMessages(keyword = "") {
   const display = document.getElementById("chatDisplay");
   if (!display || !activeChatTarget) return;
@@ -404,7 +432,6 @@ function renderMessages(keyword = "") {
   display.scrollTop = display.scrollHeight;
 }
 
-// 3. 즐겨찾기 로직 (HTML 타이틀 건드리지 않음)
 function toggleFavorite(name, dept) {
   const index = favorites.findIndex((f) => f.name === name);
   if (index > -1) favorites.splice(index, 1);
@@ -419,7 +446,6 @@ function renderRecentTrack() {
   const recentList = document.getElementById("recentUserList");
   if (!recentList) return;
 
-  // HTML 내부의 list만 비우고 새로 그림
   recentList.innerHTML = "";
 
   favorites.forEach((fav) => {
@@ -437,12 +463,11 @@ function renderRecentTrack() {
   });
 }
 
-// 4. 대화 목록 로직 (HTML 타이틀 유지, 중복 완전 제거)
 function renderChatRoomList() {
   const chatRoomList = document.getElementById("chatRoomList");
   if (!chatRoomList) return;
 
-  chatRoomList.innerHTML = ""; // 내부 내용만 싹 비움
+  chatRoomList.innerHTML = "";
 
   const chatPartners = [
     ...new Set(
@@ -521,9 +546,10 @@ function startChat(name, dept) {
   activeChatTarget = { name, dept, isGroup: name.includes("방") };
   updateChatHeader(name, dept);
   renderMessages();
+
+  document.querySelector(".msg-side-lft")?.classList.remove("is-open");
 }
 
-// 6. 조직도 (하나만 열리게)
 function renderStaffDirectory() {
   const container = document.getElementById("deptStaffList");
   if (!container) return;
@@ -549,7 +575,6 @@ function renderStaffDirectory() {
   }
 }
 
-// 7. 메시지 전송 및 자동 응답
 function sendChatMessage() {
   const input = document.getElementById("msgInput");
   if (!activeChatTarget || !input.value.trim()) return;
@@ -584,7 +609,6 @@ function sendChatMessage() {
   }
 }
 
-// 8. 초기화
 document.addEventListener("DOMContentLoaded", () => {
   renderStaffDirectory();
   renderRecentTrack();
@@ -618,13 +642,40 @@ document.addEventListener("DOMContentLoaded", () => {
     };
   }
   const staffSearch = document.getElementById("staffSearchInput");
+
   if (staffSearch) {
     staffSearch.oninput = (e) => {
-      const val = e.target.value.toLowerCase();
-      document.querySelectorAll(".staff-item").forEach((item) => {
-        item.style.display = item.innerText.toLowerCase().includes(val)
-          ? "flex"
-          : "none";
+      const keyword = e.target.value.toLowerCase().trim();
+
+      document.querySelectorAll(".dept-group-wrapper").forEach((group) => {
+        const title = group.querySelector(".dept-group-title");
+        const items = group.querySelectorAll(".staff-item");
+
+        let hasMatch = false;
+
+        items.forEach((item) => {
+          const name = item.innerText.toLowerCase();
+
+          if (keyword && name.includes(keyword)) {
+            item.style.display = "flex";
+            item.classList.add("is-match");
+            hasMatch = true;
+          } else {
+            item.style.display = keyword ? "none" : "flex";
+            item.classList.remove("is-match");
+          }
+        });
+
+        if (keyword && hasMatch) {
+          group.style.display = "block";
+          title.classList.add("is-open");
+        } else if (!keyword) {
+          group.style.display = "block";
+          title.classList.remove("is-open");
+        } else {
+          group.style.display = "none";
+          title.classList.remove("is-open");
+        }
       });
     };
   }
@@ -634,20 +685,37 @@ document.addEventListener("DOMContentLoaded", () => {
     chatSearch.oninput = (e) => renderMessages(e.target.value.trim());
   }
 });
+
 document.querySelectorAll(".mobile-menu-btn").forEach((btn) => {
   btn.addEventListener("click", () => {
     const target = btn.dataset.target;
+    const left = document.querySelector(".msg-side-left");
+    const right = document.querySelector(".msg-side-right");
 
-    document
-      .querySelector(".msg-side-left")
-      .classList.toggle("is-open", target === "left");
+    left.classList.remove("is-open");
+    right.classList.remove("is-open");
 
-    document
-      .querySelector(".msg-side-right")
-      .classList.toggle("is-open", target === "right");
+    if (target === "left") left.classList.add("is-open");
+    if (target === "right") right.classList.add("is-open");
   });
 });
-document.querySelector(".chat-display-area").addEventListener("click", () => {
-  document.querySelector(".msg-side-left").classList.remove("is-open");
-  document.querySelector(".msg-side-right").classList.remove("is-open");
+
+document.querySelector(".chat-display-area")?.addEventListener("click", () => {
+  document.querySelector(".msg-side-left")?.classList.remove("is-open");
+  document.querySelector(".msg-side-right")?.classList.remove("is-open");
+});
+const searchBtn = document.querySelector(".mobile-menu-btn.search");
+const searchArea = document.querySelector(".chat-search-area");
+const searchInput = document.getElementById("chatSearchInput");
+const cancelBtn = document.getElementById("chatSearchCancel");
+
+searchBtn.addEventListener("click", () => {
+  searchArea.classList.add("search-mode");
+  searchInput.value = "";
+  setTimeout(() => searchInput.focus(), 50);
+});
+cancelBtn.addEventListener("click", () => {
+  searchArea.classList.remove("search-mode");
+  searchInput.value = "";
+  renderMessages();
 });
