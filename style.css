@@ -3337,7 +3337,8 @@ body[data-view-mode="week"] .shift.vacation {
 .contract-detail-modal-card .contract-request-modal-row {
   gap: 20px;
 }
-.contract-request-modal-row .modal-subtitle-text {
+.contract-request-modal-row .modal-subtitle-text,
+.target-personal-row .modal-subtitle-text {
   white-space: nowrap;
   color: var(--mainTextColor-lightmode);
 }
@@ -3474,7 +3475,11 @@ body[data-view-mode="week"] .shift.vacation {
   background: var(--btn-bg-base);
   color: var(--btn-color-base);
 }
+.contract-request-form input {
+  min-width: 120px;
+}
 .contract-request-modal select {
+  min-width: 120px;
   border: 1px solid var(--grayColor100);
   border-radius: 4px;
   padding: 10px;
@@ -3484,6 +3489,7 @@ body[data-view-mode="week"] .shift.vacation {
 }
 
 #contract-expire-days {
+  min-width: 120px;
   border: 1px solid var(--grayColor100);
   border-radius: 4px;
   padding: 10px;
@@ -3510,6 +3516,7 @@ body[data-view-mode="week"] .shift.vacation {
 }
 .contract-request-modal-row,
 .target-personal-row {
+  color: var(--mainTextColor-lightmode);
   width: 100%;
   display: flex;
   align-items: center;
@@ -3710,6 +3717,7 @@ body[data-view-mode="week"] .shift.vacation {
   scrollbar-width: none;
 }
 .notice-add-modal-row {
+  color: var(--mainTextColor-lightmode);
   display: flex;
   align-items: center;
   gap: 14px;
@@ -3761,6 +3769,7 @@ body[data-view-mode="week"] .shift.vacation {
   background: #f2f4f6;
   display: flex;
   justify-content: center;
+  color: var(--mainTextColor-lightmode);
   align-items: center;
   padding: 20px;
   border-radius: 8px;
@@ -3770,6 +3779,7 @@ body[data-view-mode="week"] .shift.vacation {
   color: var(--grayColor500);
 }
 .noti-preview {
+  color: var(--mainTextColor-lightmode);
   padding: 20px;
   background: #fff;
   border-radius: 8px;

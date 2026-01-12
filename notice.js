@@ -237,19 +237,18 @@ function initNoticeSystem() {
 
   tabBtns.forEach((btn) => {
     btn.onclick = () => {
-      if(window.innerWidth <= 768){
-      tabBtns.forEach((b) => b.classList.remove("active"));
-      btn.classList.add("active");
-      
+      if (window.innerWidth <= 768) {
+        tabBtns.forEach((b) => b.classList.remove("active"));
+        btn.classList.add("active");
 
-      if (btn.dataset.tab === "left") {
-        leftSide.style.display = "block";
-        rightSide.style.display = "none";
-      } else {
-        leftSide.style.display = "none";
-        rightSide.style.display = "block";
-        updatePreview(); // 탭 바꿀 때 미리보기 최신화
-      }
+        if (btn.dataset.tab === "left") {
+          leftSide.style.display = "block";
+          rightSide.style.display = "none";
+        } else {
+          leftSide.style.display = "none";
+          rightSide.style.display = "block";
+          updatePreview(); // 탭 바꿀 때 미리보기 최신화
+        }
       }
     };
   });

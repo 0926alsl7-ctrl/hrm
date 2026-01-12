@@ -865,7 +865,7 @@ body[data-view-mode="week"] .shift .mobile-name {
 .contract-request-form input {
   font-family: "Chiron Hei HK", sans-serif;
   padding: 8px;
-  font-size: 11px;
+  font-size: 10px;
   color: #8b95a1;
 }
 .contract-request-modal-col.request-message {
@@ -965,7 +965,7 @@ body[data-view-mode="week"] .shift .mobile-name {
 }
 .contract-detail-modal-card .contract-request-form input {
   font-size: 11px;
-  width: 100%;
+  min-width: 80px;
 }
 #dynamic-form-fields-detail .contract-request-modal-col {
   padding: 4px 0;
@@ -1011,6 +1011,7 @@ body[data-view-mode="week"] .shift .mobile-name {
   font-size: 12px;
 }
 .noti-preview {
+  padding: 14px;
   min-width: auto;
 }
 .notice-add-content {
